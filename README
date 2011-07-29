@@ -1,0 +1,40 @@
+
+Changelog:
+
+0.1.6:
+- rage face support
+
+0.1.5:
+- add voting and saving of articles to frontpage
+- view articles by domain
+- some minor tweaks/bugfixes:
+  - add frontpage to reddits search icon on frontpage
+  - +/-frontpage handling in Reddits
+  - fix image titles when sliding between images
+  - show loading icon when voting/saving article or comment
+  - tweak error message when login fails
+  - display a message when no results are returned
+
+0.1.4:
+- add preference for picking subreddit landing page
+- workaround for spoilers in /r/gameofthrones
+
+0.1.3:
+- theme support
+- more comment listing options
+- HTML instead of text comments
+
+0.1.2:
+- show points on frontpage articles
+- gallery taps open images, flick through images and tap the "i" icon to open related article
+- ability to lock orientation to portrait
+- add "power scroll" to frontpage and articles
+- add basic gif viewing ability for links from gif/gifs/nswf_gif/nswf_gifs
+- fix preferences to hide thumbnails, hide easy links, use single card
+- fix multiple article cards conflicting their comments data
+
+0.1.1:
+- minor spacing changes
+- fix 'load more' button not displaying under certain conditions
+- pics open in new cards, as does article when comment counter is clicked
+- gallery overhauled

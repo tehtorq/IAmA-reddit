@@ -1,0 +1,76 @@
+[
+    {"source": "app/assistants/app-assistant.js"},
+    {"source": "app/assistants/power-scroll-base.js"},
+    {"source": "app/assistants/stage-assistant.js"},
+    {
+        "scenes": "article",
+        "source": "app/assistants/article-assistant.js"
+    },
+    {
+        "scenes": "frontpage",
+        "source": "app/assistants/frontpage-assistant.js"
+    },
+    {
+        "scenes": "reddits",
+        "source": "app/assistants/reddits-assistant.js"
+    },
+    {
+        "scenes": "user",
+        "source": "app/assistants/user-assistant.js"
+    },
+    {
+        "scenes": "login",
+        "source": "app/assistants/login-assistant.js"
+    },
+    {
+        "scenes": "prefs",
+        "source": "app/assistants/prefs-assistant.js"
+    },
+    {
+        "scenes": "message",
+        "source": "app/assistants/message-assistant.js"
+    },
+    {
+        "scenes": "compose-message",
+        "source": "app/assistants/compose-message-assistant.js"
+    },
+    {
+        "scenes": "reply",
+        "source": "app/assistants/reply-assistant.js"
+    },
+    {
+        "scenes": "gallery",
+        "source": "app/assistants/gallery-assistant.js"
+    },
+    {
+        "scenes": "image",
+        "source": "app/assistants/image-assistant.js"
+    },
+    {
+        "scenes": "gif",
+        "source": "app/assistants/gif-assistant.js"
+    },
+    {
+        "scenes": "register",
+        "source": "app/assistants/register-assistant.js"
+    },
+    {
+        "scenes": "recent-comment",
+        "source": "app/assistants/recent-comment-assistant.js"
+    },
+    {
+        "scenes": "dock",
+        "source": "app/assistants/dock-assistant.js"
+    },
+    {"source": "app/models/debugger.js"},
+		{"source": "app/models/request.js"},
+		{"source": "app/models/article.js"},
+		{"source": "app/models/comment.js"},
+		{"source": "app/models/reddit_api.js"},
+		{"source": "app/models/linky.js"},
+		{"source": "app/models/banner.js"},
+		{"source": "app/models/prototype.js"},
+    {"source": "app/models/subreddit.js"},
+    {"source": "app/models/user.js"},
+    {"source": "app/models/message.js"}
+]

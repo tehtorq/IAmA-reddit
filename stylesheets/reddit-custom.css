@@ -1,0 +1,280 @@
+
+body.palm-default {
+ background: url(../images/gradient-background-custom.png) center center repeat;
+ background-attachment:fixed;
+}
+
+.wrappertest {
+  background-color : black;
+}
+
+.thing {
+  font-size: 15px;
+  color: black;
+  padding: 18px;
+  margin: 3px 6px 3px 6px;
+  overflow: auto;
+}
+
+.toggle_hidden {
+  display: none;
+}
+
+.reddit_article {
+  position:relative; /* for comment counter */
+  padding: 10px 18px 6px 0px;
+}
+
+.reddit_comment {
+  padding: 4px 9px 4px 9px;
+  margin: 0px 0px 3px 0px;
+}
+
+.upvote_icon {
+  width: 22px;
+  height: 20px;
+  background: url(../images/upvote.png) center center repeat;
+  margin-top: 15px;
+}
+
+.selected_upvote_icon {
+  width: 22px;
+  height: 20px;
+  background: url(../images/upvote-selected.png) center center repeat;
+  margin-top: 15px;
+}
+
+.downvote_icon {
+  width: 22px;
+  height: 20px;
+  background: url(../images/downvote.png) center center repeat;
+  margin-top: 15px;
+}
+
+.selected_downvote_icon {
+  width: 22px;
+  height: 20px;
+  background: url(../images/downvote-selected.png) center center repeat;
+  margin-top: 15px;
+}
+
+.reddit_op_comment {
+  padding: 4px 9px 4px 9px;
+  margin: 0px 0px 3px 0px;
+}
+
+.reddit_post {
+  border: 1px black solid;
+}
+
+.load_more_comment {
+  color: red;
+    padding: 10px 18px 18px 18px;
+  margin: 3px 0px 3px 4px;
+  /*height: 8px;*/
+}
+
+.user {
+  position:relative; /* for comment counter */
+}
+
+.subreddit {
+  position:relative; /* for comment counter */
+}
+
+.subreddit_info {
+  /*visibility: hidden;*/
+  z-index: -100;
+  width: 80%;  
+  font-size: 15px;
+  color: black;
+  padding: 18px;
+  margin: -12px 6px 6px 12px;
+  -webkit-border-radius: 6px;
+  position:relative; /* for comment counter */
+}
+
+.comment_shadow {
+  width: 100%;
+  height: 1px;
+  background-color: grey;
+  opacity: 50%;
+}
+
+.shadow_footer {
+  width: 100%;
+  height: 1px;
+  background-color: grey;
+  opacity: 50%;
+}
+
+.column {
+  height: 40px;
+  width: 48px;
+  top:50%;
+  /*background-color : red;*/
+  right: 0px;
+  position:absolute;
+  margin-top:-20px;
+  padding: 0px;
+}
+
+.comment_counter {
+  text-align : center;
+  font-size: 15px;
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  color: black;  
+  padding: 0px 4px;
+  margin-top:0px;  
+  background: url(../images/comment-light.png) no-repeat;
+  background-size: 100%;
+}
+
+.comment_tag {
+  text-align : left;
+  font-size: 15px;
+  line-height: 40px;
+  width: 50px;
+  height: 40px;
+  color: red;  
+  padding: 0px;
+  margin: 0px -10px 5px 5px;  
+  background: url(../images/comment_tag.png) no-repeat;
+  background-size: 100%;
+  float:right;
+}
+
+.comment_tag_hidden {
+  display: none;
+}
+
+.comment_description {    
+ width: 83%;
+}
+
+.reddit_thumbnail {
+  /*float: inherit;*/
+  float:left;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 10px 5px 0px;
+}
+
+.reddit_embedded_link {
+  float: inherit;
+  padding: 5px 1px;
+}
+
+#canvas {
+  background-color : black;
+}
+
+.searchbar .filter-field-container {
+  top: 0px;
+  left: 0px;
+  position: fixed;
+  width: 100%;
+  height: 95px;
+  z-index: 999;
+}
+
+.reddits_searchbar .filter-field-container {
+  top: 0px;
+  left: 0px;
+  position: fixed;
+  width: 100%;
+  height: 50px;
+  z-index: 999;
+}
+
+.transparent-scrim {
+  opacity: 0.3;
+}
+
+/*#mojo-scene-gif-scene-scroller {
+  background-color: black;
+}*/
+
+/* A scroller needs a container element */
+.scrollerContainer {
+    width:  960px;
+    height: 480px;
+    border: yellow solid 1px;
+}
+ 
+/* An item that is viewable in the scroll pane window */
+.scrollerItem {
+    float:     left;
+    height:    480px;
+    width:     320px;
+    min-width: 320px;
+}
+
+.loading {
+  background-color:black;
+  color:white;
+  position:fixed;
+  left:0px;
+  top: 50%;
+  font-size:15px;
+  z-index:99999;
+  padding: 5px;
+  -webkit-border-radius: 0px 6px 6px 0px;
+  border-top: solid 1px silver;
+  border-right: solid 1px silver;
+  border-bottom: solid 1px silver;
+}
+
+.image_title {
+  background-color: black;
+  color:white;
+  opacity:0.5;
+  width:100%;
+  top:0px;
+  left:0px;
+  z-index:99999;
+  position:fixed;
+  font-size:14px;
+  text-align: center;
+  padding: 5px 0px;
+  border-bottom: 1px solid black;
+}
+
+.md p, .md h1 {
+    margin: 5px 0;
+    padding: 0;
+}
+
+blockquote {
+  border-left: 2px solid #336699;
+  margin: 5px 15px 5px 5px;
+  padding-left: 4px;
+}
+
+.comment_spacer {
+  font-size: 7px;
+  padding: 0px 0px 15px;
+}
+
+.comment_desc {
+  float: left;
+  margin: 4px 0px;
+  color: grey;
+  font-size: 0.8em;
+}
+
+.vote_desc {
+  float: right; 
+  font-size: 0.8em;
+  color: red;
+  margin: 4px 0px;
+}
+
+.article_desc {
+  font-size: 0.8em;
+  color: grey;
+  margin-top: 6px;
+  float: left;
+  clear: both;
+}
