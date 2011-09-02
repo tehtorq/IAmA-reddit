@@ -1,130 +1,99 @@
-
-RedditAPI = Class.create({
-
-  initialize: function() {
+var RedditAPI;
+RedditAPI = (function() {
+  function RedditAPI() {}
+  RedditAPI.prototype.initialize = function() {
     this.base_url = 'http://www.reddit.com/';
     this.reset_options();
-    this.reddits_category = 'popular';
-  },
-  
-  reset_options: function() {
+    return this.reddits_category = 'popular';
+  };
+  RedditAPI.prototype.reset_options = function() {
     this.category = 'hot';
     this.category_sort = null;
     this.domain = null;
     this.search = null;
-    this.subreddit = null
-    this.permalink = null;
-  },
-  
-  set_permalink: function(url) {
+    this.subreddit = null;
+    return this.permalink = null;
+  };
+  RedditAPI.prototype.set_permalink = function(url) {
     this.reset_options();
-    this.permalink = url;
-  },
-
-  setSubreddit: function(subreddit) {
-    if (subreddit != this.subreddit) {
+    return this.permalink = url;
+  };
+  RedditAPI.prototype.setSubreddit = function(subreddit) {
+    if (subreddit !== this.subreddit) {
       this.reset_options();
-      this.subreddit = subreddit;
+      return this.subreddit = subreddit;
     }
-  },
-
-  setCategory: function(category, sort) {
+  };
+  RedditAPI.prototype.setCategory = function(category, sort) {
     this.domain = null;
     this.search = null;
     this.category_sort = null;
     this.category = category;
-    
-    if (sort != undefined) {
-      this.category_sort = sort;
+    if (sort != null) {
+      return this.category_sort = sort;
     }
-  },
-
-  setSearchTerm: function(search) {
-    if (search != this.search) {
+  };
+  RedditAPI.prototype.setSearchTerm = function(search) {
+    if (search !== this.search) {
       this.reset_options();
-      this.search = search;
+      return this.search = search;
     }
-  },
-
-  setDomain: function(domain) {
-    if (domain != this.domain) {
+  };
+  RedditAPI.prototype.setDomain = function(domain) {
+    if (domain !== this.domain) {
       this.reset_options();
-      this.domain = domain;
+      return this.domain = domain;
     }
-  },
-
-  getArticlesPerPage: function() {
+  };
+  RedditAPI.prototype.getArticlesPerPage = function() {
     return StageAssistant.cookieValue("prefs-articles-per-page", 25);
-  },
-
-  getArticlesUrl: function() {
-    var url = this.base_url;
-
+  };
+  RedditAPI.prototype.getArticlesUrl = function() {
+    var url;
+    url = this.base_url;
     if (this.search != null) {
       url += 'search/.json';
       return url;
     }
-
     if (this.domain != null) {
       url += 'domain/' + this.domain + '/';
-    }
-    else if ((this.subreddit != null) && (this.subreddit != 'frontpage')) {
+    } else if ((this.subreddit != null) && (this.subreddit !== 'frontpage')) {
       url += 'r/' + this.subreddit + '/';
     }
-
-    if (this.permalink) {
+    if (this.permalink != null) {
       url = this.base_url + this.permalink;
-    }
-    else {
+    } else {
       url += this.category + '/';
     }
-    
     url += '.json';
-    
     if (this.category_sort != null) {
-      url += '?'+this.category_sort.key+'=' + this.category_sort.value;
+      url += '?' + this.category_sort.key + '=' + this.category_sort.value;
     }
-
     return url;
-  },
-
-  getRedditsUrl: function() {
-    var url = "http://www.reddit.com/reddits/";
-
+  };
+  RedditAPI.prototype.getRedditsUrl = function() {
+    var url;
+    url = "http://www.reddit.com/reddits/";
     if (this.search != null) {
       url += 'search/.json';
       return url;
     }
-
     url += this.reddits_category + '/';
     url += '.json';
     return url;
-  },
-
-  setRedditsSearchTerm: function(search) {
-    if (search != this.search) {
+  };
+  RedditAPI.prototype.setRedditsSearchTerm = function(search) {
+    if (search !== this.search) {
       this.last_reddit = null;
     }
-
-    this.search = search;
-  },
-
-  setRedditsCategory: function(category) {
-    if (category != this.reddits_category) {
+    return this.search = search;
+  };
+  RedditAPI.prototype.setRedditsCategory = function(category) {
+    if (category !== this.reddits_category) {
       this.last_reddit = null;
     }
-
     this.reddits_category = category;
-    this.search = null;
-  }
-
-});
-
-
-
-
-
-
-
-
-
+    return this.search = null;
+  };
+  return RedditAPI;
+})();

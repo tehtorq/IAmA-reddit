@@ -2,26 +2,32 @@
 FrontpageAssistant = Class.create(PowerScrollBase, {
 
   initialize: function($super, params) {
+    Mojo.Log.info("Wtf")
     $super();
     this.articles = { items : [] };
     this.reddit_api = new RedditAPI();
+    Mojo.Log.info("Wtf")
     this.params = params;
     
     var default_frontpage = StageAssistant.cookieValue("prefs-frontpage", "frontpage");
         
     this.reddit_api.setSubreddit(default_frontpage);
+    Mojo.Log.info("Wtf")
 
     if (params) {
       if (params.reddit) {
         this.reddit_api.setSubreddit(params.reddit);
+        Mojo.Log.info("Wtf")
       }
       else if (params.permalink) {
         this.reddit_api.set_permalink(params.permalink);
+        Mojo.Log.info("Wtf")
       }
       else {
         this.search = params;
       }
     }
+    Mojo.Log.info("Wtf")
   },
 
   setup: function() {

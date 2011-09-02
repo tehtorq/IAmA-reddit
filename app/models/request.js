@@ -1,58 +1,60 @@
-
-Request = Class.create({
-
-  initialize: function(callback) {
-    this.callback = callback;
-  },
-
-  request: function(url, method, params, token) {
+var Request;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+Request = (function() {
+  function Request() {}
+  Request.prototype.initialize = function(callback) {
+    return this.callback = callback;
+  };
+  Request.prototype.request = function(url, method, params, token) {
+    var request;
     Mojo.Log.info(url + "," + method + "," + Object.toJSON(params));
-    
-    var request = new Ajax.Request(
-      url,
-      {
-        method : method,
-        parameters: params,
-        onSuccess : function(inTransport) {this.handleResponse(token, inTransport, true);}.bind(this),
-        onFailure : function(inTransport) {this.handleResponse(token, inTransport, true);}.bind(this),
-        onException : function(inTransport, inException) {this.handleResponse(token, inTransport, true);}.bind(this)
-      }
-    )
-
-    Request.store.push(request);
-  },
-
-  get: function(url, params, success, failure) {
-    this.request(url, 'get', params, success, failure);
-  },
-
-  post: function(url, params, success, failure) {
-    if (params.uh == undefined) {
+    request = new Ajax.Request(url, {
+      method: method,
+      parameters: params,
+      onSuccess: __bind(function(inTransport) {
+        return this.handleResponse(token, inTransport, true);
+      }, this),
+      onFailure: __bind(function(inTransport) {
+        return this.handleResponse(token, inTransport, true);
+      }, this),
+      onException: __bind(function(inTransport, inException) {
+        return this.handleResponse(token, inTransport, true);
+      }, this)
+    });
+    return Request.store.push(request);
+  };
+  Request.prototype.get = function(url, params, success, failure) {
+    return this.request(url, 'get', params, success, failure);
+  };
+  Request.prototype.post = function(url, params, success, failure) {
+    if (params.uh == null) {
       new Banner("Not logged in.").send();
       return;
     }
-    
-    this.request(url, 'post', params, success, failure);
-  },
-
-  handleResponse: function(token, response, success) {
-    if (this.callback != undefined) {      
-      this.callback.handleCallback({type: token, response: response, success: success});
+    return this.request(url, 'post', params, success, failure);
+  };
+  Request.prototype.handleResponse = function(token, response, success) {
+    if (this.callback != null) {
+      return this.callback.handleCallback({
+        type: token,
+        response: response,
+        success: success
+      });
+    } else {
+      return Mojo.Controller.getAppController().sendToNotificationChain({
+        type: token,
+        response: response,
+        success: success
+      });
     }
-    else {
-       Mojo.Controller.getAppController().sendToNotificationChain({type: token, response: response, success: success});
-    }
-  }
-
-});
-
-Request.store = [];
-
-Request.clear_all = function() {
-  for (var i = 0; i < Request.store.length; i++) {
-    Mojo.Log.info("aborting request");
-    Request.store[i].transport.abort();
-  }
-
-  Request.store.length = 0;
-}
+  };
+  Request.store = [];
+  Request.clear_all = function() {
+    _.each(this.store, function(request) {
+      Mojo.Log.info("aborting request");
+      return request.transport.abort();
+    });
+    return this.store.length = 0;
+  };
+  return Request;
+})();
