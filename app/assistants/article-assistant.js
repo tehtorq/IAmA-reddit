@@ -303,7 +303,7 @@ ArticleAssistant = Class.create(PowerScrollBase, {
       return "";
     }
 
-    urls = urls.unique();
+    //urls = urls.unique(); // FIX - unique doesnt work
 
     var image_url_html = "";
     var imagecount = 0;
