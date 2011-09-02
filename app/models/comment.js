@@ -1,9 +1,8 @@
 var Comment;
 Comment = (function() {
-  function Comment() {}
-  Comment.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function Comment(callback) {
+    this.callback = callback;
+  }
   Comment.prototype.upvote = function(params) {
     return new Request(this.callback).post('http://www.reddit.com/api/vote', params, 'comment-upvote ' + params.id);
   };

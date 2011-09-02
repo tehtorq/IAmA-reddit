@@ -1,6 +1,6 @@
 class Article
 
-  initialize: (callback) ->
+  constructor: (callback) ->
     @callback = callback
 
   load: (data) ->

@@ -1,11 +1,11 @@
 var RedditAPI;
 RedditAPI = (function() {
-  function RedditAPI() {}
-  RedditAPI.prototype.initialize = function() {
+  function RedditAPI() {
+    Mojo.Log.info("reddit api init");
     this.base_url = 'http://www.reddit.com/';
     this.reset_options();
-    return this.reddits_category = 'popular';
-  };
+    this.reddits_category = 'popular';
+  }
   RedditAPI.prototype.reset_options = function() {
     this.category = 'hot';
     this.category_sort = null;
@@ -50,7 +50,9 @@ RedditAPI = (function() {
   };
   RedditAPI.prototype.getArticlesUrl = function() {
     var url;
+    Mojo.Log.info("get articles url");
     url = this.base_url;
+    Mojo.Log.info(url);
     if (this.search != null) {
       url += 'search/.json';
       return url;
@@ -66,6 +68,7 @@ RedditAPI = (function() {
       url += this.category + '/';
     }
     url += '.json';
+    Mojo.Log.info(url);
     if (this.category_sort != null) {
       url += '?' + this.category_sort.key + '=' + this.category_sort.value;
     }

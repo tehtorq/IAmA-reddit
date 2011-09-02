@@ -1,9 +1,8 @@
 var User;
 User = (function() {
-  function User() {}
-  User.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function User(callback) {
+    this.callback = callback;
+  }
   User.prototype.create = function(params) {
     return new Request(this.callback).request('http://www.reddit.com/api/register/' + params.user, 'post', params, 'user-create');
   };

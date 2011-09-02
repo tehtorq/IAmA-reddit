@@ -1,9 +1,8 @@
 var Subreddit;
 Subreddit = (function() {
-  function Subreddit() {}
-  Subreddit.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function Subreddit(callback) {
+    this.callback = callback;
+  }
   Subreddit.prototype.subscribe = function(params) {
     return new Request(this.callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-subscribe ' + params.sr);
   };

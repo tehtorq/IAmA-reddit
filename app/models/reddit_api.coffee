@@ -1,6 +1,7 @@
 class RedditAPI
   
-  initialize: ->
+  constructor: ->
+    Mojo.Log.info("reddit api init")
     @base_url = 'http://www.reddit.com/'
     this.reset_options()
     @reddits_category = 'popular'
@@ -43,7 +44,10 @@ class RedditAPI
     StageAssistant.cookieValue("prefs-articles-per-page", 25)
     
   getArticlesUrl: ->
+    Mojo.Log.info("get articles url")
     url = @base_url
+    
+    Mojo.Log.info(url)
     
     if @search?
       url += 'search/.json'
@@ -60,6 +64,8 @@ class RedditAPI
       url += @category + '/'
       
     url += '.json'
+    
+    Mojo.Log.info(url)
     
     if @category_sort?
       url += '?'+@category_sort.key+'=' + @category_sort.value

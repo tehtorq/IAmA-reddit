@@ -1,6 +1,6 @@
 class Banner
 
-  initialize: (message) ->
+  constructor: (message) ->
     @message = message
 
   send: ->

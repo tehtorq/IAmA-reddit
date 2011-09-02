@@ -1,10 +1,9 @@
 var Request;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Request = (function() {
-  function Request() {}
-  Request.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function Request(callback) {
+    this.callback = callback;
+  }
   Request.prototype.request = function(url, method, params, token) {
     var request;
     Mojo.Log.info(url + "," + method + "," + Object.toJSON(params));

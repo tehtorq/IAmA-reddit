@@ -1,6 +1,6 @@
 class User
   
-  initialize: (callback) ->
+  constructor: (callback) ->
     this.callback = callback
 
   create: (params) ->

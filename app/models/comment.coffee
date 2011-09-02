@@ -1,6 +1,6 @@
 class Comment
 
-  initialize: (callback) ->
+  constructor: (callback) ->
     @callback = callback
   
   upvote: (params) ->

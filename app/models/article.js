@@ -1,9 +1,8 @@
 var Article;
 Article = (function() {
-  function Article() {}
-  Article.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function Article(callback) {
+    this.callback = callback;
+  }
   Article.prototype.load = function(data) {
     var _ref;
     if (data == null) {

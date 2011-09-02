@@ -1,6 +1,6 @@
 class Subreddit
 
-  initialize: (callback) ->
+  constructor: (callback) ->
     @callback = callback
 
   subscribe: (params) ->

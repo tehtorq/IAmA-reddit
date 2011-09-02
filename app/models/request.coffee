@@ -1,6 +1,6 @@
 class Request
 
-  initialize: (callback) ->
+  constructor: (callback) ->
     @callback = callback
 
   request: (url, method, params, token) ->

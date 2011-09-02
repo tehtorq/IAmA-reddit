@@ -1,9 +1,8 @@
 var Message;
 Message = (function() {
-  function Message() {}
-  Message.prototype.initialize = function(callback) {
-    return this.callback = callback;
-  };
+  function Message(callback) {
+    this.callback = callback;
+  }
   Message.prototype.inbox = function(params) {
     return new Request(this.callback).get('http://reddit.com/message/inbox/.json', params, 'message-inbox');
   };

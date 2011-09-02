@@ -1,6 +1,6 @@
 class Message
 
-  initialize: (callback) ->
+  constructor: (callback) ->
     @callback = callback
   
   inbox: (params) ->
