@@ -1,5 +1,5 @@
 var FrontpageAssistant;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
   ctor.prototype = parent.prototype;
@@ -10,6 +10,11 @@ var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, par
 FrontpageAssistant = (function() {
   __extends(FrontpageAssistant, PowerScrollBase);
   function FrontpageAssistant(params) {
+    this.itemTapped = __bind(this.itemTapped, this);
+    this.loadMoreArticles = __bind(this.loadMoreArticles, this);
+    this.handleDeleteItem = __bind(this.handleDeleteItem, this);
+    this.handleKeyDown = __bind(this.handleKeyDown, this);
+    this.handleKeyUp = __bind(this.handleKeyUp, this);
     var default_frontpage;
     FrontpageAssistant.__super__.constructor.apply(this, arguments);
     this.articles = {
@@ -17,6 +22,7 @@ FrontpageAssistant = (function() {
     };
     this.reddit_api = new RedditAPI();
     this.params = params;
+    this.waka = 'waka';
     default_frontpage = StageAssistant.cookieValue("prefs-frontpage", "frontpage");
     this.reddit_api.setSubreddit(default_frontpage);
     if (params != null) {
@@ -210,16 +216,11 @@ FrontpageAssistant = (function() {
       type: Mojo.Widget.activityButton
     }, this.activityButtonModel);
     this.controller.get('loadMoreButton').hide();
-    this.itemTappedBind = this.itemTapped.bind(this);
-    this.loadMoreArticlesBind = this.loadMoreArticles.bind(this);
-    this.handleDeleteItemBind = this.handleDeleteItem.bind(this);
-    this.handleKeyUpBind = this.handleKeyUp.bindAsEventListener(this);
-    this.handleKeyDownBind = this.handleKeyDown.bindAsEventListener(this);
-    Mojo.Event.listen(this.controller.get("article-list"), Mojo.Event.listTap, this.itemTappedBind);
-    Mojo.Event.listen(this.controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItemBind);
-    Mojo.Event.listen(this.controller.document, Mojo.Event.keyup, this.handleKeyUpBind, true);
-    Mojo.Event.listen(this.controller.document, Mojo.Event.keydown, this.handleKeyDownBind, true);
-    return Mojo.Event.listen(this.controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticlesBind);
+    Mojo.Event.listen(this.controller.get("article-list"), Mojo.Event.listTap, this.itemTapped);
+    Mojo.Event.listen(this.controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem);
+    Mojo.Event.listen(this.controller.document, Mojo.Event.keyup, this.handleKeyUp, true);
+    Mojo.Event.listen(this.controller.document, Mojo.Event.keydown, this.handleKeyDown, true);
+    return Mojo.Event.listen(this.controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles);
   };
   FrontpageAssistant.prototype.activate = function(event) {
     FrontpageAssistant.__super__.activate.apply(this, arguments);
@@ -241,11 +242,11 @@ FrontpageAssistant = (function() {
   };
   FrontpageAssistant.prototype.cleanup = function(event) {
     Request.clear_all();
-    Mojo.Event.stopListening(this.controller.document, Mojo.Event.keyup, this.handleKeyUpBind);
-    Mojo.Event.stopListening(this.controller.document, Mojo.Event.keydown, this.handleKeyDownBind);
-    Mojo.Event.stopListening(this.controller.get("article-list"), Mojo.Event.listTap, this.itemTappedBind);
-    Mojo.Event.stopListening(this.controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItemBind);
-    return Mojo.Event.stopListening(this.controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticlesBind);
+    Mojo.Event.stopListening(this.controller.document, Mojo.Event.keyup, this.handleKeyUp);
+    Mojo.Event.stopListening(this.controller.document, Mojo.Event.keydown, this.handleKeyDown);
+    Mojo.Event.stopListening(this.controller.get("article-list"), Mojo.Event.listTap, this.itemTapped);
+    Mojo.Event.stopListening(this.controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem);
+    return Mojo.Event.stopListening(this.controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles);
   };
   FrontpageAssistant.prototype.tagFormatter = function(propertyValue, model) {
     if (model.data == null) {
@@ -492,10 +493,10 @@ FrontpageAssistant = (function() {
     data = json.length > 0 ? json[1].data : json.data;
     this.modhash = data.modhash;
     items = data.children;
-    _.each(items, function(item) {
+    _.each(items, __bind(function(item) {
       item.can_unsave = item.data.saved ? false : true;
       return this.articles.items.push(item);
-    });
+    }, this));
     this.controller.modelChanged(this.articles);
     this.spinSpinner(false);
     this.controller.get('loadMoreButton').mojo.deactivate();
@@ -521,7 +522,6 @@ FrontpageAssistant = (function() {
   };
   FrontpageAssistant.prototype.handleFetchSubredditsResponse = function(response) {
     var array, children, data, i;
-    Mojo.Log.info(response);
     if (!((response != null) && (response.responseJSON != null) && (response.responseJSON.data != null))) {
       return;
     }
@@ -580,7 +580,9 @@ FrontpageAssistant = (function() {
   };
   FrontpageAssistant.prototype.handleActionSelection = function(command) {
     var article, params;
-    return unles(command != null);
+    if (command == null) {
+      return;
+    }
     params = command.split(' ');
     if (params[0] === 'domain-cmd') {
       this.reddit_api.setDomain(params[1]);

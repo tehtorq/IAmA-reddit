@@ -5,6 +5,7 @@ class FrontpageAssistant extends PowerScrollBase
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
+    @waka = 'waka'
     
     default_frontpage = StageAssistant.cookieValue("prefs-frontpage", "frontpage")
         
@@ -18,7 +19,7 @@ class FrontpageAssistant extends PowerScrollBase
       else
         @search = params
 
-  setup: ->
+  setup: ->    
     StageAssistant.setTheme(this)
     
     @controller.setupWidget "spinner", this.attributes = {}, this.model = {spinning: true}
@@ -60,9 +61,9 @@ class FrontpageAssistant extends PowerScrollBase
       array.unshift({label: 'all', command: 'subreddit all'})
       array.unshift({label: 'frontpage', command: 'subreddit frontpage'})
     
-    this.subredditSubmenuModel = {items: array}
+    @subredditSubmenuModel = {items: array}
 
-    @controller.setupWidget('subreddit-submenu', null, this.subredditSubmenuModel)
+    @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
 
@@ -102,26 +103,20 @@ class FrontpageAssistant extends PowerScrollBase
         vote: this.voteFormatter.bind(this)
       }, @articles)
 
-    this.activityButtonModel = {label : "Load more"}
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, this.activityButtonModel)
+    @activityButtonModel = {label : "Load more"}
+    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
 
-    this.itemTappedBind = this.itemTapped.bind(this)
-    this.loadMoreArticlesBind = this.loadMoreArticles.bind(this)
-    this.handleDeleteItemBind = this.handleDeleteItem.bind(this)
-    this.handleKeyUpBind = this.handleKeyUp.bindAsEventListener(this)
-    this.handleKeyDownBind = this.handleKeyDown.bindAsEventListener(this)
-
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, this.itemTappedBind)
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItemBind)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keyup, this.handleKeyUpBind, true)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keydown, this.handleKeyDownBind, true)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticlesBind)
+    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, this.itemTapped)
+    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem)
+    Mojo.Event.listen(@controller.document,Mojo.Event.keyup, this.handleKeyUp, true)
+    Mojo.Event.listen(@controller.document,Mojo.Event.keydown, this.handleKeyDown, true)
+    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles)
 
   activate: (event) ->
     super
     StageAssistant.defaultWindowOrientation(this, "free")
-    this.metakey = false
+    @metakey = false
 
     if @articles.items.length is 0
       if @search?
@@ -139,11 +134,11 @@ class FrontpageAssistant extends PowerScrollBase
   cleanup: (event) ->
     Request.clear_all()
     
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, this.handleKeyUpBind)
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, this.handleKeyDownBind)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, this.itemTappedBind)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItemBind)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticlesBind)
+    Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, this.handleKeyUp)
+    Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, this.handleKeyDown)
+    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, this.itemTapped)
+    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem)
+    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles)
 
   tagFormatter: (propertyValue, model) ->
     return "" unless model.data?
@@ -168,13 +163,13 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.get('filterfield').mojo.close()
     @searchReddit(filterEvent.filterString)
   
-  handleKeyUp: (event) ->
+  handleKeyUp: (event) =>
     e = event.originalEvent
-    this.metakey = false if e.metaKey is false
+    @metakey = false if e.metaKey is false
   
-  handleKeyDown: (event) ->
+  handleKeyDown: (event) =>
     e = event.originalEvent
-    this.metakey = true if e.metaKey is true
+    @metakey = true if e.metaKey is true
   
   spinSpinner: (bool) ->
     if bool
@@ -272,7 +267,7 @@ class FrontpageAssistant extends PowerScrollBase
     
         new Banner("Vote reset!").send()
 
-  handleDeleteItem: (event) ->
+  handleDeleteItem: (event) =>
     this.unsaveArticle(event.item)
     @articles.items.splice(event.index, 1)
   
@@ -311,15 +306,15 @@ class FrontpageAssistant extends PowerScrollBase
     @viewMenuModel.items[0].items[2].label = text
     @controller.modelChanged(@viewMenuModel)
   
-  loadMoreArticles: ->
+  loadMoreArticles: =>
     @reddit_api.load_next = true
     this.loadArticles()
   
   displayLoadingButton: ->
     @controller.get('loadMoreButton').mojo.activate()
-    this.activityButtonModel.label = "Loading"
-    this.activityButtonModel.disabled = true
-    @controller.modelChanged(this.activityButtonModel)
+    @activityButtonModel.label = "Loading"
+    @activityButtonModel.disabled = true
+    @controller.modelChanged(@activityButtonModel)
   
   loadArticles: ->
     parameters = {}
@@ -360,16 +355,17 @@ class FrontpageAssistant extends PowerScrollBase
     @modhash = data.modhash
     items = data.children
     
-    _.each items, (item) ->
+    _.each items, (item) =>
       item.can_unsave = if item.data.saved then false else true
       @articles.items.push(item)
     
     @controller.modelChanged(@articles)
+    
     this.spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
-    this.activityButtonModel.label = "Load more"
-    this.activityButtonModel.disabled = false
-    @controller.modelChanged(this.activityButtonModel)
+    @activityButtonModel.label = "Load more"
+    @activityButtonModel.disabled = false
+    @controller.modelChanged(@activityButtonModel)
   
     if items.length > 0
       @controller.get('loadMoreButton').show()
@@ -388,7 +384,6 @@ class FrontpageAssistant extends PowerScrollBase
     this.switchSubreddit(subreddit)
   
   handleFetchSubredditsResponse: (response) ->
-    Mojo.Log.info(response);
     return unless response? and response.responseJSON? and response.responseJSON.data?
      
     data = response.responseJSON.data
@@ -419,11 +414,11 @@ class FrontpageAssistant extends PowerScrollBase
     array.unshift {label: 'all', command: 'subreddit all'}
     array.unshift {label: 'frontpage', command: 'subreddit frontpage'}
     
-    this.subredditSubmenuModel.items = array
-    @controller.modelChanged this.subredditSubmenuModel
+    @subredditSubmenuModel.items = array
+    @controller.modelChanged @subredditSubmenuModel
   
   handleActionSelection: (command) ->
-    return unles command?
+    return unless command?
     
     params = command.split ' '
   
@@ -490,7 +485,7 @@ class FrontpageAssistant extends PowerScrollBase
   isLoggedIn: ->
     @modhash and @modhash isnt ""
   
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     article = event.item
     element_tapped = event.originalEvent.target
   
