@@ -1,2 +1,2 @@
 *.ipk
-app/models/*.js
+release/app/models/*.js
