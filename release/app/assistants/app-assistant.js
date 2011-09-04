@@ -1,78 +1,74 @@
-
-AppAssistant = Class.create({
-
-  considerForNotification: function(params) {
-    if (!params) {
+var AppAssistant;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+AppAssistant = (function() {
+  function AppAssistant() {}
+  AppAssistant.prototype.considerForNotification = function(params) {
+    if (params == null) {
       return;
     }
-
     if (params.success) {
-      new Banner("Action completed.").send();
-    }
-    else {
-      new Banner("Action not completed.").send();
-    }
-  },
-  
-  handleLaunch: function(params) {
-    if (params.dockMode|| params.touchstoneMode) {
-      this.launchDockMode();
-    }
-    else {
-      AppAssistant.cloneCard(null, {name:"frontpage"});
-    }
-  },
-  
-  launchDockMode: function() {
-    var dockStage = this.controller.getStageController('dock');
-    if (dockStage) {
-      dockStage.window.focus();
+      return new Banner("Action completed.").send();
     } else {
-      var f = function(stageController) {
-        stageController.pushScene('dock', {dockmode:true});
-      }.bind(this);
-      this.controller.createStageWithCallback({name: 'dock', lightweight: true}, f, "dockMode");	
+      return new Banner("Action not completed.").send();
     }
-  }
-  
-});
-
-AppAssistant.cloneCard = function(assistant, sceneArguments, sceneParameters){
-  var samecard = StageAssistant.cookieValue("prefs-samecard", "off");
-  
-  if ((samecard == "on") && (StageAssistant.stages.length > 0)) {
+  };
+  AppAssistant.prototype.handleLaunch = function(params) {
+    if (params.dockMode || params.touchstoneMode) {
+      return this.launchDockMode();
+    } else {
+      return AppAssistant.cloneCard(null, {
+        name: "frontpage"
+      });
+    }
+  };
+  AppAssistant.prototype.launchDockMode = function() {
+    var dockStage, f;
+    dockStage = this.controller.getStageController('dock');
+    if (dockStage) {
+      return dockStage.window.focus();
+    } else {
+      f = __bind(function(stageController) {
+        return stageController.pushScene('dock', {
+          dockmode: true
+        });
+      }, this);
+      return this.controller.createStageWithCallback({
+        name: 'dock',
+        lightweight: true
+      }, f, "dockMode");
+    }
+  };
+  return AppAssistant;
+})();
+AppAssistant.cloneCard = function(assistant, sceneArguments, sceneParameters) {
+  var appController, cardname, pushCard, samecard, stageController;
+  samecard = StageAssistant.cookieValue("prefs-samecard", "off");
+  if ((samecard === "on") && (StageAssistant.stages.length > 0)) {
     assistant.controller.stageController.pushScene(sceneArguments, sceneParameters);
     return;
   }
-  
-  // only allow one card for prefs
-  
-  if (sceneArguments && (sceneArguments.name == 'prefs')) {
-    var stageController = Mojo.Controller.getAppController().getStageController("prefs");
-    
-    if (stageController) {
-       stageController.activate();
-       return;
+  if ((sceneArguments != null) && (sceneArguments.name === 'prefs')) {
+    stageController = Mojo.Controller.getAppController().getStageController("prefs");
+    if (stageController != null) {
+      stageController.activate();
+      return;
     }
   }
-
-  var pushCard = function(stageController) {
-    if (sceneArguments) {
-      stageController.pushScene(sceneArguments, sceneParameters);
-    }
-    else {
-      stageController.pushScene("frontpage");
+  pushCard = function(stageController) {
+    if (sceneArguments != null) {
+      return stageController.pushScene(sceneArguments, sceneParameters);
+    } else {
+      return stageController.pushScene("frontpage");
     }
   };
-
-  var cardname = "NewCardStage" + Math.floor(Math.random()*10000);
-  
-  if (sceneArguments && (sceneArguments.name == 'prefs')) {
+  cardname = "NewCardStage" + Math.floor(Math.random() * 10000);
+  if ((sceneArguments != null) && (sceneArguments.name === 'prefs')) {
     cardname = "prefs";
   }
-  
   StageAssistant.stages.push(cardname);
-
-  var appController = Mojo.Controller.getAppController();
-  appController.createStageWithCallback({name: cardname, lightweight: true}, pushCard.bind(this), "card");
+  appController = Mojo.Controller.getAppController();
+  return appController.createStageWithCallback({
+    name: cardname,
+    lightweight: true
+  }, pushCard.bind(this), "card");
 };

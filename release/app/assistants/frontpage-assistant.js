@@ -261,7 +261,7 @@ FrontpageAssistant = (function() {
     return Article.thumbnailFormatter(model);
   };
   FrontpageAssistant.prototype.voteFormatter = function(propertyValue, model) {
-    if (model.kind !== 't1' && model.kind !== 't3') {
+    if ((model.kind !== 't1') && (model.kind !== 't3')) {
       return '';
     }
     if (model.data.likes === true) {
@@ -532,7 +532,7 @@ FrontpageAssistant = (function() {
     _.each(children, function(child) {
       return Subreddit.cached_list.push({
         label: child.data.display_name,
-        subscribed: (data.modhash != null) && data.modhash !== "",
+        subscribed: (data.modhash != null) && (data.modhash !== ""),
         name: child.data.name
       });
     });
@@ -584,31 +584,32 @@ FrontpageAssistant = (function() {
       return;
     }
     params = command.split(' ');
-    if (params[0] === 'domain-cmd') {
-      this.reddit_api.setDomain(params[1]);
-      return this.loadArticles();
-    } else if (params[0] === 'comments-cmd') {
-      article = this.articles.items[parseInt(params[1])];
-      return this.controller.stageController.pushScene({
-        name: "article"
-      }, {
-        article: article
-      });
-    } else if (params[0] === 'upvote-cmd') {
-      this.spinSpinner(true);
-      return this.voteOnComment('1', params[1], params[2]);
-    } else if (params[0] === 'downvote-cmd') {
-      this.spinSpinner(true);
-      return this.voteOnComment('-1', params[1], params[2]);
-    } else if (params[0] === 'reset-vote-cmd') {
-      this.spinSpinner(true);
-      return this.voteOnComment('0', params[1], params[2]);
-    } else if (params[0] === 'save-cmd') {
-      this.spinSpinner(true);
-      return this.saveArticle(this.articles.items[params[1]]);
-    } else if (params[0] === 'unsave-cmd') {
-      this.spinSpinner(true);
-      return this.unsaveArticle(this.articles.items[params[1]]);
+    switch (params[0]) {
+      case 'domain-cmd':
+        this.reddit_api.setDomain(params[1]);
+        return this.loadArticles();
+      case 'comments-cmd':
+        article = this.articles.items[parseInt(params[1])];
+        return this.controller.stageController.pushScene({
+          name: "article"
+        }, {
+          article: article
+        });
+      case 'upvote-cmd':
+        this.spinSpinner(true);
+        return this.voteOnComment('1', params[1], params[2]);
+      case 'downvote-cmd':
+        this.spinSpinner(true);
+        return this.voteOnComment('-1', params[1], params[2]);
+      case 'reset-vote-cmd':
+        this.spinSpinner(true);
+        return this.voteOnComment('0', params[1], params[2]);
+      case 'save-cmd':
+        this.spinSpinner(true);
+        return this.saveArticle(this.articles.items[params[1]]);
+      case 'unsave-cmd':
+        this.spinSpinner(true);
+        return this.unsaveArticle(this.articles.items[params[1]]);
     }
   };
   FrontpageAssistant.prototype.findArticleIndex = function(article_name) {
@@ -659,7 +660,7 @@ FrontpageAssistant = (function() {
     }
   };
   FrontpageAssistant.prototype.isLoggedIn = function() {
-    return this.modhash && this.modhash !== "";
+    return this.modhash && (this.modhash !== "");
   };
   FrontpageAssistant.prototype.itemTapped = function(event) {
     var article, downvote_action, downvote_icon, element_tapped, save_action, save_label, upvote_action, upvote_icon;

@@ -152,7 +152,7 @@ class FrontpageAssistant extends PowerScrollBase
     Article.thumbnailFormatter(model)
     
   voteFormatter: (propertyValue, model) ->
-    return '' if model.kind isnt 't1' and model.kind isnt 't3'
+    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
     ''
@@ -392,7 +392,7 @@ class FrontpageAssistant extends PowerScrollBase
     i = 0
     
     _.each children, (child) ->
-      Subreddit.cached_list.push {label: child.data.display_name, subscribed: (data.modhash? and data.modhash isnt ""), name: child.data.name}
+      Subreddit.cached_list.push {label: child.data.display_name, subscribed: (data.modhash? and (data.modhash isnt "")), name: child.data.name}
     
     _.each Subreddit.cached_list, (item) ->
       if item.subscribed is true
@@ -422,27 +422,28 @@ class FrontpageAssistant extends PowerScrollBase
     
     params = command.split ' '
   
-    if params[0] is 'domain-cmd'
-      @reddit_api.setDomain(params[1])
-      this.loadArticles()
-    else if params[0] is 'comments-cmd'
-      article = @articles.items[parseInt(params[1])]
-      @controller.stageController.pushScene({name:"article"}, {article: article})
-    else if params[0] is 'upvote-cmd'
-      this.spinSpinner(true)
-      this.voteOnComment('1', params[1], params[2])
-    else if params[0] is 'downvote-cmd'
-      this.spinSpinner(true)
-      this.voteOnComment('-1', params[1], params[2])
-    else if params[0] is 'reset-vote-cmd'
-      this.spinSpinner(true)
-      this.voteOnComment('0', params[1], params[2])
-    else if params[0] is 'save-cmd'
-      this.spinSpinner(true)
-      this.saveArticle(@articles.items[params[1]])
-    else if params[0] is 'unsave-cmd'
-      this.spinSpinner(true)
-      this.unsaveArticle(@articles.items[params[1]])
+    switch params[0]
+      when 'domain-cmd'
+        @reddit_api.setDomain(params[1])
+        this.loadArticles()
+      when 'comments-cmd'
+        article = @articles.items[parseInt(params[1])]
+        @controller.stageController.pushScene({name:"article"}, {article: article})
+      when 'upvote-cmd'
+        this.spinSpinner(true)
+        this.voteOnComment('1', params[1], params[2])
+      when 'downvote-cmd'
+        this.spinSpinner(true)
+        this.voteOnComment('-1', params[1], params[2])
+      when 'reset-vote-cmd'
+        this.spinSpinner(true)
+        this.voteOnComment('0', params[1], params[2])
+      when 'save-cmd'
+        this.spinSpinner(true)
+        this.saveArticle(@articles.items[params[1]])
+      when 'unsave-cmd'
+        this.spinSpinner(true)
+        this.unsaveArticle(@articles.items[params[1]])
   
   findArticleIndex: (article_name) ->
     index = -1
@@ -483,7 +484,7 @@ class FrontpageAssistant extends PowerScrollBase
       new Comment(this).reset_vote(params)
   
   isLoggedIn: ->
-    @modhash and @modhash isnt ""
+    @modhash and (@modhash isnt "")
   
   itemTapped: (event) =>
     article = event.item
