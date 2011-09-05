@@ -4,25 +4,25 @@ class Article
     @callback = callback
 
   load: (data) ->
-    return this unless data?
+    return @ unless data?
     
-    this.kind = 't3'
-    this.data = data
-    this.data.url = this.data.url.unescapeHTML()
-    this.author = this.data.author
-    this.title = this.data.title
-    this.url = this.getUrl()
-    this.id = this.data.id
-    this.name = data.name
-    this.can_unsave = (this.data.saved) ? false : true
-    this.setEmbeddedURLs()
-    this
+    @kind = 't3'
+    @data = data
+    @data.url = @data.url.unescapeHTML()
+    @author = @data.author
+    @title = @data.title
+    @url = @getUrl()
+    @id = @data.id
+    @name = data.name
+    @can_unsave = (@data.saved) ? false : true
+    @setEmbeddedURLs()
+    @
   
   setEmbeddedURLs: ->
     image_url_html = ""
-    urls = this.urls()
-    this.urls = []
-    this.images = []
+    urls = @urls()
+    @urls = []
+    @images = []
     
     hide_thumbnails = StageAssistant.cookieValue("prefs-hide-easylinks", "off")
     
@@ -36,26 +36,26 @@ class Article
       # check if its a link to image
 
       if link_url.type is 'image'
-        this.images.push(link_url.url);
+        @images.push(link_url.url);
         link_icon = './images/picture.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="image_'+i+'_'+ this.id + '">'
+        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="image_'+i+'_'+ @id + '">'
       else if link_url.type is 'youtube_video'
         link_icon = './images/youtube.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="youtube_'+i+'_'+ this.id + '">'
+        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="youtube_'+i+'_'+ @id + '">'
       else if link_url.type is 'web'
         link_icon = './images/web.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="web_'+i+'_'+ this.id + '">'
+        image_url_html += '<img class="reddit_embedded_link" src="'+link_icon+'" alt="Loading" id="web_'+i+'_'+ @id + '">'
 
-      this.urls.push(link_url.url)
+      @urls.push(link_url.url)
 
-    this.image_url_html = image_url_html
+    @image_url_html = image_url_html
 
   getUrl: ->
-    return null unless this.data.url?
-    Linky.parse(this.data.url)
+    return null unless @data.url?
+    Linky.parse(@data.url)
 
   urls: ->
-    urls = this.data.selftext.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
+    urls = @data.selftext.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
 
     if urls?
       _.each urls, (url) ->
@@ -67,7 +67,7 @@ class Article
     urls
 
   hasThumbnail: ->
-    this.data.thumbnail and (this.data.thumbnail != "")
+    @data.thumbnail and (@data.thumbnail != "")
 
   save: (params) ->
     new Request(@callback).post('http://www.reddit.com/api/save', params, 'article-save ' + params.id)

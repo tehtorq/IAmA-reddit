@@ -12,25 +12,25 @@ class Request
         method : method
         parameters: params
         onSuccess: (inTransport) =>
-          this.handleResponse(token, inTransport, true)
+          @handleResponse(token, inTransport, true)
         onFailure: (inTransport) =>
-          this.handleResponse(token, inTransport, true)
+          @handleResponse(token, inTransport, true)
         onException: (inTransport, inException) =>
-          this.handleResponse(token, inTransport, true)
+          @handleResponse(token, inTransport, true)
       }
     )
 
     Request.store.push(request)
 
   get: (url, params, success, failure) ->
-    this.request(url, 'get', params, success, failure)
+    @request(url, 'get', params, success, failure)
 
   post: (url, params, success, failure) ->
     unless params.uh?
       new Banner("Not logged in.").send()
       return
     
-    this.request(url, 'post', params, success, failure)
+    @request(url, 'post', params, success, failure)
 
   handleResponse: (token, response, success) ->
     if @callback? 

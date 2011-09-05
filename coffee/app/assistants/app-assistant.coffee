@@ -10,12 +10,12 @@ class AppAssistant
   
   handleLaunch: (params) ->
     if params.dockMode or params.touchstoneMode
-      this.launchDockMode()
+      @launchDockMode()
     else
       AppAssistant.cloneCard(null, {name:"frontpage"})
   
   launchDockMode: ->
-    dockStage = this.controller.getStageController('dock')
+    dockStage = @controller.getStageController('dock')
     
     if dockStage
       dockStage.window.focus()
@@ -23,7 +23,7 @@ class AppAssistant
       f = (stageController) =>
         stageController.pushScene('dock', {dockmode:true})
         
-      this.controller.createStageWithCallback({name: 'dock', lightweight: true}, f, "dockMode")
+      @controller.createStageWithCallback({name: 'dock', lightweight: true}, f, "dockMode")
 
 AppAssistant.cloneCard = (assistant, sceneArguments, sceneParameters) ->
   samecard = StageAssistant.cookieValue("prefs-samecard", "off")
@@ -53,4 +53,4 @@ AppAssistant.cloneCard = (assistant, sceneArguments, sceneParameters) ->
   StageAssistant.stages.push(cardname)
 
   appController = Mojo.Controller.getAppController()
-  appController.createStageWithCallback({name: cardname, lightweight: true}, pushCard.bind(this), "card")
+  appController.createStageWithCallback({name: cardname, lightweight: true}, pushCard.bind(@), "card")

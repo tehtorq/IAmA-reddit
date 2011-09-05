@@ -11,22 +11,22 @@ class ImageAssistant
       @article_array = []
 
   setup: ->
-    StageAssistant.setTheme(this)
+    StageAssistant.setTheme(@)
     
     @controller.setupWidget("spinner",
-      this.attributes = {}
-      this.model = {spinning: true}
+      @attributes = {}
+      @model = {spinning: true}
     )
     
     @controller.setupWidget(
       "ImageId" 
-      this.attributes = 
+      @attributes = 
         noExtractFS: true
-      this.model =
+      @model =
         onLeftFunction: =>
-          this.updateUrls(-1)
+          @updateUrls(-1)
         onRightFunction: =>
-          this.updateUrls(1)
+          @updateUrls(1)
     )
       
     command_menu_items = null
@@ -58,19 +58,19 @@ class ImageAssistant
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
 
-    this.changedImageBind = this.changedImage.bindAsEventListener(this)
-    this.windowResizeBind = this.handleWindowResize.bindAsEventListener(this)
-    this.handleTapBind = this.handleTap.bindAsEventListener(this)
+    @changedImageBind = @changedImage.bindAsEventListener(@)
+    @windowResizeBind = @handleWindowResize.bindAsEventListener(@)
+    @handleTapBind = @handleTap.bindAsEventListener(@)
 
-    Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, this.changedImageBind)
-    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, this.handleTapBind)
-    Mojo.Event.listen(@controller.window, 'resize', this.windowResizeBind, false)
+    Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImageBind)
+    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTapBind)
+    Mojo.Event.listen(@controller.window, 'resize', @windowResizeBind, false)
 
   activate: (event) ->
     @controller.get('image_title').hide()
-    StageAssistant.defaultWindowOrientation(this, "free")
-    this.spinSpinner(true)
-    this.updateUrls(0)
+    StageAssistant.defaultWindowOrientation(@, "free")
+    @spinSpinner(true)
+    @updateUrls(0)
 
   ready: ->
     @controller.get('ImageId').mojo.manualSize(Mojo.Environment.DeviceInfo.screenWidth,Mojo.Environment.DeviceInfo.screenHeight)
@@ -78,12 +78,12 @@ class ImageAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, this.changedImageBind)
-    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, this.handleTapBind)
-    Mojo.Event.stopListening(@controller.window, 'resize', this.windowResizeBind, false)
+    Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImageBind)
+    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTapBind)
+    Mojo.Event.stopListening(@controller.window, 'resize', @windowResizeBind, false)
 
   changedImage: ->
-    this.spinSpinner(false)
+    @spinSpinner(false)
   
   spinSpinner: (bool) ->
     if bool
@@ -99,15 +99,15 @@ class ImageAssistant
     
     switch event.command
       when 'save'
-        this.download(this.urlForIndex(@current_index))
+        @download(@urlForIndex(@current_index))
       when 'article'
-        AppAssistant.cloneCard(this, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
+        AppAssistant.cloneCard(@, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
       when 'back'
-        this.spinSpinner(true)
-        this.updateUrls(-1)
+        @spinSpinner(true)
+        @updateUrls(-1)
       when 'forward'
-        this.spinSpinner(true)
-        this.updateUrls(1)
+        @spinSpinner(true)
+        @updateUrls(1)
 
   urlForIndex: (index) ->
     if index < 0
@@ -140,13 +140,13 @@ class ImageAssistant
     image = @controller.get('ImageId')
 
     if (@current_index > -1) and (@current_index < @image_array.length)
-      image.mojo.centerUrlProvided(this.urlForIndex(@current_index))
+      image.mojo.centerUrlProvided(@urlForIndex(@current_index))
 
     if (@current_index > 0) and (@current_index < @image_array.length)
-      image.mojo.leftUrlProvided(this.urlForIndex(@current_index - 1))
+      image.mojo.leftUrlProvided(@urlForIndex(@current_index - 1))
 
     if (@current_index > -1) and (@current_index < (@image_array.length - 1))
-      image.mojo.rightUrlProvided(this.urlForIndex(@current_index + 1))
+      image.mojo.rightUrlProvided(@urlForIndex(@current_index + 1))
     
     @controller.get('image_title').update(@article_array[@current_index].data.title)
 

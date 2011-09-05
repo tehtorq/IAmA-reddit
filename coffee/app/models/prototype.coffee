@@ -1,2 +1,2 @@
 #_.extend Array, unique: ->
-  #_.uniq(this)
+  #_.uniq(@)

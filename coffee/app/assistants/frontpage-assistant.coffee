@@ -20,13 +20,13 @@ class FrontpageAssistant extends PowerScrollBase
         @search = params
 
   setup: ->    
-    StageAssistant.setTheme(this)
+    StageAssistant.setTheme(@)
     
-    @controller.setupWidget "spinner", this.attributes = {}, this.model = {spinning: true}
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     new_items = [{label:$L("what's new"), command:$L("category new")},{label:$L("new"), command:$L("category new sort new")},{label:$L("rising"), command:$L("category new sort rising")}]
-    controversial_items = [{label:$L("today"), command:$L("category controversial t day")},{label:$L("this hour"), command:$L("category controversial t hour")},{label:$L("this week"), command:$L("category controversial t week")},{label:$L("this month"), command:$L("category controversial t month")},{label:$L("this year"), command:$L("category controversial t year")},{label:$L("all time"), command:$L("category controversial t all")}]
-    top_items = [{label:$L("today"), command:$L("category top t day")},{label:$L("this hour"), command:$L("category top t hour")},{label:$L("this week"), command:$L("category top t week")},{label:$L("this month"), command:$L("category top t month")},{label:$L("this year"), command:$L("category top t year")}]
+    controversial_items = [{label:$L("today"), command:$L("category controversial t day")},{label:$L("@ hour"), command:$L("category controversial t hour")},{label:$L("@ week"), command:$L("category controversial t week")},{label:$L("@ month"), command:$L("category controversial t month")},{label:$L("@ year"), command:$L("category controversial t year")},{label:$L("all time"), command:$L("category controversial t all")}]
+    top_items = [{label:$L("today"), command:$L("category top t day")},{label:$L("@ hour"), command:$L("category top t hour")},{label:$L("@ week"), command:$L("category top t week")},{label:$L("@ month"), command:$L("category top t month")},{label:$L("@ year"), command:$L("category top t year")}]
 
     @controller.setupWidget('category-submenu', null, {items: [
       {label:$L("hot"), command:$L("category hot")},
@@ -82,12 +82,12 @@ class FrontpageAssistant extends PowerScrollBase
     
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
-    this.helpMenuDisabled = false
+    @helpMenuDisabled = false
 
     @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, StageAssistant.appMenuModel)
 
     @controller.setupWidget('filterfield', {delay: 2000})
-    @controller.listen('filterfield', Mojo.Event.filter, this.filter.bind(this))
+    @controller.listen('filterfield', Mojo.Event.filter, @filter.bind(@))
 
     @controller.setupWidget("article-list", {
       itemTemplate: "frontpage/article"
@@ -98,35 +98,35 @@ class FrontpageAssistant extends PowerScrollBase
       lookahead: 25
       renderLimit: 1000
       formatters: 
-        tag: this.tagFormatter.bind(this)
-        thumbnail: this.thumbnailFormatter.bind(this)
-        vote: this.voteFormatter.bind(this)
+        tag: @tagFormatter.bind(@)
+        thumbnail: @thumbnailFormatter.bind(@)
+        vote: @voteFormatter.bind(@)
       }, @articles)
 
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
 
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, this.itemTapped)
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keyup, this.handleKeyUp, true)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keydown, this.handleKeyDown, true)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles)
+    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.listen(@controller.document,Mojo.Event.keyup, @handleKeyUp, true)
+    Mojo.Event.listen(@controller.document,Mojo.Event.keydown, @handleKeyDown, true)
+    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
 
   activate: (event) ->
     super
-    StageAssistant.defaultWindowOrientation(this, "free")
+    StageAssistant.defaultWindowOrientation(@, "free")
     @metakey = false
 
     if @articles.items.length is 0
       if @search?
         @searchReddit(@search)
       else if @reddit_api.subreddit is 'random'
-        this.switchSubreddit(@reddit_api.subreddit)
+        @switchSubreddit(@reddit_api.subreddit)
       else
-        this.loadArticles()
+        @loadArticles()
 
-    this.fetchSubreddits('mine')
+    @fetchSubreddits('mine')
 
   deactivate: (event) ->
     super
@@ -134,11 +134,11 @@ class FrontpageAssistant extends PowerScrollBase
   cleanup: (event) ->
     Request.clear_all()
     
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, this.handleKeyUp)
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, this.handleKeyDown)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, this.itemTapped)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, this.handleDeleteItem)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, this.loadMoreArticles)
+    Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
+    Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)
+    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
 
   tagFormatter: (propertyValue, model) ->
     return "" unless model.data?
@@ -185,7 +185,7 @@ class FrontpageAssistant extends PowerScrollBase
     else
       @reddit_api.setCategory(params[1], {key: params[2], value: params[3]})
     
-    this.loadArticles()
+    @loadArticles()
   
   showMessageInbox: ->
     @controller.stageController.pushScene({name:"message",transition: Mojo.Transition.crossFade},{action:'inbox'})
@@ -196,7 +196,7 @@ class FrontpageAssistant extends PowerScrollBase
   handleCallback: (params) ->
     return params unless params? and params.success
   
-    this.spinSpinner(false)
+    @spinSpinner(false)
   
     index = -1
     params.type = params.type.split(' ')
@@ -204,7 +204,7 @@ class FrontpageAssistant extends PowerScrollBase
     switch params.type[0]
       when "article-unsave"
         if params.type[1]?
-          index = this.findArticleIndex(params.type[1])
+          index = @findArticleIndex(params.type[1])
       
           if index > -1
             @articles.items[index].data.saved = false
@@ -213,7 +213,7 @@ class FrontpageAssistant extends PowerScrollBase
         new Banner("Unsaved!").send()
       when "article-save"
         if params.type[1]?
-          index = this.findArticleIndex(params.type[1])
+          index = @findArticleIndex(params.type[1])
       
           if index > -1
             @articles.items[index].data.saved = true
@@ -221,16 +221,16 @@ class FrontpageAssistant extends PowerScrollBase
     
         new Banner("Saved!").send()
       when 'load-articles'
-        this.handleLoadArticlesResponse(params.response)
+        @handleLoadArticlesResponse(params.response)
       when 'random-subreddit'
-        this.handleRandomSubredditResponse(params.response)
+        @handleRandomSubredditResponse(params.response)
       when 'subreddit-load'
-        this.handleFetchSubredditsResponse(params.response)
+        @handleFetchSubredditsResponse(params.response)
       when 'subreddit-load-mine'
-        this.handleFetchSubredditsResponse(params.response)
-        this.fetchSubreddits()
+        @handleFetchSubredditsResponse(params.response)
+        @fetchSubreddits()
       when "comment-upvote"
-        index = this.findArticleIndex(params.type[1])
+        index = @findArticleIndex(params.type[1])
 
         if index > -1
           if not @articles.items[index].data.likes is false
@@ -242,7 +242,7 @@ class FrontpageAssistant extends PowerScrollBase
     
         new Banner("Upvoted!").send()
       when "comment-downvote"
-        index = this.findArticleIndex(params.type[1]);
+        index = @findArticleIndex(params.type[1]);
     
         if index > -1
           if @articles.items[index].data.likes is true
@@ -254,7 +254,7 @@ class FrontpageAssistant extends PowerScrollBase
     
         new Banner("Downvoted!").send()
       when "comment-vote-reset"
-        index = this.findArticleIndex(params.type[1])
+        index = @findArticleIndex(params.type[1])
     
         if index > -1
           if @articles.items[index].data.likes is true
@@ -268,37 +268,37 @@ class FrontpageAssistant extends PowerScrollBase
         new Banner("Vote reset!").send()
 
   handleDeleteItem: (event) =>
-    this.unsaveArticle(event.item)
+    @unsaveArticle(event.item)
     @articles.items.splice(event.index, 1)
   
   subredditsLoaded: ->
     Subreddit.cached_list.length > 0
   
   fetchSubreddits: (type) ->
-    return if this.subredditsLoaded()
+    return if @subredditsLoaded()
     
     if type is 'mine'
-      new Request(this).get('http://www.reddit.com/reddits/mine/.json', {}, 'subreddit-load-mine')
+      new Request(@).get('http://www.reddit.com/reddits/mine/.json', {}, 'subreddit-load-mine')
     else
-      new Request(this).get('http://www.reddit.com/reddits/.json', {}, 'subreddit-load')
+      new Request(@).get('http://www.reddit.com/reddits/.json', {}, 'subreddit-load')
   
   searchReddit: (searchTerm) ->
     @reddit_api.setSearchTerm(searchTerm)
-    this.loadArticles()
+    @loadArticles()
   
   randomSubreddit: ->
-    new Request(this).get('http://www.reddit.com/r/random/', {}, 'random-subreddit')
+    new Request(@).get('http://www.reddit.com/r/random/', {}, 'random-subreddit')
   
   switchSubreddit: (subreddit) ->
     return unless subreddit?
   
     if subreddit is 'random'
-      this.spinSpinner(true)
-      this.randomSubreddit()
+      @spinSpinner(true)
+      @randomSubreddit()
       return
   
     @reddit_api.setSubreddit(subreddit)
-    this.loadArticles()
+    @loadArticles()
   
   updateHeading: (text) ->
     text = '' unless text?
@@ -308,7 +308,7 @@ class FrontpageAssistant extends PowerScrollBase
   
   loadMoreArticles: =>
     @reddit_api.load_next = true
-    this.loadArticles()
+    @loadArticles()
   
   displayLoadingButton: ->
     @controller.get('loadMoreButton').mojo.activate()
@@ -322,27 +322,27 @@ class FrontpageAssistant extends PowerScrollBase
     
     if @reddit_api.load_next
       parameters.after = @articles.items[@articles.items.length - 1].data.name
-      this.displayLoadingButton()
+      @displayLoadingButton()
     else
       length = @articles.items.length
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
-      this.spinSpinner(true)
+      @spinSpinner(true)
       @controller.get('article-list').mojo.noticeRemovedItems(0, length)
     
     if @reddit_api.subreddit?
-      this.updateHeading(@reddit_api.subreddit)
+      @updateHeading(@reddit_api.subreddit)
     else if @reddit_api.domain?
-      this.updateHeading(@reddit_api.domain)
+      @updateHeading(@reddit_api.domain)
     else if @reddit_api.search?
-      this.updateHeading(@reddit_api.search)
+      @updateHeading(@reddit_api.search)
       parameters.q = @reddit_api.search
       parameters.restrict_sr = 'off'
       parameters.sort = 'relevance'
     else
-      this.updateHeading(null)
+      @updateHeading(null)
   
-    new Request(this).get(@reddit_api.getArticlesUrl(), parameters, 'load-articles')
+    new Request(@).get(@reddit_api.getArticlesUrl(), parameters, 'load-articles')
   
   handleLoadArticlesResponse: (response) ->
     @reddit_api.load_next = false
@@ -361,7 +361,7 @@ class FrontpageAssistant extends PowerScrollBase
     
     @controller.modelChanged(@articles)
     
-    this.spinSpinner(false)
+    @spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
     @activityButtonModel.label = "Load more"
     @activityButtonModel.disabled = false
@@ -381,7 +381,7 @@ class FrontpageAssistant extends PowerScrollBase
     end_offset = headers.indexOf('/', start_offset)
     subreddit = headers.substring(start_offset, end_offset)
   
-    this.switchSubreddit(subreddit)
+    @switchSubreddit(subreddit)
   
   handleFetchSubredditsResponse: (response) ->
     return unless response? and response.responseJSON? and response.responseJSON.data?
@@ -425,25 +425,25 @@ class FrontpageAssistant extends PowerScrollBase
     switch params[0]
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
-        this.loadArticles()
+        @loadArticles()
       when 'comments-cmd'
         article = @articles.items[parseInt(params[1])]
         @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'upvote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('1', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('1', params[1], params[2])
       when 'downvote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('-1', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('-1', params[1], params[2])
       when 'reset-vote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('0', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('0', params[1], params[2])
       when 'save-cmd'
-        this.spinSpinner(true)
-        this.saveArticle(@articles.items[params[1]])
+        @spinSpinner(true)
+        @saveArticle(@articles.items[params[1]])
       when 'unsave-cmd'
-        this.spinSpinner(true)
-        this.unsaveArticle(@articles.items[params[1]])
+        @spinSpinner(true)
+        @unsaveArticle(@articles.items[params[1]])
   
   findArticleIndex: (article_name) ->
     index = -1
@@ -459,7 +459,7 @@ class FrontpageAssistant extends PowerScrollBase
       id: article.data.name
       uh: @modhash
   
-    new Article(this).save(params)
+    new Article(@).save(params)
   
   unsaveArticle: (article) ->
     params:
@@ -467,7 +467,7 @@ class FrontpageAssistant extends PowerScrollBase
       id: article.data.name
       uh: @modhash
   
-    new Article(this).unsave(params)
+    new Article(@).unsave(params)
   
   voteOnComment: (dir, comment_name, subreddit) ->
     params:
@@ -477,11 +477,11 @@ class FrontpageAssistant extends PowerScrollBase
       r: subreddit
   
     if dir is 1
-      new Comment(this).upvote(params)
+      new Comment(@).upvote(params)
     else if dir is -1
-      new Comment(this).downvote(params)
+      new Comment(@).downvote(params)
     else
-      new Comment(this).reset_vote(params)
+      new Comment(@).reset_vote(params)
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
@@ -491,11 +491,11 @@ class FrontpageAssistant extends PowerScrollBase
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
-      AppAssistant.cloneCard(this, {name:"article"}, {article: article})
+      AppAssistant.cloneCard(@, {name:"article"}, {article: article})
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
-      StageAssistant.cloneImageCard(this, article)
+      StageAssistant.cloneImageCard(@, article)
       return
   
     if element_tapped.id.indexOf('youtube_') isnt -1 or element_tapped.id.indexOf('web_') isnt -1
@@ -510,7 +510,7 @@ class FrontpageAssistant extends PowerScrollBase
         
       return
     
-    if this.isLoggedIn()
+    if @isLoggedIn()
       upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
       downvote_icon = if article.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
       upvote_action = if article.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
@@ -519,7 +519,7 @@ class FrontpageAssistant extends PowerScrollBase
       save_label = if article.data.saved is true then 'Unsave' else 'Save'
   
       @controller.popupSubmenu {
-       onChoose: this.handleActionSelection.bind(this),
+       onChoose: @handleActionSelection.bind(@),
        placeNear:element_tapped,
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon},
@@ -530,7 +530,7 @@ class FrontpageAssistant extends PowerScrollBase
       }
     else
       @controller.popupSubmenu {
-       onChoose: this.handleActionSelection.bind(this),
+       onChoose: @handleActionSelection.bind(@),
        placeNear:element_tapped,
        items: [
          {label: $L('Comments'), command: 'comments-cmd ' + event.index},
@@ -542,13 +542,13 @@ class FrontpageAssistant extends PowerScrollBase
   
     params = event.command.split(' ')
   
-    this.handleCategorySwitch(params) is params[0] is 'category'
+    @handleCategorySwitch(params) is params[0] is 'category'
   
     switch params[0]
       when 'new-card'
         AppAssistant.cloneCard()
       when 'subreddit'
-        this.switchSubreddit(params[1])
+        @switchSubreddit(params[1])
     
     controller = Mojo.Controller.getAppController().getActiveStageController()
     currentScene = controller.activeScene()
@@ -568,18 +568,18 @@ class FrontpageAssistant extends PowerScrollBase
           when Mojo.Menu.helpCmd
             controller.pushScene('support')
           when Mojo.Menu.prefsCmd
-            AppAssistant.cloneCard(this, {name:"prefs"}, {})
+            AppAssistant.cloneCard(@, {name:"prefs"}, {})
           when 'login-cmd'
             controller.pushScene({name:"login",transition: Mojo.Transition.crossFade})
           when 'logout-cmd'
-            new User(this).logout({})        
+            new User(@).logout({})        
           when 'register-cmd'
             controller.pushScene({name:"register",transition: Mojo.Transition.crossFade})
           when 'reddits-cmd'
-            AppAssistant.cloneCard(this, {name:"reddits"}, {})
+            AppAssistant.cloneCard(@, {name:"reddits"}, {})
           when 'gallery-cmd'
-            AppAssistant.cloneCard(this, {name:"gallery"}, {})
+            AppAssistant.cloneCard(@, {name:"gallery"}, {})
           when 'recent-comments-cmd'
-            AppAssistant.cloneCard(this, {name:"recent-comment"}, {})
+            AppAssistant.cloneCard(@, {name:"recent-comment"}, {})
           when 'messages-cmd'
-            AppAssistant.cloneCard(this, {name:"message"}, {})
+            AppAssistant.cloneCard(@, {name:"message"}, {})

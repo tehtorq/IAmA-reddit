@@ -3,7 +3,7 @@ class RedditAPI
   constructor: ->
     Mojo.Log.info("reddit api init")
     @base_url = 'http://www.reddit.com/'
-    this.reset_options()
+    @reset_options()
     @reddits_category = 'popular'
     
   reset_options: ->
@@ -15,12 +15,12 @@ class RedditAPI
     @permalink = null
     
   set_permalink: (url) ->
-    this.reset_options()
+    @reset_options()
     @permalink = url
     
   setSubreddit: (subreddit) ->
     if subreddit isnt @subreddit
-      this.reset_options()
+      @reset_options()
       @subreddit = subreddit
       
   setCategory: (category, sort) ->
@@ -32,12 +32,12 @@ class RedditAPI
     
   setSearchTerm: (search) ->
     if search isnt @search
-      this.reset_options()
+      @reset_options()
       @search = search
       
   setDomain: (domain) ->
     if domain isnt @domain
-      this.reset_options()
+      @reset_options()
       @domain = domain
       
   getArticlesPerPage: ->

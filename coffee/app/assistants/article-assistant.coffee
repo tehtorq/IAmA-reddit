@@ -16,14 +16,14 @@ class ArticleAssistant extends PowerScrollBase
     @comments = { items : [] }
 
   setup: ->
-    StageAssistant.setTheme(this)
+    StageAssistant.setTheme(@)
     
     @controller.setupWidget("spinner",
-      this.attributes = {},
-      this.model = {spinning: true}
+      @attributes = {},
+      @model = {spinning: true}
     ) 
       
-    this.spinSpinner(false)
+    @spinSpinner(false)
     
     @controller.setupWidget('sub-menu', null, {items: [
       {label:$L("sorted by"), items: [{label:$L("hot"), command:$L("sort hot")},
@@ -58,38 +58,38 @@ class ArticleAssistant extends PowerScrollBase
     @controller.setupWidget("comment-list", {
     itemTemplate : "article/comment",
     formatters:
-      time: this.timeFormatter
-      body: this.bodyFormatter
-      score: this.scoreFormatter
-      vote: this.voteFormatter
-      easylinks: this.easylinksFormatter
-      cssclass: this.cssclassFormatter
-      tagClass: this.tagClassFormatter
-      indent: this.indentFormatter
-      thumbnail: this.thumbnailFormatter
-      shadowindent: this.shadowindentFormatter
+      time: @timeFormatter
+      body: @bodyFormatter
+      score: @scoreFormatter
+      vote: @voteFormatter
+      easylinks: @easylinksFormatter
+      cssclass: @cssclassFormatter
+      tagClass: @tagClassFormatter
+      indent: @indentFormatter
+      thumbnail: @thumbnailFormatter
+      shadowindent: @shadowindentFormatter
     }, @comments)
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
 
-    @itemTappedBind = this.itemTapped.bind(this)
+    @itemTappedBind = @itemTapped.bind(@)
 
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
 
   activate: (event) ->
     super
-    StageAssistant.defaultWindowOrientation(this, "free")
+    StageAssistant.defaultWindowOrientation(@, "free")
     
     if event?
       if event.replied is true
         item = @comments.items[0]
         @comments.items.clear()
         @comments.items.push(item)
-        this.jump_to_comment = event.comment_id
+        @jump_to_comment = event.comment_id
     
     if @comments.items.length < 2
       @controller.get('loadMoreButton').mojo.activate()
-      this.fetchComments({})
+      @fetchComments({})
   
   findArticleIndex: (article_name) ->
     length = @comments.items.length
@@ -110,7 +110,7 @@ class ArticleAssistant extends PowerScrollBase
     @controller.modelChanged(@comments)
     @controller.get('loadMoreButton').mojo.activate()
     @controller.get('loadMoreButton').show()
-    this.fetchComments(params)
+    @fetchComments(params)
 
   deactivate: (event) ->
     super
@@ -118,7 +118,7 @@ class ArticleAssistant extends PowerScrollBase
   cleanup: (event) ->
     Request.clear_all()
 
-    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, this.itemTappedBind)
+    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
 
   timeFormatter: (propertyValue, model) =>
     return if (model.kind isnt 't1') and (model.kind isnt 't3')
@@ -242,23 +242,23 @@ class ArticleAssistant extends PowerScrollBase
     
     switch event.command
       when 'top'
-        this.scrollToTop()
+        @scrollToTop()
       when 'save-cmd'
-        this.saveArticle()
+        @saveArticle()
       when 'email-cmd'
-        this.mailArticle()
+        @mailArticle()
       when 'sms-cmd'
-        this.smsArticle()
+        @smsArticle()
       when 'show 200'
-        this.loadComments({limit: 200})
+        @loadComments({limit: 200})
       when 'show 500'
-        this.loadComments({limit: 500})
+        @loadComments({limit: 500})
       when 'related','duplicates'
         url = @url.replace(/\/comments\//, '/'+event.command+'/').replace('http://www.reddit.com/', '').replace('http://reddit.com/', '')          
-        AppAssistant.cloneCard(this, {name:"frontpage"},{permalink:url})          
+        AppAssistant.cloneCard(@, {name:"frontpage"},{permalink:url})          
       when 'sort hot','sort new','sort controversial','sort top','sort old','sort best'
         params = event.command.split(' ')
-        this.loadComments({sort: params[1]})
+        @loadComments({sort: params[1]})
 
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -279,14 +279,14 @@ class ArticleAssistant extends PowerScrollBase
           {name:"user",transition: Mojo.Transition.crossFade},{linky:params[1]}
         )
       when 'upvote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('1', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('1', params[1], params[2])
       when 'downvote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('-1', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('-1', params[1], params[2])
       when 'reset-vote-cmd'
-        this.spinSpinner(true)
-        this.voteOnComment('0', params[1], params[2])
+        @spinSpinner(true)
+        @voteOnComment('0', params[1], params[2])
   
   spinSpinner: (bool) ->
     if bool
@@ -300,7 +300,7 @@ class ArticleAssistant extends PowerScrollBase
       @comments.items.push({kind: 't3', data: object[0].data.children[0].data})
       @controller.modelChanged(@comments)
     
-    this.populateReplies(object[1].data.children, 0)
+    @populateReplies(object[1].data.children, 0)
     
     @controller.get('comment-list').mojo.setLength(@comments.items.length)
     @controller.get('comment-list').mojo.noticeUpdatedItems(0, @comments.items)
@@ -315,11 +315,11 @@ class ArticleAssistant extends PowerScrollBase
       
         if (data.replies?) and (data.replies isnt "")
           if data.replies.data? and data.replies.data.children?
-            this.populateReplies(data.replies.data.children, indent + 1)
+            @populateReplies(data.replies.data.children, indent + 1)
 
   fetchComments: (params) ->
     params.url = @url + '.json'    
-    new Article(this).comments(params)
+    new Article(@).comments(params)
 
   handlefetchCommentsResponse: (response) ->
     return unless response? and response.responseJSON?
@@ -327,24 +327,24 @@ class ArticleAssistant extends PowerScrollBase
     json = response.responseJSON
     @modhash = json[0].data.modhash if json[0].data? and json[0].data.modhash?
 
-    this.populateComments(json)
+    @populateComments(json)
     
     @controller.get('loadMoreButton').hide()
     
-    if this.jump_to_comment?
-      @controller.getSceneScroller().mojo.revealElement(this.jump_to_comment)
-      this.jump_to_comment = null
+    if @jump_to_comment?
+      @controller.getSceneScroller().mojo.revealElement(@jump_to_comment)
+      @jump_to_comment = null
 
   handleCallback: (params) ->
     return params unless params? and params.success
     
-    this.spinSpinner(false)
+    @spinSpinner(false)
     
     params.type = params.type.split(' ')
     index = -1
 
     if params.type[0] is "comment-upvote"
-      index = this.findArticleIndex(params.type[1])
+      index = @findArticleIndex(params.type[1])
       
       if index > -1
         if @comments.items[index].data.likes is false
@@ -356,7 +356,7 @@ class ArticleAssistant extends PowerScrollBase
       
       new Banner("Upvoted!").send()
     else if params.type[0] is "comment-downvote"
-      index = this.findArticleIndex(params.type[1])
+      index = @findArticleIndex(params.type[1])
       
       if index > -1
         if @comments.items[index].data.likes is true
@@ -368,7 +368,7 @@ class ArticleAssistant extends PowerScrollBase
       
       new Banner("Downvoted!").send()
     else if params.type[0] is "comment-vote-reset"
-      index = this.findArticleIndex(params.type[1])
+      index = @findArticleIndex(params.type[1])
       
       if index > -1
         if @comments.items[index].data.likes is true
@@ -383,7 +383,7 @@ class ArticleAssistant extends PowerScrollBase
     else if params.type[0] is "article-save"
       new Banner("Saved!").send()
     else if params.type[0] is "article-comments"
-      this.handlefetchCommentsResponse(params.response)
+      @handlefetchCommentsResponse(params.response)
 
   voteOnComment: (dir, comment_name, subreddit) ->
     params:
@@ -393,11 +393,11 @@ class ArticleAssistant extends PowerScrollBase
       r: subreddit
 
     if dir is 1
-      new Comment(this).upvote(params)
+      new Comment(@).upvote(params)
     else if dir is -1
-      new Comment(this).downvote(params)
+      new Comment(@).downvote(params)
     else
-      new Comment(this).reset_vote(params)
+      new Comment(@).reset_vote(params)
 
   mailArticle: ->
     @controller.serviceRequest(
@@ -437,7 +437,7 @@ class ArticleAssistant extends PowerScrollBase
       uh: @modhash
       renderstyle: 'html'
 
-    new Article(this).save(params)
+    new Article(@).save(params)
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
@@ -488,7 +488,7 @@ class ArticleAssistant extends PowerScrollBase
       linky = Linky.parse(element_tapped.href)
 
       if linky.type is 'image'
-        AppAssistant.cloneCard(this, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
       else if ((linky.type is 'youtube_video') or (linky.type is 'web'))
         @controller.serviceRequest("palm://com.palm.applicationManager", {
           method : "open",
@@ -502,11 +502,11 @@ class ArticleAssistant extends PowerScrollBase
 
     if element_tapped.id.indexOf('image_') isnt -1
       if element_tapped.className is 'reddit_thumbnail'
-        StageAssistant.cloneImageCard(this, @original_article)
+        StageAssistant.cloneImageCard(@, @original_article)
       else
         index = element_tapped.id.match(/_(\d+)_/g)[0].replace(/_/g,'')
         index = parseInt(index)
-        AppAssistant.cloneCard(this, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
+        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
 
       return
 
@@ -529,14 +529,14 @@ class ArticleAssistant extends PowerScrollBase
 
       return
     
-    if this.isLoggedIn()  
+    if @isLoggedIn()  
       upvote_icon = if comment.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
       downvote_icon =  if comment.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
       upvote_action = if comment.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
       downvote_action = if comment.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
 
       @controller.popupSubmenu({
-                 onChoose: this.handleCommentActionSelection.bind(this),
+                 onChoose: @handleCommentActionSelection.bind(@),
                  placeNear:element_tapped,
                  items: [                         
                    {label: $L('Upvote'), command: upvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: upvote_icon},
@@ -546,7 +546,7 @@ class ArticleAssistant extends PowerScrollBase
                  })
     else
       @controller.popupSubmenu({
-                 onChoose: this.handleCommentActionSelection.bind(this),
+                 onChoose: @handleCommentActionSelection.bind(@),
                  placeNear:element_tapped,
                  items: [
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]

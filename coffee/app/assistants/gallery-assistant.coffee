@@ -8,10 +8,10 @@ class GalleryAssistant
 
   handleCallback: (params) ->
     return params unless params? and params.success
-    this.handleLoadArticlesResponse(params.response) if params.type is "article-list"
+    @handleLoadArticlesResponse(params.response) if params.type is "article-list"
 
   setup: ->
-    StageAssistant.setTheme(this)
+    StageAssistant.setTheme(@)
     
     sfw_reddits = ['1000words','aviation','battlestations','gifs','itookapicture','photocritique','pics','vertical','wallpaper','wallpapers','windowshots']   
     sfw_reddits_items = []
@@ -41,15 +41,15 @@ class GalleryAssistant
     @activityButtonModel = {label : "Load more"};
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel);
     
-    @loadImagesBind = this.loadImages.bind(this)
-    @handleTapBind = this.handleTap.bind(this)
+    @loadImagesBind = @loadImages.bind(@)
+    @handleTapBind = @handleTap.bind(@)
 
     Mojo.Event.listen(@controller.get("gallery"), Mojo.Event.tap, @handleTapBind)
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImagesBind)
 
   activate: (event) ->
-    StageAssistant.defaultWindowOrientation(this, "free")
-    this.loadImages()
+    StageAssistant.defaultWindowOrientation(@, "free")
+    @loadImages()
 
   deactivate: (event) ->
 
@@ -73,7 +73,7 @@ class GalleryAssistant
         image_array.push(thumb.url.url)
         articles.push(thumb)
       
-      AppAssistant.cloneCard(this, {name:"image",disableSceneScroller:true},{index:parseInt(element_tapped.alt),images:image_array, articles:articles})
+      AppAssistant.cloneCard(@, {name:"image",disableSceneScroller:true},{index:parseInt(element_tapped.alt),images:image_array, articles:articles})
 
   storeThumb: (reddit_article) ->
     url = reddit_article.data.url
@@ -112,7 +112,7 @@ class GalleryAssistant
     @controller.modelChanged(@activityButtonModel)
 
   handleLoadArticlesResponse: (response) ->
-    this.displayLoadMoreButton()
+    @displayLoadMoreButton()
     myObj = response.responseJSON
     data = myObj.data
     items = data.children
@@ -121,7 +121,7 @@ class GalleryAssistant
       d = item.data
       reddit_article = new Article().load(d)
       @last_article_id = reddit_article.data.name
-      this.storeThumb(reddit_article) if reddit_article.hasThumbnail() 
+      @storeThumb(reddit_article) if reddit_article.hasThumbnail() 
 
     @fetching_images = false
   
@@ -135,21 +135,21 @@ class GalleryAssistant
     return if @fetching_images
 
     @fetching_images = true
-    this.displayLoadingButton()
+    @displayLoadingButton()
 
     parameters = {}
     parameters.limit = 100
     parameters.after = @last_article_id if @last_article_id?
     parameters.sr = @sr if @sr?
 
-    new Article(this).list(parameters)
+    new Article(@).list(parameters)
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?
 
     @sr = subreddit
-    this.clearImages()
-    this.loadImages()
+    @clearImages()
+    @loadImages()
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -164,4 +164,4 @@ class GalleryAssistant
 
     switch params[0]
       when 'subreddit'
-        this.switchSubreddit(params[1])
+        @switchSubreddit(params[1])

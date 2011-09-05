@@ -8,7 +8,7 @@ class UserAssistant
         []
 
   setup: ->
-    StageAssistant.setTheme(this);
+    StageAssistant.setTheme(@);
     
     @viewMenuModel
       visible: true
@@ -26,21 +26,21 @@ class UserAssistant
     @controller.setupWidget("list", {
       itemTemplate : "user/list-item",
       formatters:
-        title: this.titleFormatter
-        content: this.contentFormatter
-        description: this.descriptionFormatter
+        title: @titleFormatter
+        content: @contentFormatter
+        description: @descriptionFormatter
       }, @listModel)
 
-    @itemTappedBind = this.itemTapped.bind(this)
+    @itemTappedBind = @itemTapped.bind(@)
     Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
 
   activate: (event) ->
-    StageAssistant.defaultWindowOrientation(this, "free")
+    StageAssistant.defaultWindowOrientation(@, "free")
     @listModel.items.clear()
     @controller.modelChanged(@listModel)
 
-    this.about()
-    this.fetchComments()
+    @about()
+    @fetchComments()
 
   deactivate: (event) ->
 
@@ -70,7 +70,7 @@ class UserAssistant
     
     switch event.command
       when 'top'
-        this.scrollToTop()
+        @scrollToTop()
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -79,19 +79,19 @@ class UserAssistant
     return params unless params? and params.success
 
     if params.type is "user-comments"
-      this.handleUserCommentsResponse(params.response)
+      @handleUserCommentsResponse(params.response)
     else if params.type is "user-about"
-      this.handleUserAboutResponse(params.response)
+      @handleUserAboutResponse(params.response)
 
   fetchComments: ->
     params = {user: @user}
 
-    new User(this).comments(params)
+    new User(@).comments(params)
 
   about: ->
     params = {user: @user}
 
-    new User(this).about(params)
+    new User(@).about(params)
 
   handleUserCommentsResponse: (response) ->
     children = response.responseJSON.data.children

@@ -12,8 +12,8 @@
 class PowerScrollBase
   
   constructor: ->
-    @twoFingerStartBound = this.twoFingerStart.bind(this)
-    @twoFingerEndBound = this.twoFingerEnd.bind(this)
+    @twoFingerStartBound = @twoFingerStart.bind(@)
+    @twoFingerEndBound = @twoFingerEnd.bind(@)
 
   activate: ->
     # Add listeners for two-finger gesture events

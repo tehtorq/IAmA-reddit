@@ -9,7 +9,7 @@ class ComposeMessageAssistant
     @captchaModel = { items : [] }
 
     setup: ->
-      StageAssistant.setTheme(this);
+      StageAssistant.setTheme(@);
 
       @controller.setupWidget("recipientTextFieldId",
         { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
@@ -33,17 +33,17 @@ class ComposeMessageAssistant
 
       @controller.setupWidget("sendButton", {}, { label : "Send"});
 
-      Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, this.sendMessage.bind(this))
+      Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage.bind(@))
 
   activate: (event) ->
-    StageAssistant.defaultWindowOrientation(this, "up")
-    this.displayComposeMessage()
+    StageAssistant.defaultWindowOrientation(@, "up")
+    @displayComposeMessage()
 
   deactivate: (event) ->
   cleanup: (event) ->
 
   displayComposeMessage: (object) ->
-    this.fetchHTMLComposePage()
+    @fetchHTMLComposePage()
 
   sendMessage: ->
     to = @recipientModel.value
@@ -75,9 +75,9 @@ class ComposeMessageAssistant
           json_string = Object.toJSON(responseText)
         
           if json_string.indexOf('your message has been delivered') isnt -1
-            this.debug('Success!')
+            @debug('Success!')
           else
-            this.debug('Failure!')                 
+            @debug('Failure!')                 
                     
         onFailure: (inTransport) ->
         onException: (inTransport, inException) ->

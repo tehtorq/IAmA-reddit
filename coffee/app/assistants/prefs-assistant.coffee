@@ -1,4 +1,6 @@
 class PrefsAssistant
+  
+  constructor: ->
 
   setup: ->
     StageAssistant.setTheme(@)
@@ -30,16 +32,16 @@ class PrefsAssistant
       { trueValue : "on", falseValue : "off"}
       {value: value6, disabled: false}
     )
-  	
-  	@controller.setupWidget("articles_per_page_radio_button",
-                            { choices : [
-                                          { label : "10", value : "10" },
-                                          { label : "25", value : "25" },
-                                          { label : "50", value : "50" },
-                                          { label : "100", value : "100" }
-                                        ] },
-                            {value: value5}
-                            )
+    
+    @controller.setupWidget("articles_per_page_radio_button",
+      { choices : [
+                    { label : "10", value : "10" },
+                    { label : "25", value : "25" },
+                    { label : "50", value : "50" },
+                    { label : "100", value : "100" }
+                  ] },
+      {value: value5}
+    )
                                                         
     @controller.setupWidget("theme_radio_button", { 
       choices: 
@@ -113,9 +115,6 @@ class PrefsAssistant
 
   cookieValue: (cookieName, default_value) ->
   	cookie = new Mojo.Model.Cookie(cookieName)
-  	
-  	if cookie
-  	  value = cookie.get()
-  	  return value
+  	return cookie.get() if cookie
   	  
   	default_value

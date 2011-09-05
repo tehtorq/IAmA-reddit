@@ -14,43 +14,43 @@ class DockAssistant
     
     @controller.setupWidget(
       "spinner"
-      this.attributes = {}
-      this.model = {spinning: true}
+      @attributes = {}
+      @model = {spinning: true}
     ) 
     
     @controller.setupWidget("ImageId",
-      this.attributes = {
+      @attributes = {
         noExtractFS: true
       },
-      this.model = {
+      @model = {
         onLeftFunction: =>
-          this.updateUrls(-1)
+          @updateUrls(-1)
         onRightFunction: =>
-          this.updateUrls(1)
+          @updateUrls(1)
       }
     )
 
-    @loadImagesBind = this.loadImages.bind(this)
+    @loadImagesBind = @loadImages.bind(@)
 
   activate: (event) ->
-    StageAssistant.defaultWindowOrientation(this, "free")
-    this.timerID = @controller.window.setInterval(this.tick.bind(this),15000)
+    StageAssistant.defaultWindowOrientation(@, "free")
+    @timerID = @controller.window.setInterval(@tick.bind(@),15000)
   
   ready: ->
     @controller.get('ImageId').mojo.manualSize(Mojo.Environment.DeviceInfo.screenWidth,Mojo.Environment.DeviceInfo.screenHeight)
 
   deactivate: (event) ->
     @controller.enableFullScreenMode(false)
-    @controller.window.clearInterval(this.timerID)
+    @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->
     Request.clear_all()
   
   tick: ->
-    this.updateUrls(1)
+    @updateUrls(1)
     
     if (@image_array.length - @current_index) < 10
-      this.loadImages()
+      @loadImages()
 
   orientationChanged: (orientation) ->
     @controller.stageController.setWindowOrientation(orientation)
@@ -69,7 +69,7 @@ class DockAssistant
         @article_array.push({data: reddit_article.data, kind: 't3'})
         @image_array.push(url)
     
-    this.spinSpinner(false)
+    @spinSpinner(false)
     @fetching_images = false
   
   spinSpinner: (bool) ->
@@ -82,20 +82,20 @@ class DockAssistant
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
     @controller.get('gallery').update('')
     @last_article_id = null
-    this.thumbs.clear()
+    @thumbs.clear()
 
   loadImages: ->
     return if @fetching_images
     
     @fetching_images = true
-    this.spinSpinner(true)
+    @spinSpinner(true)
 
     parameters = {}
     parameters.limit = 100
     parameters.after = @last_article_id if @last_article_id?
     parameters.sr = @sr if @sr?
 
-    new Article(this).list(parameters)
+    new Article(@).list(parameters)
   
   urlForIndex: (index) ->
     if index < 0
@@ -117,17 +117,17 @@ class DockAssistant
     image = @controller.get('ImageId')
 
     if (@current_index > -1) and (@current_index < @image_array.length)
-      image.mojo.centerUrlProvided(this.urlForIndex(@current_index))
+      image.mojo.centerUrlProvided(@urlForIndex(@current_index))
 
     if (@current_index > 0) and (@current_index < @image_array.length)
-      image.mojo.leftUrlProvided(this.urlForIndex(@current_index - 1))
+      image.mojo.leftUrlProvided(@urlForIndex(@current_index - 1))
 
     if (@current_index > -1) and (@current_index < (@image_array.length - 1))
-      image.mojo.rightUrlProvided(this.urlForIndex(@current_index + 1))
+      image.mojo.rightUrlProvided(@urlForIndex(@current_index + 1))
   
   handleCallback: (params) ->
     return params unless params? and params.success
-    this.handleLoadArticlesResponse(params.response) if params.type is "article-list"
+    @handleLoadArticlesResponse(params.response) if params.type is "article-list"
   
   handleWindowResize: (event) ->
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth, @controller.window.innerHeight)

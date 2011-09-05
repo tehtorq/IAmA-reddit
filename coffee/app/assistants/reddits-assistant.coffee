@@ -25,11 +25,11 @@ class RedditsAssistant
     StageAssistant.setTheme(@)
     
     @controller.setupWidget("spinner",
-      @attributes = {},
+      attributes = {},
       @model = {spinning: true}
-    ) 
+    )
     
-    @controller.setupWidget(Mojo.Menu.commandMenu, 
+    @controller.setupWidget(Mojo.Menu.commandMenu,
       { menuClass:'no-fade' },
       items:
         [
@@ -44,28 +44,31 @@ class RedditsAssistant
             ]
         ]
     )
-
+    
     @spinnerModel = {spinning: false}
-  @controller.setupWidget("progressSpinner",
-     @attributes = {
-              spinnerSize: 'large',
-              superClass: 'palm-activity-indicator-large',
-              fps: 60,
-              startLastFrame: 0,
-              mainFrameCount: 12,
-              frameHeight: 128
-       },
-       @spinnerModel)
-
+    
+    @controller.setupWidget("progressSpinner",
+      attributes =
+        spinnerSize: 'large',
+        superClass: 'palm-activity-indicator-large',
+        fps: 60,
+        startLastFrame: 0,
+        mainFrameCount: 12,
+        frameHeight: 128
+      @spinnerModel
+    )
+    
     @controller.setupWidget(Mojo.Menu.appMenu, {}, {
       visible: true,
-      items: [
+      items:
+        [
           {label: "Login", command: 'login-cmd'},
           {label: "Frontpage", command: 'frontpage-cmd'},
           {label: "Gallery", command: 'gallery-cmd'}
-      ]
-    })
-
+        ]
+      }
+    )
+    
     @controller.setupWidget("reddit-list", {
       itemTemplate : "reddits/reddit",
       emptyTemplate : "reddits/emptylist",
@@ -76,7 +79,7 @@ class RedditsAssistant
       lookahead : 25,
       renderLimit : 1000
     }, @redditsModel)
-
+    
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
@@ -196,8 +199,12 @@ class RedditsAssistant
     new Subreddit(@).fetch(parameters)
 
   handleLoadRedditsResponse: (response) ->
+    Mojo.Log.info(JSON.stringify(response))
+    return unless response? and response.responseJSON? and response.responseJSON.data?
+    
     @modhash = response.responseJSON.data.modhash
     items = response.responseJSON.data.children
+    
     new_items = []
     new_items.length = 0
     length = @controller.get('reddit-list').mojo.getLength()
