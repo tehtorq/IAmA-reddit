@@ -1,3 +1,4 @@
 #!/bin/bash
 rm release/app/models/*
-coffee -b -o release/ -c coffee/
+rm release/app/assistants/*
+#coffee -b -o release/ -c coffee/
