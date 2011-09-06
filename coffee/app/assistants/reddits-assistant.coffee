@@ -199,7 +199,6 @@ class RedditsAssistant
     new Subreddit(@).fetch(parameters)
 
   handleLoadRedditsResponse: (response) ->
-    Mojo.Log.info(JSON.stringify(response))
     return unless response? and response.responseJSON? and response.responseJSON.data?
     
     @modhash = response.responseJSON.data.modhash
@@ -209,15 +208,15 @@ class RedditsAssistant
     new_items.length = 0
     length = @controller.get('reddit-list').mojo.getLength()
 
-    _.each items, (item) ->
-      if length < 1 or (items[i].data.name isnt @last_name) # ugly hack for possible bug in reddits/mine    
-        if items[i].data.description?
-          items[i].data.description = items[i].data.description.replace(/\n/gi, "<br/>")
-          items[i].data.description = items[i].data.description.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
+    _.each items, (item) =>
+      if (length < 1) or (item.data.name isnt @last_name) # ugly hack for possible bug in reddits/mine    
+        if item.data.description?
+          item.data.description = item.data.description.replace(/\n/gi, "<br/>")
+          item.data.description = item.data.description.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
 
-        items[i].data.prevent_delete = (@reddit_api.reddits_category isnt 'mine')
-        new_items.push(items[i].data)
-        @last_name = items[i].data.name
+        item.data.prevent_delete = (@reddit_api.reddits_category isnt 'mine')
+        new_items.push(item.data)
+        @last_name = item.data.name
 
     @controller.get('reddit-list').mojo.noticeAddedItems(length, new_items)
     
@@ -286,7 +285,7 @@ class RedditsAssistant
       })
   
   isLoggedIn: ->
-    @modhash? and @modhash isnt ""
+    (@modhash?) and (@modhash isnt "")
 
   handleActionCommand: (command) ->
     return unless command?
