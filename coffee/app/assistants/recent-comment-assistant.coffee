@@ -26,7 +26,7 @@ class RecentCommentAssistant extends PowerScrollBase
     StageAssistant.defaultWindowOrientation(@, "free")
     
     @fetchRecentComments() if @commentModel.items.length is 0
-    @timerID = @controller.window.setInterval(@tick.bind(@),5000)
+    @timerID = @controller.window.setInterval(@tick, 5000)
 
   deactivate: (event) ->
     super
@@ -38,9 +38,9 @@ class RecentCommentAssistant extends PowerScrollBase
 
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
   
-  tick: ->
+  tick: =>
     current_seconds = (new Date()).getTime() / 1000
-    @starting_second = current_seconds unless @starting_second
+    @starting_second = current_seconds unless @starting_second?
     @last_poll_second = current_seconds unless @last_poll_second?
     @fetchRecentComments() if (current_seconds - @last_poll_second) > 5
     @updateList()
@@ -58,16 +58,16 @@ class RecentCommentAssistant extends PowerScrollBase
       content = model.data.body
 
     return "" unless content?
-
+    
     content = content.replace(/\n/gi, "<br/>")
     content = content.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
     content
-
-  indentFormatter: (propertyValue, model) ->
+    
+  indentFormatter: (propertyValue, model) =>
     return "" if (model.kind isnt 't1') and (model.kind isnt 'more')
     6 + 10 * model.data.indent + ""
 
-  shadowindentFormatter: (propertyValue, model) ->
+  shadowindentFormatter: (propertyValue, model) =>
     return "" if (model.kind isnt 't1') and (model.kind isnt 'more')
     return 12 + 10 * model.data.indent + ""
 
@@ -78,14 +78,15 @@ class RecentCommentAssistant extends PowerScrollBase
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
 
-  handleCommentActionSelection: (command) ->
+  handleCommentActionSelection: (command) =>
     return unless command?
 
     params = command.split(' ')
 
     if params[0] is 'view-cmd'
       #@controller.stageController.popScenesTo("user", {linky:params[1]})
-      @controller.stageController.pushScene({name:"user",transition: Mojo.Transition.crossFade},{linky:params[1]})
+      controller = Mojo.Controller.getAppController().getActiveStageController()
+      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{linky:params[1]})
 
   populateComments: (object) ->
     _.each object.data.children, (comment) =>  
@@ -105,10 +106,10 @@ class RecentCommentAssistant extends PowerScrollBase
     counter = 0
     
     _.each @comments, (comment) =>
-      if @comment.data.created_utc > @newestTimestamp()
+      if comment.data.created_utc > @newestTimestamp()
         counter++
         new_entries = true
-        @commentModel.items.unshift(@comment)
+        @commentModel.items.unshift(comment)
     
     if new_entries
       @controller.get('list').mojo.setLength(@commentModel.items.length)
@@ -177,7 +178,7 @@ class RecentCommentAssistant extends PowerScrollBase
       return
 
     @controller.popupSubmenu({
-      onChoose: @handleCommentActionSelection.bind(@),
+      onChoose: @handleCommentActionSelection,
       placeNear:element_tapped,
       items: [{label: $L('View Posts'), command: 'view-cmd ' + comment.data.author}]
     })

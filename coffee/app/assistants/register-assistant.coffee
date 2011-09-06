@@ -1,9 +1,9 @@
 class RegisterAssistant
 
   constructor: ->
-    @usernameModel: { }
-    @passwordModel: { }
-    @captchaModel: { }
+    @usernameModel = { }
+    @passwordModel = { }
+    @captchaModel = { }
 
   setup: ->
     StageAssistant.setTheme(@)

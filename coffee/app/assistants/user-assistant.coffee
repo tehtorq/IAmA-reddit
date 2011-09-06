@@ -3,7 +3,7 @@ class UserAssistant
   constructor: (url) ->
     @user = url.linky
     @url = 'http://reddit.com/user/' + @user + '.json'
-    @listModel:
+    @listModel =
       items:
         []
 
@@ -120,7 +120,7 @@ class UserAssistant
       thread_id = article.data.link_id
       thread_title = article.data.link_title
 
-    hash
+    hash =
       url: '/comments/' + thread_id.substr(3)
       title: thread_title
 
