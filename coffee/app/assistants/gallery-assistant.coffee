@@ -38,8 +38,8 @@ class GalleryAssistant
 
     @thumbs = []
 
-    @activityButtonModel = {label : "Load more"};
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel);
+    @activityButtonModel = {label : "Load more"}
+    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
     @loadImagesBind = @loadImages.bind(@)
     @handleTapBind = @handleTap.bind(@)
@@ -113,9 +113,9 @@ class GalleryAssistant
 
   handleLoadArticlesResponse: (response) ->
     @displayLoadMoreButton()
-    myObj = response.responseJSON
-    data = myObj.data
-    items = data.children
+    
+    return unless response? and response.responseJSON? and response.responseJSON.data? and response.responseJSON.data.children?
+    items = response.responseJSON.data.children
     
     _.each items, (item) =>
       d = item.data

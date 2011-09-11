@@ -1,4 +1,4 @@
 #!/bin/bash
 palm-package release/
-palm-install -d usb *.ipk
+palm-install -d tcp *.ipk
 

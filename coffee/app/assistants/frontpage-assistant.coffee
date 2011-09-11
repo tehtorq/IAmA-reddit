@@ -5,7 +5,6 @@ class FrontpageAssistant extends PowerScrollBase
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
-    @waka = 'waka'
     
     default_frontpage = StageAssistant.cookieValue("prefs-frontpage", "frontpage")
         
@@ -67,7 +66,7 @@ class FrontpageAssistant extends PowerScrollBase
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
 
-    @viewMenuModel = {
+    @viewMenuModel =
       visible: true
       items: [
         items: [
@@ -78,7 +77,6 @@ class FrontpageAssistant extends PowerScrollBase
           {}
         ]
       ]
-    }
     
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
@@ -115,9 +113,9 @@ class FrontpageAssistant extends PowerScrollBase
       lookahead: 25
       renderLimit: 1000
       formatters: 
-        tag: @tagFormatter.bind(@)
-        thumbnail: @thumbnailFormatter.bind(@)
-        vote: @voteFormatter.bind(@)
+        tag: @tagFormatter
+        thumbnail: @thumbnailFormatter
+        vote: @voteFormatter
       }, @articles)
 
     @activityButtonModel = {label : "Load more"}
@@ -131,7 +129,8 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
 
   activate: (event) ->
-    super
+    Mojo.Log.info('activate called')
+    #super
     StageAssistant.defaultWindowOrientation(@, "free")
     @metakey = false
 
@@ -157,7 +156,7 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
 
-  tagFormatter: (propertyValue, model) ->
+  tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
       
     if @reddit_api.subreddit is model.data.subreddit
@@ -165,10 +164,10 @@ class FrontpageAssistant extends PowerScrollBase
     
     (model.data.ups - model.data.downs) + " points in " + model.data.subreddit + " by " + model.data.author
   
-  thumbnailFormatter: (propertyValue, model) ->
+  thumbnailFormatter: (propertyValue, model) =>
     Article.thumbnailFormatter(model)
     
-  voteFormatter: (propertyValue, model) ->
+  voteFormatter: (propertyValue, model) =>
     return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
@@ -559,7 +558,7 @@ class FrontpageAssistant extends PowerScrollBase
   
     params = event.command.split(' ')
   
-    @handleCategorySwitch(params) is params[0] is 'category'
+    @handleCategorySwitch(params) if params[0] is 'category'
   
     switch params[0]
       when 'new-card'
