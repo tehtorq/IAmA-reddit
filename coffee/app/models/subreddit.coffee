@@ -10,8 +10,8 @@ class Subreddit
     new Request(@callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-unsubscribe ' + params.sr)
 
   fetch: (params) ->
-    url = params.url;
-    delete params.url;
+    url = params.url
+    delete params.url
 
     new Request(@callback).get(url, params, 'subreddit-load')
 

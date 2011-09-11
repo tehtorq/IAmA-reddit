@@ -386,15 +386,15 @@ class ArticleAssistant extends PowerScrollBase
       @handlefetchCommentsResponse(params.response)
 
   voteOnComment: (dir, comment_name, subreddit) ->
-    params:
+    params =
       dir: dir
       id: comment_name
       uh: @modhash
       r: subreddit
 
-    if dir is 1
+    if dir is '1'
       new Comment(@).upvote(params)
-    else if dir is -1
+    else if dir is '-1'
       new Comment(@).downvote(params)
     else
       new Comment(@).reset_vote(params)
@@ -431,7 +431,7 @@ class ArticleAssistant extends PowerScrollBase
     )
 
   saveArticle: ->
-    params:
+    params =
       executed: 'saved'
       id: @article.name
       uh: @modhash

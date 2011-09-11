@@ -59,7 +59,7 @@ class ComposeMessageAssistant
       iden: @iden
       uh: @modhash
 
-    new Ajax.Request(		
+    new Ajax.Request(   
       'http://www.reddit.com/api/compose'
       {
         method: "post"   
@@ -85,11 +85,11 @@ class ComposeMessageAssistant
     )
 
   fetchHTMLComposePage: ->
-	  new Ajax.Request(
-		  @url
-		  {
-		    method: "get"
-		    onSuccess: (inTransport) =>
+    new Ajax.Request(
+      @url
+      {
+        method: "get"
+        onSuccess: (inTransport) =>
           responseText = inTransport.responseText
 
           # work out captcha

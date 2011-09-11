@@ -83,8 +83,25 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
+    
+    appMenuModel =
+      visible: true
+      items:
+        [
+          {label: "Manage User", items:
+            [
+              {label: "Login", command: 'login-cmd'}
+              {label: "Register", command: 'register-cmd'}
+              #{label: "Logout", command: 'logout-cmd'}
+            ]}
+          {label: "Reddits", command: 'reddits-cmd'}
+          {label: "Gallery", command: 'gallery-cmd'}
+          {label: "Recent Comments", command: 'recent-comments-cmd'}
+          {label: "Messages", command: 'messages-cmd'}
+          {label: "Preferences", command: Mojo.Menu.prefsCmd}
+        ]
 
-    @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, StageAssistant.appMenuModel)
+    @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
 
     @controller.setupWidget('filterfield', {delay: 2000})
     @controller.listen('filterfield', Mojo.Event.filter, @filter.bind(@))
@@ -417,7 +434,7 @@ class FrontpageAssistant extends PowerScrollBase
     @subredditSubmenuModel.items = array
     @controller.modelChanged @subredditSubmenuModel
   
-  handleActionSelection: (command) ->
+  handleActionSelection: (command) =>
     return unless command?
     
     params = command.split ' '
@@ -454,7 +471,7 @@ class FrontpageAssistant extends PowerScrollBase
     index
   
   saveArticle: (article) ->
-    params:
+    params =
       executed: 'saved'
       id: article.data.name
       uh: @modhash
@@ -462,7 +479,7 @@ class FrontpageAssistant extends PowerScrollBase
     new Article(@).save(params)
   
   unsaveArticle: (article) ->
-    params:
+    params =
       executed: 'unsaved'
       id: article.data.name
       uh: @modhash
@@ -470,15 +487,15 @@ class FrontpageAssistant extends PowerScrollBase
     new Article(@).unsave(params)
   
   voteOnComment: (dir, comment_name, subreddit) ->
-    params:
+    params =
       dir: dir
       id: comment_name
       uh: @modhash
       r: subreddit
   
-    if dir is 1
+    if dir is '1'
       new Comment(@).upvote(params)
-    else if dir is -1
+    else if dir is '-1'
       new Comment(@).downvote(params)
     else
       new Comment(@).reset_vote(params)
@@ -519,7 +536,7 @@ class FrontpageAssistant extends PowerScrollBase
       save_label = if article.data.saved is true then 'Unsave' else 'Save'
   
       @controller.popupSubmenu {
-       onChoose: @handleActionSelection.bind(@),
+       onChoose: @handleActionSelection,
        placeNear:element_tapped,
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon},
@@ -530,7 +547,7 @@ class FrontpageAssistant extends PowerScrollBase
       }
     else
       @controller.popupSubmenu {
-       onChoose: @handleActionSelection.bind(@),
+       onChoose: @handleActionSelection,
        placeNear:element_tapped,
        items: [
          {label: $L('Comments'), command: 'comments-cmd ' + event.index},

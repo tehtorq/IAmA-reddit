@@ -139,17 +139,15 @@ class RedditsAssistant
     params.type = params.type.split(' ')
 
     if params.type[0] is "subreddit-subscribe"
-      if params.type[1]
+      if params.type[1]?
         _.each Subreddit.cached_list, (item) ->
-          if item.name == params.type[1]
-            Subreddit.cached_list[i].subscribed = true
+          item.subscribed = true if item.name is params.type[1]
       
       new Banner("Subscribed!").send()
     else if params.type[0] is "subreddit-unsubscribe"
-      if params.type[1]
+      if params.type[1]?
         _.each Subreddit.cached_list, (item) ->
-          if item.name == params.type[1]
-            item.subscribed = false
+          item.subscribed = false if item.name is params.type[1]
       
       new Banner("Unsubscribed!").send()
     else if params.type[0] is "subreddit-load"
@@ -266,13 +264,13 @@ class RedditsAssistant
       edit_option = '+frontpage'
       edit_action = 'frontpage-add-cmd'
       
-      _.each Subreddit.cached_list, (item) ->
-        if (item.label is item.display_name) and (item.subscribed is true)
+      _.each Subreddit.cached_list, (cached_item) ->
+        if (cached_item.label is item.display_name) and (cached_item.subscribed is true)
           edit_option = '-frontpage'
           edit_action = 'frontpage-remove-cmd'
       
       @controller.popupSubmenu({
-               onChoose: @handleActionCommand.bind(@),
+               onChoose: @handleActionCommand,
                placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name},
                          {label: $L(edit_option), command: edit_action + ' ' + item.name}]
@@ -287,7 +285,7 @@ class RedditsAssistant
   isLoggedIn: ->
     (@modhash?) and (@modhash isnt "")
 
-  handleActionCommand: (command) ->
+  handleActionCommand: (command) =>
     return unless command?
 
     params = command.split(' ')

@@ -1,7 +1,7 @@
 class Debugger
 
   debug: (value) ->
-    string = "";
+    string = ""
 
     for key in value
       string += key + " => " + value[key] + "\n"

@@ -1,7 +1,7 @@
 class MessageAssistant
   
   constructor: (action) ->
-    @listModel:
+    @listModel =
       items: []
 
   setup: ->
@@ -22,7 +22,7 @@ class MessageAssistant
       {label:$L("sent"), command:$L("message sent")}
     ]}
     
-    @viewMenuModel = {
+    @viewMenuModel =
       visible: true,
       items: [
           {items:[{},
@@ -30,7 +30,6 @@ class MessageAssistant
                   {icon:'search', submenu: "sub-menu", width: 60},
                   {}]}
       ]
-    }
     
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
     

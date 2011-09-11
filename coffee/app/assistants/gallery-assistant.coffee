@@ -158,7 +158,7 @@ class GalleryAssistant
       when 'login-cmd'
         @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade})
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage",disableSceneScroller:true});
+        @controller.stageController.popScene({name:"frontpage",disableSceneScroller:true})
 
     params = event.command.split(' ')
 

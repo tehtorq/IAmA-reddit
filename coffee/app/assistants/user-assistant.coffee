@@ -10,7 +10,7 @@ class UserAssistant
   setup: ->
     StageAssistant.setTheme(@);
     
-    @viewMenuModel
+    @viewMenuModel =
       visible: true
       items: 
         [
@@ -94,6 +94,7 @@ class UserAssistant
     new User(@).about(params)
 
   handleUserCommentsResponse: (response) ->
+    return unless response? and response.responseJSON? and response.responseJSON.data? and response.responseJSON.data.children?
     children = response.responseJSON.data.children
     
     _.each children, (child) =>

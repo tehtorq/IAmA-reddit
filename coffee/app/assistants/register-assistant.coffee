@@ -4,6 +4,7 @@ class RegisterAssistant
     @usernameModel = { }
     @passwordModel = { }
     @captchaModel = { }
+    @iden = null
 
   setup: ->
     StageAssistant.setTheme(@)
@@ -31,11 +32,6 @@ class RegisterAssistant
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "up")
-    @usernameModel.value = null
-    @passwordModel.value = null
-    @captchaModel.value = null
-    @iden = null
-    
     @fetchCaptcha()
 
   deactivate: (event) ->
@@ -69,17 +65,17 @@ class RegisterAssistant
   register: ->
     @displayButtonRegistering()
     
-    params:
+    params =
       captcha: @captchaModel.value
       email: ''
-      id:	'#login_reg'
-      iden:	@iden
-      op:	'reg'
-      passwd:	@passwordModel.value
-      passwd2:	@passwordModel.value
+      id: '#login_reg'
+      iden: @iden
+      op: 'reg'
+      passwd: @passwordModel.value
+      passwd2:  @passwordModel.value
       reason: ''
-      renderstyle:	'html'
-      user:	@usernameModel.value
+      renderstyle:  'html'
+      user: @usernameModel.value
       api_type: 'json'
 
     new User(@).create(params)

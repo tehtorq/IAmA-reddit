@@ -114,7 +114,7 @@ class PrefsAssistant
     cookie.put(event.value)
 
   cookieValue: (cookieName, default_value) ->
-  	cookie = new Mojo.Model.Cookie(cookieName)
-  	return cookie.get() if cookie
-  	  
-  	default_value
+    cookie = new Mojo.Model.Cookie(cookieName)
+    return cookie.get() if cookie
+      
+    default_value

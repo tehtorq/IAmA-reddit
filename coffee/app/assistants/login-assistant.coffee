@@ -1,8 +1,8 @@
 class LoginAssistant
 
   constructor: ->
-    usernameModel: {}
-    passwordModel: {}
+    @usernameModel = {}
+    @passwordModel = {}
 
   setup: ->
     StageAssistant.setTheme(@)

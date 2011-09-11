@@ -12,8 +12,8 @@
 class PowerScrollBase
   
   constructor: ->
-    @twoFingerStartBound = @twoFingerStart.bind(@)
-    @twoFingerEndBound = @twoFingerEnd.bind(@)
+    @twoFingerStartBound = @twoFingerStart
+    @twoFingerEndBound = @twoFingerEnd
 
   activate: ->
     # Add listeners for two-finger gesture events
@@ -25,10 +25,10 @@ class PowerScrollBase
     Mojo.Event.stopListening(@controller.document, "gesturestart", @twoFingerStartBound)
     Mojo.Event.stopListening(@controller.document, "gestureend", @twoFingerEndBound)
 
-  twoFingerStart: (event) ->
+  twoFingerStart: (event) =>
     @gestureStartY = event.centerY
 
-  twoFingerEnd: (event) ->
+  twoFingerEnd: (event) =>
     gestureDistanceY = event.centerY - @gestureStartY
     scroller = @controller.getSceneScroller()
 

@@ -10,23 +10,6 @@ class StageAssistant
       'onFailure': fallback
     })
 
-  @appMenuModel =
-    visible: true
-    items:
-      [
-        {label: "Manage User", items:
-          [
-            {label: "Login", command: 'login-cmd'}
-            {label: "Register", command: 'register-cmd'}
-            #{label: "Logout", command: 'logout-cmd'}
-          ]}
-        {label: "Reddits", command: 'reddits-cmd'}
-        {label: "Gallery", command: 'gallery-cmd'}
-        {label: "Recent Comments", command: 'recent-comments-cmd'}
-        {label: "Messages", command: 'messages-cmd'}
-        {label: "Preferences", command: Mojo.Menu.prefsCmd}
-      ]
-
   @cookieValue: (cookieName, default_value) ->
     cookie = new Mojo.Model.Cookie(cookieName)
 
