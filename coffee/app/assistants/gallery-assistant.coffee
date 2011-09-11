@@ -13,7 +13,7 @@ class GalleryAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    sfw_reddits = ['1000words','aviation','battlestations','gifs','itookapicture','photocritique','pics','vertical','wallpaper','wallpapers','windowshots']   
+    sfw_reddits = StageAssistant.cookieValue("prefs-galleries", '1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots').split(',')
     sfw_reddits_items = []
     
     _.each sfw_reddits, (item) ->
@@ -35,6 +35,16 @@ class GalleryAssistant
     }
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
+    
+    appMenuModel =
+      visible: true
+      items:
+        [
+          {label: "Frontpage", command: 'frontpage-cmd'}
+          {label: "Preferences", command: 'manage-cmd'}
+        ]
+
+    @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
 
     @thumbs = []
 
@@ -153,13 +163,15 @@ class GalleryAssistant
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
+    
+    controller = Mojo.Controller.getAppController().getActiveStageController()
 
     switch event.command
-      when 'login-cmd'
-        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade})
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage",disableSceneScroller:true})
-
+        controller.pushScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+      when 'manage-cmd'
+        AppAssistant.cloneCard(@, {name:"prefs"}, {})
+      
     params = event.command.split(' ')
 
     switch params[0]

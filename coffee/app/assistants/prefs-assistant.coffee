@@ -4,7 +4,7 @@ class PrefsAssistant
 
   setup: ->
     StageAssistant.setTheme(@)
-
+    
     value1 = @cookieValue("prefs-hide-thumbnails", "off")
     value3 = @cookieValue("prefs-hide-easylinks", "off")
     value4 = @cookieValue("prefs-samecard", "off")
@@ -12,6 +12,19 @@ class PrefsAssistant
     value6 = @cookieValue("prefs-lock-orientation", "off")
     value7 = @cookieValue("prefs-theme", "stylesheets/reddit-dark.css")
     value8 = @cookieValue("prefs-frontpage", "all")
+    value9 = @cookieValue('prefs-galleries','1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots')
+    
+    @galleriesModel = { value : value9 }
+
+    @controller.setupWidget("galleriesTextFieldId", { 
+        focusMode: Mojo.Widget.focusAppendMode
+        textCase: Mojo.Widget.steModeLowerCase
+        multiline: true
+        enterSubmits: true
+        autoFocus: false
+      }
+      @galleriesModel
+    )
     
     @controller.setupWidget("hide_thumbnail_toggle_button",
       { trueValue : "on", falseValue : "off"}
@@ -77,6 +90,7 @@ class PrefsAssistant
     Mojo.Event.listen(@controller.get("lock_orientation_toggle_button"), Mojo.Event.propertyChange, @handleUpdate6)
     Mojo.Event.listen(@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7)
     Mojo.Event.listen(@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8)
+    Mojo.Event.listen(@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -112,9 +126,13 @@ class PrefsAssistant
   handleUpdate8: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-frontpage")
     cookie.put(event.value)
+    
+  handleUpdate9: (event) =>
+    cookie = new Mojo.Model.Cookie("prefs-galleries")
+    cookie.put(event.value)
 
   cookieValue: (cookieName, default_value) ->
     cookie = new Mojo.Model.Cookie(cookieName)
-    return cookie.get() if cookie
+    return cookie.get() if cookie? and cookie.get()?
       
     default_value
