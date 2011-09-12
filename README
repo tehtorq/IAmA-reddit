@@ -1,6 +1,9 @@
 
 Changelog:
 
+0.1.7:
+- Maintenance release, rewritten in coffeescript
+
 0.1.6:
 - rage face support
 
