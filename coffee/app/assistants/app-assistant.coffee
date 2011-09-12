@@ -34,8 +34,8 @@ class AppAssistant
   
     # only allow one card for prefs
   
-    if sceneArguments? and (sceneArguments.name is 'prefs')
-      stageController = Mojo.Controller.getAppController().getStageController("prefs")
+    if sceneArguments? and (sceneArguments.name in ['prefs','about'])
+      stageController = Mojo.Controller.getAppController().getStageController(sceneArguments.name)
     
       if stageController?
         stageController.activate()
@@ -48,7 +48,7 @@ class AppAssistant
         stageController.pushScene("frontpage")
 
     cardname = "NewCardStage" + Math.floor(Math.random()*10000)
-    cardname = "prefs" if sceneArguments? and (sceneArguments.name is 'prefs')
+    cardname = sceneArguments.name if sceneArguments? and (sceneArguments.name in ['prefs','about'])
   
     StageAssistant.stages.push(cardname)
 

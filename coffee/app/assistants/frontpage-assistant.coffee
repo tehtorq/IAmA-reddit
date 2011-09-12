@@ -97,6 +97,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Recent Comments", command: 'recent-comments-cmd'}
           {label: "Messages", command: 'messages-cmd'}
           {label: "Preferences", command: Mojo.Menu.prefsCmd}
+          {label: "About", command: 'about-scene'}
         ]
 
     @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
@@ -599,3 +600,5 @@ class FrontpageAssistant extends PowerScrollBase
             AppAssistant.cloneCard(@, {name:"recent-comment"}, {})
           when 'messages-cmd'
             AppAssistant.cloneCard(@, {name:"message"}, {})
+          when 'about-scene'
+            AppAssistant.cloneCard(@, {name:"about"}, {})

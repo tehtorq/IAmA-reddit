@@ -1,5 +1,16 @@
 [
     {"source": "app/lib/underscore-min.js"},
+    {"source": "app/models/debugger.js"},
+		{"source": "app/models/request.js"},
+		{"source": "app/models/article.js"},
+		{"source": "app/models/comment.js"},
+		{"source": "app/models/reddit_api.js"},
+		{"source": "app/models/linky.js"},
+		{"source": "app/models/banner.js"},
+		{"source": "app/models/prototype.js"},
+    {"source": "app/models/subreddit.js"},
+    {"source": "app/models/user.js"},
+    {"source": "app/models/message.js"},
     {"source": "app/assistants/app-assistant.js"},
     {"source": "app/assistants/power-scroll-base.js"},
     {"source": "app/assistants/stage-assistant.js"},
@@ -63,15 +74,8 @@
         "scenes": "dock",
         "source": "app/assistants/dock-assistant.js"
     },
-    {"source": "app/models/debugger.js"},
-		{"source": "app/models/request.js"},
-		{"source": "app/models/article.js"},
-		{"source": "app/models/comment.js"},
-		{"source": "app/models/reddit_api.js"},
-		{"source": "app/models/linky.js"},
-		{"source": "app/models/banner.js"},
-		{"source": "app/models/prototype.js"},
-    {"source": "app/models/subreddit.js"},
-    {"source": "app/models/user.js"},
-    {"source": "app/models/message.js"}
+    {
+        "scenes": "about",
+        "source": "app/assistants/about-assistant.js"
+    }
 ]
