@@ -2,10 +2,12 @@
 body.palm-default {
  background: url(../images/gradient-background-light.png) center center repeat;
  background-attachment:fixed;
+ -webkit-background-size: 100% 100%;
 }
 
 .wrappertest {
   background-color : black;
+  -webkit-background-size: 100% 100%;
 }
 
 .thing {

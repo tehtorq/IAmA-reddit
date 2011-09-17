@@ -1,7 +1,7 @@
 class UserAssistant
 
-  constructor: (url) ->
-    @user = url.linky
+  constructor: (params) ->
+    @user = params.user
     @url = 'http://reddit.com/user/' + @user + '.json'
     @listModel =
       items:
@@ -16,7 +16,7 @@ class UserAssistant
         [
           items:
             [{},
-            { label: "overview for " + @user, command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth},
+            { label: "overview for " + @user, command: 'top', icon: "", width: @controller.window.innerWidth},
             {}
             ]
       ]
@@ -122,7 +122,7 @@ class UserAssistant
       thread_title = article.data.link_title
 
     hash =
-      url: '/comments/' + thread_id.substr(3)
+      url: 'http://reddit.com/comments/' + thread_id.substr(3)
       title: thread_title
 
     @controller.stageController.pushScene({name:"article",transition: Mojo.Transition.crossFade}, hash)

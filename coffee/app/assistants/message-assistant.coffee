@@ -26,7 +26,7 @@ class MessageAssistant
       visible: true,
       items: [
           {items:[{},
-                  { label: 'inbox', command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 60},
+                  { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
                   {icon:'search', submenu: "sub-menu", width: 60},
                   {}]}
       ]
@@ -51,30 +51,21 @@ class MessageAssistant
   cleanup: (event) ->
   
   timeFormatter: (propertyValue, model) =>
-    return "" if (model.kind isnt 't1') and (model.kind isnt 't3') and (model.kind isnt 't4')
+    return "" if model.kind not in ['t1','t3','t4']
     StageAssistant.timeFormatter(model.data.created_utc)
   
   descriptionFormatter: (propertyValue, model) =>
-    return "" if (model.kind isnt 't1') and (model.kind isnt 't3') and (model.kind isnt 't4')
-    
-    desc = ""
+    return "" if model.kind not in ['t1','t3','t4']
     
     if model.kind is 't1'
-      desc = "from <b>" + model.data.author + "</b> via " + model.data.subreddit + " sent " + StageAssistant.timeFormatter(model.data.created_utc)
+      "from <b>" + model.data.author + "</b> via " + model.data.subreddit + " sent " + StageAssistant.timeFormatter(model.data.created_utc)
     else
-      desc = "from <b>" + model.data.author + "</b> sent " + StageAssistant.timeFormatter(model.data.created_utc)
-    
-    desc
+      "from <b>" + model.data.author + "</b> sent " + StageAssistant.timeFormatter(model.data.created_utc)
   
   handleCallback: (params) ->
     return params unless params? and params.success
-
-    if (params.type is "message-inbox") or
-        (params.type is "message-unread") or
-        (params.type is "message-messages") or
-        (params.type is "message-comments") or
-        (params.type is "message-selfreply") or
-        (params.type is "message-sent")
+    
+    if params.type in ['message-inbox','message-unread','message-messages','message-comments','message-selfreply','message-sent']
       @handleMessagesResponse(params.response)
   
   loadMessages: (type) ->
@@ -97,9 +88,8 @@ class MessageAssistant
         new Message(@).sent({})
 
   handleMessagesResponse: (response) ->
-    @spinSpinner(false)
-    
     return if response.readyState isnt 4
+    @spinSpinner(false)
     
     children = response.responseJSON.data.children
     
@@ -111,7 +101,7 @@ class MessageAssistant
 
   itemTapped: (event) ->
     item = event.item
-    #@controller.stageController.pushScene({name:"user"},{linky:item.item["author"]})
+    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)

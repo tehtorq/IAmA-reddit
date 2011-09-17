@@ -28,11 +28,12 @@ class FrontpageAssistant extends PowerScrollBase
     top_items = [{label:$L("today"), command:$L("category top t day")},{label:$L("@ hour"), command:$L("category top t hour")},{label:$L("this week"), command:$L("category top t week")},{label:$L("this month"), command:$L("category top t month")},{label:$L("this year"), command:$L("category top t year")}]
 
     @controller.setupWidget('category-submenu', null, {items: [
-      {label:$L("hot"), command:$L("category hot")},
-      {label:$L("new"), items: new_items},
-      {label:$L("controversial"), items: controversial_items},
-      {label:$L("top"), items: top_items},
+      {label:$L("hot"), command:$L("category hot")}
+      {label:$L("new"), items: new_items}
+      {label:$L("controversial"), items: controversial_items}
+      {label:$L("top"), items: top_items}
       {label:$L("saved"), command:$L("category saved")}
+      {label:$L("friends"), command:$L("subreddit friends")}
       ]})
     
     array = []
@@ -72,7 +73,7 @@ class FrontpageAssistant extends PowerScrollBase
         items: [
           {}
           { label: '', submenu: "subreddit-submenu", icon: "search", width: 60}
-          { label: heading, command: 'new-card', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 120}
+          { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 120}
           { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
           {}
         ]
@@ -96,6 +97,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Gallery", command: 'gallery-cmd'}
           {label: "Recent Comments", command: 'recent-comments-cmd'}
           {label: "Messages", command: 'messages-cmd'}
+          {label: "Friends", command: 'friend-scene'}
           {label: "Preferences", command: Mojo.Menu.prefsCmd}
           {label: "About", command: 'about-scene'}
         ]
@@ -124,6 +126,7 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.get('loadMoreButton').hide()
 
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.listen(@controller.document,Mojo.Event.keyup, @handleKeyUp, true)
     Mojo.Event.listen(@controller.document,Mojo.Event.keydown, @handleKeyDown, true)
@@ -156,6 +159,11 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
+    
+  # ready: ->
+  #   min-height:480px does not work ?
+  #   @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
+  #   @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
 
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
@@ -169,7 +177,7 @@ class FrontpageAssistant extends PowerScrollBase
     Article.thumbnailFormatter(model)
     
   voteFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return '' if model.kind not in ['t1','t3']
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
     ''
@@ -443,9 +451,6 @@ class FrontpageAssistant extends PowerScrollBase
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
         @loadArticles()
-      when 'comments-cmd'
-        article = @articles.items[parseInt(params[1])]
-        @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -457,10 +462,10 @@ class FrontpageAssistant extends PowerScrollBase
         @voteOnComment('0', params[1], params[2])
       when 'save-cmd'
         @spinSpinner(true)
-        @saveArticle(@articles.items[params[1]])
+        @saveArticle(@findArticleByName(params[1]))
       when 'unsave-cmd'
         @spinSpinner(true)
-        @unsaveArticle(@articles.items[params[1]])
+        @unsaveArticle(@findArticleByName(params[1]))
   
   findArticleIndex: (article_name) ->
     index = -1
@@ -469,6 +474,9 @@ class FrontpageAssistant extends PowerScrollBase
       index = i if item.data.name is article_name
   
     index
+    
+  findArticleByName: (name) ->
+    _.first _.select @articles.items, (article) -> article.data.name is name
   
   saveArticle: (article) ->
     params =
@@ -526,33 +534,8 @@ class FrontpageAssistant extends PowerScrollBase
       }
         
       return
-    
-    if @isLoggedIn()
-      upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
-      downvote_icon = if article.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
-      upvote_action = if article.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
-      downvote_action = if article.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
-      save_action = if article.data.saved is true then 'unsave-cmd' else 'save-cmd'
-      save_label = if article.data.saved is true then 'Unsave' else 'Save'
-  
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       placeNear:element_tapped,
-       items: [                         
-         {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon},
-         {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon},
-         {label: $L('Comments'), command: 'comments-cmd ' + event.index},
-         {label: $L(save_label), command: save_action + ' ' + event.index},
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}]
-      }
-    else
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       placeNear:element_tapped,
-       items: [
-         {label: $L('Comments'), command: 'comments-cmd ' + event.index},
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}]
-       }
+      
+    @controller.stageController.pushScene({name:"article"}, {article: article})
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -598,7 +581,42 @@ class FrontpageAssistant extends PowerScrollBase
             AppAssistant.cloneCard(@, {name:"gallery"}, {})
           when 'recent-comments-cmd'
             AppAssistant.cloneCard(@, {name:"recent-comment"}, {})
+          when 'friend-scene'
+            AppAssistant.cloneCard(@, {name:"friend"}, {})
           when 'messages-cmd'
             AppAssistant.cloneCard(@, {name:"message"}, {})
           when 'about-scene'
             AppAssistant.cloneCard(@, {name:"about"}, {})
+
+  itemHold: (event) =>
+    event.preventDefault()
+    element_tapped = event.target
+    thing = event.srcElement.up('.thing-container')
+    article = @findArticleByName(thing.id)
+
+    if @isLoggedIn()
+      upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
+      downvote_icon = if article.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
+      upvote_action = if article.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
+      downvote_action = if article.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
+      save_action = if article.data.saved is true then 'unsave-cmd' else 'save-cmd'
+      save_label = if article.data.saved is true then 'Unsave' else 'Save'
+  
+      @controller.popupSubmenu {
+       onChoose: @handleActionSelection,
+       placeNear:element_tapped,
+       items: [                         
+         {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
+         {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
+         {label: $L(save_label), command: save_action + ' ' + article.data.name}
+         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+         ]
+      }
+    else
+      @controller.popupSubmenu {
+       onChoose: @handleActionSelection,
+       placeNear:element_tapped,
+       items: [
+         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+         ]
+       }

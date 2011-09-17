@@ -11,7 +11,7 @@ class GifAssistant
       visible: false,
       items: [
           {items:[{},
-                  { label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 180},
+                  { label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 180},
                   {label: $L('Save'), icon:'save', command:'save'},                  
                   {}]}
       ]
@@ -28,12 +28,14 @@ class GifAssistant
     mydiv = @controller.document.createElement('img')
     mydiv.setAttribute('src', @image_array[0])
     mydiv.setAttribute('alt', @image_array[0])
-    mydiv.setAttribute('style', 'max-width: 320px')
+    mydiv.setAttribute('style', "max-width: #{@controller.window.innerWidth}px")
     #mydiv.setAttribute('align', 'middle')
 
     @controller.get('centered').appendChild(mydiv)
 
   ready: ->
+    @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
+    @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
 
   deactivate: (event) ->
 

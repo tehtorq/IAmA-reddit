@@ -4,6 +4,7 @@
 		{"source": "app/models/request.js"},
 		{"source": "app/models/article.js"},
 		{"source": "app/models/comment.js"},
+		{"source": "app/models/friend.js"},
 		{"source": "app/models/reddit_api.js"},
 		{"source": "app/models/linky.js"},
 		{"source": "app/models/banner.js"},
@@ -73,6 +74,10 @@
     {
         "scenes": "dock",
         "source": "app/assistants/dock-assistant.js"
+    },
+    {
+        "scenes": "friend",
+        "source": "app/assistants/friend-assistant.js"
     },
     {
         "scenes": "about",

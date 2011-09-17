@@ -37,7 +37,7 @@ class DockAssistant
     @timerID = @controller.window.setInterval(@tick.bind(@),15000)
   
   ready: ->
-    @controller.get('ImageId').mojo.manualSize(Mojo.Environment.DeviceInfo.screenWidth,Mojo.Environment.DeviceInfo.screenHeight)
+    @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth,@controller.window.innerHeight)
 
   deactivate: (event) ->
     @controller.enableFullScreenMode(false)

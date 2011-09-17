@@ -2,6 +2,7 @@
 body.palm-default {
  background: url(../images/gradient-background-custom-dark.png) center center repeat;
  background-attachment:fixed;
+ -webkit-background-size: 100% 100%;
 }
 
 .wrappertest {

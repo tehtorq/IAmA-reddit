@@ -66,14 +66,8 @@ class StageAssistant
     urls = @parseUrls(text)
 
     return null unless urls?
-
-    images = []
     
-    _.each urls, (url) ->
-      if urls.type is 'image'
-        images.push(urls.url)
-
-    images
+    _.compact _.map urls, (url) -> urls.url if urls.type is 'image'
 
   @timeFormatter = (time) ->
     newDate = new Date()
@@ -93,7 +87,7 @@ class StageAssistant
     return if units is 1 then units.toString() + ' day ago' else units.toString() + ' days ago'
 
   @scoreFormatter: (model) ->
-    (model.data.ups - model.data.downs) + " points"
+    "#{model.data.ups - model.data.downs} points"
 
   @defaultWindowOrientation: (assistant, orientation) ->
     value = StageAssistant.cookieValue("prefs-lock-orientation", "off")

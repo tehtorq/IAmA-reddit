@@ -86,7 +86,7 @@ class RecentCommentAssistant extends PowerScrollBase
     if params[0] is 'view-cmd'
       #@controller.stageController.popScenesTo("user", {linky:params[1]})
       controller = Mojo.Controller.getAppController().getActiveStageController()
-      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{linky:params[1]})
+      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{user:params[1]})
 
   populateComments: (object) ->
     _.each object.data.children, (comment) =>  

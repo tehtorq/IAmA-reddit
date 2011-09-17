@@ -36,7 +36,7 @@ class ImageAssistant
         {}
         {label: $L('Back'), icon:'back', command:'back'}
         {label: $L('Article'), icon:'info', command:'article'}
-        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 240}
+        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 240}
         {label: $L('Save'), icon:'save', command:'save'}
         {label: $L('Forward'), icon:'forward', command:'forward'}
         {}
@@ -45,7 +45,7 @@ class ImageAssistant
       command_menu_items = [
         {}
         {label: $L('Back'), icon:'back', command:'back'}
-        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 180}
+        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 180}
         {label: $L('Save'), icon:'save', command:'save'}
         {label: $L('Forward'), icon:'forward', command:'forward'}
         {}
@@ -73,7 +73,9 @@ class ImageAssistant
     @updateUrls(0)
 
   ready: ->
-    @controller.get('ImageId').mojo.manualSize(Mojo.Environment.DeviceInfo.screenWidth,Mojo.Environment.DeviceInfo.screenHeight)
+    @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
+    @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
+    @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth,@controller.window.innerHeight)
 
   deactivate: (event) ->
 

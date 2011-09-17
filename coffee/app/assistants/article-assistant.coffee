@@ -10,8 +10,10 @@ class ArticleAssistant extends PowerScrollBase
       @article = params.article.data      
       @url += @article.permalink
       @params.title = @article.title
-    else
-      @url += params.url
+    else if params.url?
+      @url = params.url
+        
+    Mojo.Log.info(@url)
     
     @comments = { items : [] }
 
@@ -45,7 +47,7 @@ class ArticleAssistant extends PowerScrollBase
       visible: true,
       items: [
           {items:[{},
-                  { label: @params.title.substr(0, 40), command: 'top', icon: "", width: Mojo.Environment.DeviceInfo.screenWidth - 60},
+                  { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
                   {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
                   {}]}
       ]
@@ -75,17 +77,27 @@ class ArticleAssistant extends PowerScrollBase
     @itemTappedBind = @itemTapped.bind(@)
 
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
+    Mojo.Event.listen(@controller.document, Mojo.Event.webViewLinkClicked, @itemTappedBind)
+    Mojo.Event.listen(@controller.document, Mojo.Event.tap, @itemTappedBind)
+    
+    @controller.get("comment-list").observe("click", (event) =>
+      element = event.findElement("a")
+      
+      if element?
+        event.preventDefault()
+        @handleClickedLink(element)
+    )
 
   activate: (event) ->
     super
     StageAssistant.defaultWindowOrientation(@, "free")
     
-    if event?
-      if event.replied is true
-        item = @comments.items[0]
-        @comments.items.clear()
-        @comments.items.push(item)
-        @jump_to_comment = event.comment_id
+    if event? and event.replied is true
+      item = @comments.items[0]
+      @comments.items.clear()
+      @comments.items.push(item)
+      @jump_to_comment = event.comment_id
     
     if @comments.items.length < 2
       @controller.get('loadMoreButton').mojo.activate()
@@ -121,11 +133,11 @@ class ArticleAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
 
   timeFormatter: (propertyValue, model) =>
-    return if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return if model.kind not in ['t1','t3']
     StageAssistant.timeFormatter(model.data.created_utc)
 
   bodyFormatter: (propertyValue, model) =>
-    if (model.kind isnt 't1') and (model.kind isnt 't3')
+    if model.kind not in ['t1','t3']
       return "load more comments" if model.kind is 'more'
       return ""
     
@@ -146,36 +158,36 @@ class ArticleAssistant extends PowerScrollBase
     content
 
   scoreFormatter: (propertyValue, model) =>
-    return "" if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return "" if model.kind not in ['t1','t3']
     (model.data.ups - model.data.downs) + " points"
 
   voteFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return '' if model.kind not in ['t1','t3']
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
     ''
   
   tagClassFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return '' if model.kind not in ['t1','t3']
     if model.data.author is @article.author then 'comment_tag' else 'comment_tag_hidden'
 
   cssclassFormatter: (propertyValue, model) =>
-    if (model.kind isnt 't1') and (model.kind isnt 't3')
+    if model.kind not in ['t1','t3']
       return "load_more_comment" is model.kind is 'more'
       return ""
     
     'reddit_comment'
 
   indentFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 'more')
-    return 4 + 6 * model.data.indent + ""
+    return '' if model.kind not in ['t1','more']
+    4 + 6 * model.data.indent + ""
 
   shadowindentFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 'more')
-    return 8 + 6 * model.data.indent + ""
+    return '' if model.kind not in ['t1','more']
+    8 + 6 * model.data.indent + ""
 
   thumbnailFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return '' if model.kind not in ['t1','t3']
     
     image_link = null
 
@@ -203,7 +215,7 @@ class ArticleAssistant extends PowerScrollBase
     ""
 
   easylinksFormatter: (propertyValue, model) =>
-    return '' if (model.kind isnt 't1') and (model.kind isnt 't3')
+    return '' if model.kind not in ['t1','t3']
     
     hide_thumbnails = StageAssistant.cookieValue("prefs-hide-easylinks", "off")
     
@@ -262,6 +274,13 @@ class ArticleAssistant extends PowerScrollBase
 
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
+    
+  updateHeading: (text) ->
+    text = '' unless text?
+    text = text.substr(0, 40)
+
+    @viewMenuModel.items[0].items[1].label = text
+    @controller.modelChanged(@viewMenuModel)
 
   handleCommentActionSelection: (command) ->
     return unless command?
@@ -276,7 +295,7 @@ class ArticleAssistant extends PowerScrollBase
         )
       when 'view-cmd'
         @controller.stageController.pushScene(
-          {name:"user",transition: Mojo.Transition.crossFade},{linky:params[1]}
+          {name:"user",transition: Mojo.Transition.crossFade},{user:params[1]}
         )
       when 'upvote-cmd'
         @spinSpinner(true)
@@ -297,6 +316,7 @@ class ArticleAssistant extends PowerScrollBase
   populateComments: (object) ->
     unless @article?
       @article = object[0].data.children[0].data
+      @updateHeading(@article.title)
       @comments.items.push({kind: 't3', data: object[0].data.children[0].data})
       @controller.modelChanged(@comments)
     
@@ -441,29 +461,12 @@ class ArticleAssistant extends PowerScrollBase
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
-
+    
   itemTapped: (event) ->
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0
     url = null
-    
-    # handle links & spoilers
-    
-    if element_tapped.tagName is 'A'
-      if (element_tapped.href is 'file:///s') or (element_tapped.href is 'file:///b') or (element_tapped.href is 'file:///?')
-        element_tapped.update(element_tapped.title)
-      else
-        if element_tapped.title? and (element_tapped.title.length > 0)
-          @controller.showAlertDialog({   
-            #title: "Title",
-            message: element_tapped.title,
-            choices:[    
-              {label: "Ok", value:"", type:'dismiss'}    
-            ]
-          })
-      
-      return
     
     # click on OP tag to jump to next comment by OP
     
@@ -479,25 +482,6 @@ class ArticleAssistant extends PowerScrollBase
           @controller.get('comment-list').mojo.revealItem(index, true)
           return
       
-      return
-
-    if element_tapped.className is 'linky'
-      #event.originalEvent.stopPropagation()
-      #event.stopPropagation()
-
-      linky = Linky.parse(element_tapped.href)
-
-      if linky.type is 'image'
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
-      else if ((linky.type is 'youtube_video') or (linky.type is 'web'))
-        @controller.serviceRequest("palm://com.palm.applicationManager", {
-          method : "open",
-          parameters:
-            target: linky.url,
-            onSuccess: ->
-            onFailure: ->
-        })
-
       return
 
     if element_tapped.id.indexOf('image_') isnt -1
@@ -528,6 +512,14 @@ class ArticleAssistant extends PowerScrollBase
         })
 
       return
+
+  itemHold: (event) =>
+    event.preventDefault()
+    element_tapped = event.target
+    thing = event.srcElement.up('.thing-container')    
+    id = thing.id
+    
+    comment = _.first _.select @comments.items, (item) => item.data.name is id
     
     if @isLoggedIn()  
       upvote_icon = if comment.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
@@ -551,3 +543,48 @@ class ArticleAssistant extends PowerScrollBase
                  items: [
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]
                  })
+  
+  handleClickedLink: (element) ->
+    
+    Mojo.Log.info("#{element.href} clicked")
+    
+    # handle gameofthrones links
+    
+    return element.update(element.title) if element.href in ['file:///s','file:///b','file:///?']
+    
+    # handle taps on ragefaces
+    
+    if element.title? and (element.title.length > 0)
+      @controller.showAlertDialog({   
+        #title: "Title",
+        message: element.title,
+        choices:[    
+          {label: "Ok", value:"", type:'dismiss'}    
+        ]
+      })
+      
+      return
+      
+    # parse type of url
+    
+    if element.href.indexOf('http://www.reddit.com/') is 0
+      if element.href.indexOf('/comments/') isnt -1
+        return AppAssistant.cloneCard(@, {name:"article",transition: Mojo.Transition.crossFade},{url:element.href,title: "Link"})
+      else if element.href.indexOf('/user/') isnt -1
+        user = element.href.replace('http://www.reddit.com/user/', '')
+        return AppAssistant.cloneCard(@, {name:"user",transition: Mojo.Transition.crossFade},{user:user})
+      else
+        return AppAssistant.cloneCard(@, {name:"frontpage",transition: Mojo.Transition.crossFade},{url:element.href})
+      
+    linky = Linky.parse(element.href)
+    
+    if linky.type is 'image'
+      AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+    else if (linky.type is 'youtube_video') or (linky.type is 'web')
+      @controller.serviceRequest("palm://com.palm.applicationManager", {
+        method : "open",
+        parameters:
+          target: linky.url,
+          onSuccess: ->
+          onFailure: ->
+      })
