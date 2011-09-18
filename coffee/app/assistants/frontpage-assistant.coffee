@@ -25,7 +25,7 @@ class FrontpageAssistant extends PowerScrollBase
     
     new_items = [{label:$L("what's new"), command:$L("category new")},{label:$L("new"), command:$L("category new sort new")},{label:$L("rising"), command:$L("category new sort rising")}]
     controversial_items = [{label:$L("today"), command:$L("category controversial t day")},{label:$L("this hour"), command:$L("category controversial t hour")},{label:$L("this week"), command:$L("category controversial t week")},{label:$L("this month"), command:$L("category controversial t month")},{label:$L("this year"), command:$L("category controversial t year")},{label:$L("all time"), command:$L("category controversial t all")}]
-    top_items = [{label:$L("today"), command:$L("category top t day")},{label:$L("@ hour"), command:$L("category top t hour")},{label:$L("this week"), command:$L("category top t week")},{label:$L("this month"), command:$L("category top t month")},{label:$L("this year"), command:$L("category top t year")}]
+    top_items = [{label:$L("today"), command:$L("category top t day")},{label:$L("this hour"), command:$L("category top t hour")},{label:$L("this week"), command:$L("category top t week")},{label:$L("this month"), command:$L("category top t month")},{label:$L("this year"), command:$L("category top t year")}]
 
     @controller.setupWidget('category-submenu', null, {items: [
       {label:$L("hot"), command:$L("category hot")}
@@ -159,12 +159,7 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
-    
-  # ready: ->
-  #   min-height:480px does not work ?
-  #   @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
-  #   @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
-
+  
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
       
@@ -354,8 +349,10 @@ class FrontpageAssistant extends PowerScrollBase
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
       @controller.get('article-list').mojo.noticeRemovedItems(0, length)
-    
-    if @reddit_api.subreddit?
+
+    if @reddit_api.category? and (@reddit_api.category is 'saved')
+      @updateHeading(@reddit_api.category)    
+    else if @reddit_api.subreddit?
       @updateHeading(@reddit_api.subreddit)
     else if @reddit_api.domain?
       @updateHeading(@reddit_api.domain)
