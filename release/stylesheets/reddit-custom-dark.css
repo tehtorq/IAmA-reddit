@@ -134,7 +134,7 @@ body.palm-default {
   padding: 0px 4px;
   margin-top:0px;  
   background: url(../images/comment-light.png) no-repeat;
-  background-size: 100%;
+  -webkit-background-size: 100% 100%;
 }
 
 .comment_tag {
