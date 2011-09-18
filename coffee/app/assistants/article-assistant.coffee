@@ -428,7 +428,7 @@ class ArticleAssistant extends PowerScrollBase
           id: "com.palm.app.email",
           params:
             summary: @article.title,
-            text: 'http://reddit.com' + @article.data.permalink,
+            text: 'http://reddit.com' + @article.permalink,
             recipients: [{
               type:"email",
               role:1,
@@ -446,7 +446,7 @@ class ArticleAssistant extends PowerScrollBase
         parameters:
           id: "com.palm.app.messaging",
           params:
-            messageText: @article.title + "\n\n" + 'http://reddit.com' + @article.data.permalink
+            messageText: @article.title + "\n\n" + 'http://reddit.com' + @article.permalink
       }
     )
 
