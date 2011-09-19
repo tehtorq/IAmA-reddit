@@ -13,58 +13,61 @@ class FriendAssistant
       @model = {spinning: true}
     )
     
-    @controller.setupWidget(Mojo.Menu.commandMenu,
-      { menuClass:'no-fade' },
-      items:
-        [
-          toggleCmd : "friends-cmd",
-          items: 
-            [
-              {}
-              { label : "Friends", command : "friends-cmd" }
-              { label : "Submissions", command : "submissions-cmd" }
-              { label : "Comments", command : "comments-cmd" }
-              {}
-            ]
-        ]
-    )
+    # @controller.setupWidget(Mojo.Menu.commandMenu,
+    #   { menuClass:'no-fade' },
+    #   items:
+    #     [
+    #       toggleCmd : "friends-cmd",
+    #       items: 
+    #         [
+    #           {}
+    #           { label : "Friends", command : "friends-cmd" }
+    #           { label : "Submissions", command : "submissions-cmd" }
+    #           { label : "Comments", command : "comments-cmd" }
+    #           {}
+    #         ]
+    #     ]
+    # )
     
-    @controller.setupWidget 'sub-menu', null, {items: [
-      {label:$L("all"), command:$L("message inbox")}
-      {label:$L("unread"), command:$L("message unread")}
-      {label:$L("messages"), command:$L("message messages")}
-      {label:$L("comment replies"), command:$L("message comments")}
-      {label:$L("post replies"), command:$L("message selfreply")}
-      {label:$L("sent"), command:$L("message sent")}
-    ]}
+    # @controller.setupWidget 'sub-menu', null, {items: [
+    #   {label:$L("all"), command:$L("message inbox")}
+    #   {label:$L("unread"), command:$L("message unread")}
+    #   {label:$L("messages"), command:$L("message messages")}
+    #   {label:$L("comment replies"), command:$L("message comments")}
+    #   {label:$L("post replies"), command:$L("message selfreply")}
+    #   {label:$L("sent"), command:$L("message sent")}
+    # ]}
     
-    @viewMenuModel =
-      visible: true,
-      items: [
-          {items:[{},
-                  { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
-                  {icon:'search', submenu: "sub-menu", width: 60},
-                  {}]}
-      ]
+    # @viewMenuModel =
+    #   visible: true,
+    #   items: [
+    #       {items:[{},
+    #               { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+    #               {icon:'search', submenu: "sub-menu", width: 60},
+    #               {}]}
+    #   ]
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    # @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     @controller.setupWidget("contentarea", {
       itemTemplate: "friend/list-item"
       emptyTemplate: "friend/emptylist"
       nullItemTemplate: "list/null_item_template"
-      swipeToDelete: true
+      # swipeToDelete: true
+      #addItemLabel: '+ Add'
       }, @listModel)
 
     @controller.listen("contentarea", Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listDelete, @handleDeleteItem)
+    # Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listDelete, @handleDeleteItem)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadFriends()
 
   deactivate: (event) ->
+    
   cleanup: (event) ->
+    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
   
   handleCallback: (params) ->
     return params unless params? and params.success
@@ -115,10 +118,7 @@ class FriendAssistant
 
   itemTapped: (event) =>
     item = event.item
-    
-    @controller.stageController.pushScene(
-      {name:"user",transition: Mojo.Transition.crossFade},{user:item.name}
-    )
+    AppAssistant.cloneCard(@, {name:"user"}, {user:item.name})
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)

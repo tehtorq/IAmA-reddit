@@ -294,9 +294,7 @@ class ArticleAssistant extends PowerScrollBase
           {thing_id:params[1], user: params[2], modhash: @modhash, subreddit: params[4]}
         )
       when 'view-cmd'
-        @controller.stageController.pushScene(
-          {name:"user",transition: Mojo.Transition.crossFade},{user:params[1]}
-        )
+        AppAssistant.cloneCard(@, {name:"user"}, {user:params[1]})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])

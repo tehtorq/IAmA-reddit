@@ -180,7 +180,7 @@ class GalleryAssistant
 
     switch event.command
       when 'frontpage-cmd'
-        controller.pushScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+        AppAssistant.cloneCard(@, {name:"frontpage"}, {})
       when 'manage-cmd'
         AppAssistant.cloneCard(@, {name:"prefs"}, {})
       

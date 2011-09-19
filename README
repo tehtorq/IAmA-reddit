@@ -1,6 +1,11 @@
 
 Changelog:
 
+0.1.8:
+- layout fixes for Pre 3
+- basic listing of friends and /friends subreddit
+- clicking embedded reddit links should now display through app instead of browser 
+
 0.1.7:
 - Maintenance release, rewritten in coffeescript
 

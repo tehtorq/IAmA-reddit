@@ -97,7 +97,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Gallery", command: 'gallery-cmd'}
           {label: "Recent Comments", command: 'recent-comments-cmd'}
           {label: "Messages", command: 'messages-cmd'}
-          {label: "Friends", command: 'friend-scene'}
+          {label: "List Friends", command: 'friend-scene'}
           {label: "Preferences", command: Mojo.Menu.prefsCmd}
           {label: "About", command: 'about-scene'}
         ]
