@@ -215,6 +215,10 @@ body.palm-default {
   opacity: 0.3;
 }
 
+.palm-scrim {
+  -webkit-background-size: 100% 100%;
+}
+
 /*#mojo-scene-gif-scene-scroller {
   background-color: black;
 }*/
