@@ -20,3 +20,6 @@ class Message
   
   sent: (params) ->
     new Request(@callback).get('http://reddit.com/message/sent/.json', params, 'message-sent')
+    
+  compose: (params) ->
+    new Request(@callback).post('http://www.reddit.com/api/compose', params, 'message-compose')

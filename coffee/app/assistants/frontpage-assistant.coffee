@@ -87,18 +87,21 @@ class FrontpageAssistant extends PowerScrollBase
       visible: true
       items:
         [
+          {label: "Friends", command: 'friend-scene'}
+          {label: "Gallery", command: 'gallery-cmd'}
           {label: "Manage User", items:
             [
               {label: "Login", command: 'login-cmd'}
               {label: "Register", command: 'register-cmd'}
               #{label: "Logout", command: 'logout-cmd'}
             ]}
-          {label: "Reddits", command: 'reddits-cmd'}
-          {label: "Gallery", command: 'gallery-cmd'}
+          {label: "Messages", items:
+            [
+              {label: "Compose", command: 'compose-message-cmd'}
+              {label: "Inbox", command: 'messages-cmd'}
+            ]}
           {label: "Recent Comments", command: 'recent-comments-cmd'}
-          {label: "Messages", command: 'messages-cmd'}
-          {label: "Compose Message", command: 'compose-message-cmd'}
-          {label: "List Friends", command: 'friend-scene'}
+          {label: "Reddits", command: 'reddits-cmd'}
           {label: "Preferences", command: Mojo.Menu.prefsCmd}
           {label: "About", command: 'about-scene'}
         ]

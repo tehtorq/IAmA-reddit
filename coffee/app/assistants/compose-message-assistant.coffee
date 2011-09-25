@@ -44,6 +44,28 @@ class ComposeMessageAssistant
 
   displayComposeMessage: (object) ->
     @fetchHTMLComposePage()
+    
+  handleCallback: (params) ->
+    return params unless params? and params.success
+
+    if params.type is "message-compose"
+      @handleComposeMessageResponse(params.response)
+      
+  handleComposeMessageResponse: (response) ->
+    @controller.get('sendButton').hide()
+    json_string = JSON.stringify(response.responseText)
+  
+    if json_string.indexOf('your message has been delivered') isnt -1
+      new Banner("Message sent to #{@recipientModel.value}").send()
+      return
+    else if json_string.indexOf('BAD_CAPTCHA') isnt -1
+      new Banner("Are you human?").send()
+    else if json_string.indexOf('USER_DOESNT_EXIST') isnt -1
+      new Banner("User doesn't exist!").send()
+    else
+      new Banner("Something went wrong!").send()
+        
+    @fetchHTMLComposePage()
 
   sendMessage: =>
     to = @recipientModel.value
@@ -51,7 +73,7 @@ class ComposeMessageAssistant
     body = @bodyModel.value
     captcha = @captchaModel.value
 
-    postdata =
+    params =
       to: to
       subject: subject
       text: body
@@ -59,39 +81,11 @@ class ComposeMessageAssistant
       iden: @iden
       uh: @modhash
       
-    Mojo.Log.info(JSON.stringify(postdata))
-
-    new Ajax.Request(   
-      'http://www.reddit.com/api/compose'
-      {
-        method: "post"   
-        parameters: postdata
-        # parameters:
-        #   customHttpHeaders: [
-        #     'Referer: http://www.reddit.com/message/compose/'
-        #     'x-reddit-version: 1.1'
-        #   ]
-        #Referer: 'http://www.reddit.com/message/compose?to=' + to
-        onSuccess: (inTransport) =>
-          Mojo.Log.info('success')
-          responseText = inTransport.responseJSON
-          json_string = Object.toJSON(responseText)
-          
-          Mojo.Log.info(JSON.stringify(responseText))
-        
-          if json_string.indexOf('your message has been delivered') isnt -1
-            @debug('Success!')
-          else
-            @debug('Failure!')                 
-                    
-        onFailure: (inTransport) ->
-          Mojo.Log.info('failure')
-        onException: (inTransport, inException) ->
-          Mojo.Log.info('exception')
-      }
-    )
+    new Message(@).compose(params)
 
   fetchHTMLComposePage: ->
+    @controller.get('sendButton').hide()
+    
     new Ajax.Request(
       @url
       {
@@ -120,6 +114,7 @@ class ComposeMessageAssistant
           url = 'http://www.reddit.com/captcha/' + @iden + '.png'
 
           @controller.get('image_id').src = url
+          @controller.get('sendButton').show()
         onFailure: (inTransport) =>
           $("contentarea").update("Failure")
         onException: (inTransport, inException) =>
