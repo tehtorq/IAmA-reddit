@@ -20,8 +20,7 @@ class ReplyAssistant
 
     @sendButtonModel = {label : "Send"}
     @controller.setupWidget("sendButton", {type:Mojo.Widget.activityButton}, @sendButtonModel)
-    @sendMessageBind = @sendMessage.bind(@)
-    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessageBind)
+    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "up")
@@ -31,7 +30,7 @@ class ReplyAssistant
 
   cleanup: (event) ->
     @reply_data = null
-    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessageBind)
+    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   handleCallback: (params) ->
     return params unless params? and params.success
@@ -41,7 +40,7 @@ class ReplyAssistant
       new Banner("Replied to " + @reply_data.user + ".").send()
       @controller.stageController.popScene({replied: true, comment_id: @reply_data.thing_id})
 
-  sendMessage: ->
+  sendMessage: =>
     @displayButtonSending()
 
     params =

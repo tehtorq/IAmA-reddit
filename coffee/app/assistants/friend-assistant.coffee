@@ -13,42 +13,6 @@ class FriendAssistant
       @model = {spinning: true}
     )
     
-    # @controller.setupWidget(Mojo.Menu.commandMenu,
-    #   { menuClass:'no-fade' },
-    #   items:
-    #     [
-    #       toggleCmd : "friends-cmd",
-    #       items: 
-    #         [
-    #           {}
-    #           { label : "Friends", command : "friends-cmd" }
-    #           { label : "Submissions", command : "submissions-cmd" }
-    #           { label : "Comments", command : "comments-cmd" }
-    #           {}
-    #         ]
-    #     ]
-    # )
-    
-    # @controller.setupWidget 'sub-menu', null, {items: [
-    #   {label:$L("all"), command:$L("message inbox")}
-    #   {label:$L("unread"), command:$L("message unread")}
-    #   {label:$L("messages"), command:$L("message messages")}
-    #   {label:$L("comment replies"), command:$L("message comments")}
-    #   {label:$L("post replies"), command:$L("message selfreply")}
-    #   {label:$L("sent"), command:$L("message sent")}
-    # ]}
-    
-    # @viewMenuModel =
-    #   visible: true,
-    #   items: [
-    #       {items:[{},
-    #               { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
-    #               {icon:'search', submenu: "sub-menu", width: 60},
-    #               {}]}
-    #   ]
-    
-    # @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
-    
     @controller.setupWidget("contentarea", {
       itemTemplate: "friend/list-item"
       emptyTemplate: "friend/emptylist"
@@ -57,8 +21,8 @@ class FriendAssistant
       #addItemLabel: '+ Add'
       }, @listModel)
 
-    @controller.listen("contentarea", Mojo.Event.listTap, @itemTapped)
-    # Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -68,6 +32,7 @@ class FriendAssistant
     
   cleanup: (event) ->
     Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
   
   handleCallback: (params) ->
     return params unless params? and params.success
@@ -119,6 +84,19 @@ class FriendAssistant
   itemTapped: (event) =>
     item = event.item
     AppAssistant.cloneCard(@, {name:"user"}, {user:item.name})
+    
+  itemHold: (event) =>
+    event.preventDefault()
+    element_tapped = event.target
+    thing = event.srcElement.up('.thing-container')    
+    friend = thing.id
+
+    @controller.popupSubmenu({
+               onChoose: @handleFriendActionSelection,
+               placeNear:element_tapped,
+               items: [
+                 {label: $L("Message"), command: "message-cmd #{friend}"}]
+               })
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -131,7 +109,15 @@ class FriendAssistant
     switch params[0]
       when 'top'
         @scrollToTop()
-      #when 'remove-friend'
+        
+  handleFriendActionSelection: (command) =>
+    return unless command?
+
+    params = command.split(' ')
+
+    switch params[0]
+      when 'message-cmd'
+        AppAssistant.cloneCard(@, {name:"compose-message"}, {to:params[1]})
   
   spinSpinner: (bool) ->
     if bool

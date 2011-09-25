@@ -17,9 +17,7 @@ class RecentCommentAssistant extends PowerScrollBase
       shadowindent: @shadowindentFormatter
     }, @commentModel)
 
-    @itemTappedBind = @itemTapped.bind(@)
-
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   activate: (event) ->
     super
@@ -36,7 +34,7 @@ class RecentCommentAssistant extends PowerScrollBase
     @controller.window.clearInterval(@timerID)
     Request.clear_all()
 
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
   
   tick: =>
     current_seconds = (new Date()).getTime() / 1000
@@ -125,7 +123,7 @@ class RecentCommentAssistant extends PowerScrollBase
     return params unless params? and params.success
     @handlefetchCommentsResponse(params.response) if params.type is "comment-recent"
 
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0

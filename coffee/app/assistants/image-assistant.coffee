@@ -58,13 +58,9 @@ class ImageAssistant
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
 
-    @changedImageBind = @changedImage.bindAsEventListener(@)
-    @windowResizeBind = @handleWindowResize.bindAsEventListener(@)
-    @handleTapBind = @handleTap.bindAsEventListener(@)
-
-    Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImageBind)
-    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTapBind)
-    Mojo.Event.listen(@controller.window, 'resize', @windowResizeBind, false)
+    Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
+    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
+    Mojo.Event.listen(@controller.window, 'resize', @handleWindowResize, false)
 
   activate: (event) ->
     @controller.get('image_title').hide()
@@ -80,11 +76,11 @@ class ImageAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImageBind)
-    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTapBind)
-    Mojo.Event.stopListening(@controller.window, 'resize', @windowResizeBind, false)
+    Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
+    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
+    Mojo.Event.stopListening(@controller.window, 'resize', @handleWindowResize, false)
 
-  changedImage: ->
+  changedImage: =>
     @spinSpinner(false)
   
   spinSpinner: (bool) ->
@@ -93,7 +89,7 @@ class ImageAssistant
     else
       @controller.get('loading').hide()
 
-  handleWindowResize: (event) ->
+  handleWindowResize: (event) =>
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth, @controller.window.innerHeight)
 
   handleCommand: (event) ->
@@ -152,7 +148,7 @@ class ImageAssistant
     
     @controller.get('image_title').update(@article_array[@current_index].data.title)
 
-  handleTap: ->
+  handleTap: =>
     @cmdMenuModel.visible = !@cmdMenuModel.visible
     @controller.modelChanged(@cmdMenuModel)
     @controller.get('image_title').toggle()

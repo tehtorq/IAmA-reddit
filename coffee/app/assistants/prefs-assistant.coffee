@@ -47,7 +47,9 @@ class PrefsAssistant
     )
     
     @controller.setupWidget("articles_per_page_radio_button",
-      { choices : [
+      { 
+        label: $L('Articles per page'),
+        choices : [
                     { label : "10", value : "10" },
                     { label : "25", value : "25" },
                     { label : "50", value : "50" },
@@ -56,7 +58,8 @@ class PrefsAssistant
       {value: value5}
     )
                                                         
-    @controller.setupWidget("theme_radio_button", { 
+    @controller.setupWidget("theme_radio_button", {
+      label: $L('Theme'), 
       choices: 
         [
           { label : "light", value : "stylesheets/reddit-light.css" }
@@ -64,6 +67,7 @@ class PrefsAssistant
           { label : "custom", value : "stylesheets/reddit-custom.css" }
           #{ label : "custom-dark", value : "stylesheets/reddit-custom-dark.css" }
           { label : "kuler", value : "stylesheets/reddit-kuler.css" }
+          #{ label : "lcd", value : "stylesheets/lcd-theme.css" }
         ]
       }
       {value: value7}
@@ -79,6 +83,7 @@ class PrefsAssistant
     reddits.unshift({label: 'frontpage', value: 'frontpage'})
     
     @controller.setupWidget("frontpage_button",
+      label: $L('Default Frontpage'), 
       { choices : reddits },
       {value: value8}
     )

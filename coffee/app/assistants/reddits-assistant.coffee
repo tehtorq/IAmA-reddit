@@ -74,7 +74,6 @@ class RedditsAssistant
       emptyTemplate : "reddits/emptylist",
       nullItemTemplate: "list/null_item_template",
       swipeToDelete: true,
-      #reorderable: true,
       preventDeleteProperty: 'prevent_delete',
       lookahead : 25,
       renderLimit : 1000
@@ -86,17 +85,11 @@ class RedditsAssistant
 
     @controller.setupWidget('filterfield', {delay: 2000})
 
-    @controller.listen('filterfield', Mojo.Event.filter, @filter.bind(@))
+    @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
-    @itemTappedBind = @itemTapped.bind(@)
-    @loadMoreRedditsBind = @loadMoreReddits.bind(@)
-    @handleDeleteItemBind = @handleDeleteItem.bind(@)
-    #@handleCategorySwitchBind = @handleCategorySwitch.bind(@)
-
-    #Mojo.Event.listen(@controller.get('category-list'),Mojo.Event.listTap, @handleCategorySwitchBind)
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTappedBind)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreRedditsBind)
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItemBind)
+    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
+    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
 
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)
@@ -112,11 +105,11 @@ class RedditsAssistant
   cleanup: (event) ->
     Request.clear_all()
 
-    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTappedBind)
-    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItemBind)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreRedditsBind)
+    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
 
-  filter: (filterEvent) ->
+  filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
 
     @controller.get('filterfield').mojo.close()
@@ -169,10 +162,10 @@ class RedditsAssistant
 
     new Subreddit(@).unsubscribe(params)
 
-  handleDeleteItem: (event) ->
+  handleDeleteItem: (event) =>
     @unsubscribe(event.item.name)
 
-  loadMoreReddits: ->
+  loadMoreReddits: =>
     @loadReddits()
 
   loadReddits: ->
@@ -243,7 +236,7 @@ class RedditsAssistant
     @activityButtonModel.disabled = true
     @controller.modelChanged(@activityButtonModel)
 
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     item = event.item
     element_tapped = event.originalEvent.target
 
@@ -277,7 +270,7 @@ class RedditsAssistant
       })
     else
       @controller.popupSubmenu({
-               onChoose: @handleActionCommand.bind(@),
+               onChoose: @handleActionCommand,
                placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name}]
       })

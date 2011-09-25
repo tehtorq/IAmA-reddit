@@ -41,7 +41,7 @@ class MessageAssistant
         description: @descriptionFormatter
       }, @listModel)
 
-    @controller.listen("contentarea", Mojo.Event.listTap, @itemTapped.bind(@))
+    @controller.listen("contentarea", Mojo.Event.listTap, @itemTapped)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -49,6 +49,7 @@ class MessageAssistant
 
   deactivate: (event) ->
   cleanup: (event) ->
+    @controller.stopListening("contentarea", Mojo.Event.listTap, @itemTapped)
   
   timeFormatter: (propertyValue, model) =>
     return "" if model.kind not in ['t1','t3','t4']
@@ -99,7 +100,7 @@ class MessageAssistant
 
     @controller.modelChanged(@listModel)
 
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     item = event.item
     #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
   

@@ -30,8 +30,6 @@ class DockAssistant
       }
     )
 
-    @loadImagesBind = @loadImages.bind(@)
-
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
     @timerID = @controller.window.setInterval(@tick.bind(@),15000)
@@ -84,7 +82,7 @@ class DockAssistant
     @last_article_id = null
     @thumbs.clear()
 
-  loadImages: ->
+  loadImages: =>
     return if @fetching_images
     
     @fetching_images = true

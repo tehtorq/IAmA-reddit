@@ -97,6 +97,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Gallery", command: 'gallery-cmd'}
           {label: "Recent Comments", command: 'recent-comments-cmd'}
           {label: "Messages", command: 'messages-cmd'}
+          {label: "Compose Message", command: 'compose-message-cmd'}
           {label: "List Friends", command: 'friend-scene'}
           {label: "Preferences", command: Mojo.Menu.prefsCmd}
           {label: "About", command: 'about-scene'}
@@ -105,7 +106,7 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
 
     @controller.setupWidget('filterfield', {delay: 2000})
-    @controller.listen('filterfield', Mojo.Event.filter, @filter.bind(@))
+    @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
     @controller.setupWidget("article-list", {
       itemTemplate: "frontpage/article"
@@ -177,7 +178,7 @@ class FrontpageAssistant extends PowerScrollBase
     return '-1' if model.data.likes is false
     ''
     
-  filter: (filterEvent) ->
+  filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
     
     @controller.get('filterfield').mojo.close()
@@ -206,12 +207,6 @@ class FrontpageAssistant extends PowerScrollBase
       @reddit_api.setCategory(params[1], {key: params[2], value: params[3]})
     
     @loadArticles()
-  
-  showMessageInbox: ->
-    @controller.stageController.pushScene({name:"message",transition: Mojo.Transition.crossFade},{action:'inbox'})
-  
-  showComposeMessage: ->
-    @controller.stageController.pushScene({name:"compose-message",transition: Mojo.Transition.crossFade},{action:'compose'})
   
   handleCallback: (params) ->
     return params unless params? and params.success
@@ -582,6 +577,8 @@ class FrontpageAssistant extends PowerScrollBase
             AppAssistant.cloneCard(@, {name:"friend"}, {})
           when 'messages-cmd'
             AppAssistant.cloneCard(@, {name:"message"}, {})
+          when 'compose-message-cmd'
+            AppAssistant.cloneCard(@, {name:"compose-message"},{})
           when 'about-scene'
             AppAssistant.cloneCard(@, {name:"about"}, {})
 

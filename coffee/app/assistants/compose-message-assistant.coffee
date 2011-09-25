@@ -1,39 +1,38 @@
 class ComposeMessageAssistant
   
-  constructor: (action) ->
-    @action = action.action
+  constructor: (params) ->
     @url = 'http://reddit.com' + '/message/compose/'
-    @recipientModel = { items : [] }
-    @subjectModel = { items : [] }
-    @bodyModel = { items : [] }
-    @captchaModel = { items : [] }
+    @recipientModel = { value : params.to || '' }
+    @subjectModel = { value : '' }
+    @bodyModel = { value : '' }
+    @captchaModel = { value : '' }
 
-    setup: ->
-      StageAssistant.setTheme(@);
+  setup: ->
+    StageAssistant.setTheme(@)
 
-      @controller.setupWidget("recipientTextFieldId",
-        { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
-        @recipientModel
-        )
+    @controller.setupWidget("recipientTextFieldId",
+      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
+      @recipientModel
+      )
 
-      @controller.setupWidget("subjectTextFieldId",
-        { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
-        @subjectModel
-        )
+    @controller.setupWidget("subjectTextFieldId",
+      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
+      @subjectModel
+      )
 
-      @controller.setupWidget("bodyTextFieldId",
-        { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, multiline: true },
-        @bodyModel
-        )
+    @controller.setupWidget("bodyTextFieldId",
+      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, multiline: true },
+      @bodyModel
+      )
 
-      @controller.setupWidget("captchaTextFieldId",
-        { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
-        @captchaModel
-        )
+    @controller.setupWidget("captchaTextFieldId",
+      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
+      @captchaModel
+      )
 
-      @controller.setupWidget("sendButton", {}, { label : "Send"});
+    @controller.setupWidget("sendButton", {}, { label : "Send"})
 
-      Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage.bind(@))
+    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "up")
@@ -41,38 +40,44 @@ class ComposeMessageAssistant
 
   deactivate: (event) ->
   cleanup: (event) ->
+    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   displayComposeMessage: (object) ->
     @fetchHTMLComposePage()
 
-  sendMessage: ->
+  sendMessage: =>
     to = @recipientModel.value
     subject = @subjectModel.value
     body = @bodyModel.value
     captcha = @captchaModel.value
 
-    postdata:
+    postdata =
       to: to
       subject: subject
       text: body
       captcha: captcha
       iden: @iden
       uh: @modhash
+      
+    Mojo.Log.info(JSON.stringify(postdata))
 
     new Ajax.Request(   
       'http://www.reddit.com/api/compose'
       {
         method: "post"   
-        postBody: postdata
-        parameters:
-          customHttpHeaders: [
-            'Referer: http://www.reddit.com/message/compose/'
-            'x-reddit-version: 1.1'
-          ]
-        Referer: 'http://www.reddit.com/message/compose?to=' + to
+        parameters: postdata
+        # parameters:
+        #   customHttpHeaders: [
+        #     'Referer: http://www.reddit.com/message/compose/'
+        #     'x-reddit-version: 1.1'
+        #   ]
+        #Referer: 'http://www.reddit.com/message/compose?to=' + to
         onSuccess: (inTransport) =>
+          Mojo.Log.info('success')
           responseText = inTransport.responseJSON
           json_string = Object.toJSON(responseText)
+          
+          Mojo.Log.info(JSON.stringify(responseText))
         
           if json_string.indexOf('your message has been delivered') isnt -1
             @debug('Success!')
@@ -80,7 +85,9 @@ class ComposeMessageAssistant
             @debug('Failure!')                 
                     
         onFailure: (inTransport) ->
+          Mojo.Log.info('failure')
         onException: (inTransport, inException) ->
+          Mojo.Log.info('exception')
       }
     )
 

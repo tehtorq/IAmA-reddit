@@ -74,12 +74,9 @@ class ArticleAssistant extends PowerScrollBase
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
 
-    @itemTappedBind = @itemTapped.bind(@)
-
-    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
-    Mojo.Event.listen(@controller.document, Mojo.Event.webViewLinkClicked, @itemTappedBind)
-    Mojo.Event.listen(@controller.document, Mojo.Event.tap, @itemTappedBind)
+    Mojo.Event.listen(@controller.document, Mojo.Event.tap, @itemTapped)
     
     @controller.get("comment-list").observe("click", (event) =>
       element = event.findElement("a")
@@ -130,7 +127,7 @@ class ArticleAssistant extends PowerScrollBase
   cleanup: (event) ->
     Request.clear_all()
 
-    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
 
   timeFormatter: (propertyValue, model) =>
     return if model.kind not in ['t1','t3']
@@ -282,7 +279,7 @@ class ArticleAssistant extends PowerScrollBase
     @viewMenuModel.items[0].items[1].label = text
     @controller.modelChanged(@viewMenuModel)
 
-  handleCommentActionSelection: (command) ->
+  handleCommentActionSelection: (command) =>
     return unless command?
 
     params = command.split(' ')
@@ -295,6 +292,8 @@ class ArticleAssistant extends PowerScrollBase
         )
       when 'view-cmd'
         AppAssistant.cloneCard(@, {name:"user"}, {user:params[1]})
+      when 'message-cmd'
+        AppAssistant.cloneCard(@, {name:"compose-message"}, {to:params[1]})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -460,7 +459,7 @@ class ArticleAssistant extends PowerScrollBase
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
     
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0
@@ -526,17 +525,18 @@ class ArticleAssistant extends PowerScrollBase
       downvote_action = if comment.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
 
       @controller.popupSubmenu({
-                 onChoose: @handleCommentActionSelection.bind(@),
+                 onChoose: @handleCommentActionSelection,
                  placeNear:element_tapped,
                  items: [                         
                    {label: $L('Upvote'), command: upvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: upvote_icon},
                    {label: $L('Downvote'), command: downvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: downvote_icon},
                    {label: $L('Reply'), command: 'reply-cmd ' + comment.data.name + ' ' + comment.data.author + ' ' + @url + ' ' + comment.data.subreddit},
-                   {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]
+                   {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}
+                   {label: $L("Message"), command: 'message-cmd ' + comment.data.author}]
                  })
     else
       @controller.popupSubmenu({
-                 onChoose: @handleCommentActionSelection.bind(@),
+                 onChoose: @handleCommentActionSelection,
                  placeNear:element_tapped,
                  items: [
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]
@@ -577,7 +577,10 @@ class ArticleAssistant extends PowerScrollBase
     linky = Linky.parse(element.href)
     
     if linky.type is 'image'
-      AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+      if linky.url.endsWith('.gif')
+        AppAssistant.cloneCard(@, {name:"gif",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+      else
+        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
     else if (linky.type is 'youtube_video') or (linky.type is 'web')
       @controller.serviceRequest("palm://com.palm.applicationManager", {
         method : "open",

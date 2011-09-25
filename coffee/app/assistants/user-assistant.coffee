@@ -31,8 +31,7 @@ class UserAssistant
         description: @descriptionFormatter
       }, @listModel)
 
-    @itemTappedBind = @itemTapped.bind(@)
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -45,7 +44,7 @@ class UserAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTappedBind)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'
@@ -109,7 +108,7 @@ class UserAssistant
     @controller.get('comment_karma_field').update(userinfo.data.comment_karma)
     @controller.get('link_karma_field').update(userinfo.data.link_karma)
 
-  itemTapped: (event) ->
+  itemTapped: (event) =>
     article = event.item;
     thread_id = null
     thread_title = null

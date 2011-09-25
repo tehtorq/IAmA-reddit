@@ -26,9 +26,8 @@ class RegisterAssistant
 
     @activityButtonModel = {label : "create account"}
     @controller.setupWidget("registerButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
-    @registerBind = @register.bind(@)
 
-    Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @registerBind)
+    Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "up")
@@ -37,7 +36,7 @@ class RegisterAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @registerBind)
+    Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   displayButtonRegistering: ->
     @controller.get('registerButton').mojo.activate()
@@ -62,7 +61,7 @@ class RegisterAssistant
     else if params.type is 'load-captcha'
       @handleCaptchaResponse(params.response)
 
-  register: ->
+  register: =>
     @displayButtonRegistering()
     
     params =
