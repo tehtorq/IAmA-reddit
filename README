@@ -1,6 +1,10 @@
 
 Changelog:
 
+0.1.9:
+- attempt to handle gifs a little better
+- send messages to other reddit users
+
 0.1.8:
 - layout fixes for Pre 3
 - basic listing of friends and /friends subreddit
