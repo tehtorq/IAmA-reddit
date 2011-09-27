@@ -137,8 +137,6 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
 
   activate: (event) ->
-    Mojo.Log.info('activate called')
-    #super
     StageAssistant.defaultWindowOrientation(@, "free")
     @metakey = false
 

@@ -14,9 +14,9 @@ class Request
         onSuccess: (inTransport) =>
           @handleResponse(token, inTransport, true)
         onFailure: (inTransport) =>
-          @handleResponse(token, inTransport, true)
+          @handleResponse(token, inTransport, false)
         onException: (inTransport, inException) =>
-          @handleResponse(token, inTransport, true)
+          @handleResponse(token, inTransport, false)
       }
     )
 
@@ -33,6 +33,10 @@ class Request
     @request(url, 'post', params, success, failure)
 
   handleResponse: (token, response, success) ->
+    #return unless response.readyState is 4
+    
+    Mojo.Log.info("handleResponse: {token: #{token}, success:#{success}}")
+    
     if @callback? 
       @callback.handleCallback({type: token, response: response, success: success})
     else

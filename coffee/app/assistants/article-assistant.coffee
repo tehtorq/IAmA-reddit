@@ -12,8 +12,6 @@ class ArticleAssistant extends PowerScrollBase
       @params.title = @article.title
     else if params.url?
       @url = params.url
-        
-    Mojo.Log.info(@url)
     
     @comments = { items : [] }
 

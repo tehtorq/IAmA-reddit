@@ -15,7 +15,7 @@ class Article
     @id = @data.id
     @name = data.name
     @can_unsave = (@data.saved) ? false : true
-    @setEmbeddedURLs()
+    #@setEmbeddedURLs()
     @
   
   setEmbeddedURLs: ->

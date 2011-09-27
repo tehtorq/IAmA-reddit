@@ -7,8 +7,11 @@ class GalleryAssistant
     @sr = 'pics'
 
   handleCallback: (params) ->
-    return params unless params? and params.success
-    @handleLoadArticlesResponse(params.response) if params.type is "article-list"
+    return unless params?
+    
+    if params.type is "article-list"
+      @fetching_images = false
+      @handleLoadArticlesResponse(params.response) if params.success?
 
   setup: ->
     StageAssistant.setTheme(@)
@@ -124,18 +127,17 @@ class GalleryAssistant
     @controller.modelChanged(@activityButtonModel)
 
   handleLoadArticlesResponse: (response) ->
+    @fetching_images = false
     @displayLoadMoreButton()
     
     return unless response? and response.responseJSON? and response.responseJSON.data? and response.responseJSON.data.children?
+    
     items = response.responseJSON.data.children
     
     _.each items, (item) =>
-      d = item.data
-      reddit_article = new Article().load(d)
+      reddit_article = new Article().load(item.data)
       @last_article_id = reddit_article.data.name
-      @storeThumb(reddit_article) if reddit_article.hasThumbnail() 
-
-    @fetching_images = false
+      @storeThumb(reddit_article) #if reddit_article.hasThumbnail() 
   
   clearImages: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -158,6 +160,7 @@ class GalleryAssistant
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?
+    @fetching_images = false
 
     @sr = subreddit
     @clearImages()
