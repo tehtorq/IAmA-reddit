@@ -3,6 +3,7 @@ class PrefsAssistant
   constructor: ->
 
   setup: ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     StageAssistant.setTheme(@)
     
     value1 = @cookieValue("prefs-hide-thumbnails", "off")
@@ -102,6 +103,7 @@ class PrefsAssistant
 
   deactivate: (event) ->
   cleanup: (event) ->
+    Request.clear_all(@cardname)
 
   handleUpdate1: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-hide-thumbnails")  

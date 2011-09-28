@@ -2,6 +2,8 @@ class ArticleAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
+    
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @params = params
     @url = 'http://reddit.com'
 
@@ -123,7 +125,7 @@ class ArticleAssistant extends PowerScrollBase
     super
 
   cleanup: (event) ->
-    Request.clear_all()
+    Request.clear_all(@cardname)
 
     Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
 
@@ -220,6 +222,8 @@ class ArticleAssistant extends PowerScrollBase
     urls = StageAssistant.parseUrls(model.data.body)
 
     return "" unless urls?
+    
+    #Mojo.Log.info(JSON.stringify(urls))
 
     #urls = urls.unique() // FIX - unique doesnt work
 

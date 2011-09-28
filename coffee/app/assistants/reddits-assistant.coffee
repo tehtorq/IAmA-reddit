@@ -1,6 +1,7 @@
 class RedditsAssistant
 
   constructor: ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @reddit_api = new RedditAPI()
     @redditsModel = { items : [] }
     
@@ -103,7 +104,7 @@ class RedditsAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Request.clear_all()
+    Request.clear_all(@cardname)
 
     Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)

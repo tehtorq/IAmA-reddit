@@ -1,6 +1,7 @@
 class UserAssistant
 
   constructor: (params) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @user = params.user
     @url = 'http://reddit.com/user/' + @user + '.json'
     @listModel =
@@ -44,6 +45,7 @@ class UserAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   titleFormatter: (propertyValue, model) =>

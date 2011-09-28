@@ -1,6 +1,7 @@
 class ReplyAssistant
 
   constructor: (reply_data) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @reply_data = reply_data
 
   setup: ->
@@ -29,6 +30,7 @@ class ReplyAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     @reply_data = null
     Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 

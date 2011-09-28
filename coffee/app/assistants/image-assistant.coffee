@@ -1,6 +1,7 @@
 class ImageAssistant
 
   constructor: (params) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @image_array = params.images
     @article_array = params.articles
     @current_index = params.index
@@ -76,6 +77,7 @@ class ImageAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
     Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
     Mojo.Event.stopListening(@controller.window, 'resize', @handleWindowResize, false)

@@ -1,6 +1,7 @@
 class LoginAssistant
 
   constructor: ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @usernameModel = {}
     @passwordModel = {}
 
@@ -29,6 +30,7 @@ class LoginAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get("loginButton"), Mojo.Event.tap, @login)
 
   displayButtonLoggingIn: ->

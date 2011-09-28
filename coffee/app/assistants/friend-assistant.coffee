@@ -1,6 +1,7 @@
 class FriendAssistant
   
   constructor: (action) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @listModel =
       items: []
 
@@ -31,6 +32,7 @@ class FriendAssistant
   deactivate: (event) ->
     
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
   

@@ -1,6 +1,7 @@
 class GalleryAssistant
 
   constructor: (params) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @image_limit = 20
     @fetching_images = false
     @last_article_id = null
@@ -64,7 +65,7 @@ class GalleryAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
-    Request.clear_all()
+    Request.clear_all(@cardname)
     
     Mojo.Event.stopListening(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)

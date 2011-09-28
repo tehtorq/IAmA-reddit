@@ -2,6 +2,7 @@ class RecentCommentAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @params = params
     @commentModel = { items : [] }
     @comments = []
@@ -32,7 +33,7 @@ class RecentCommentAssistant extends PowerScrollBase
 
   cleanup: (event) ->
     @controller.window.clearInterval(@timerID)
-    Request.clear_all()
+    Request.clear_all(@cardname)
 
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
   

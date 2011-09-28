@@ -1,5 +1,12 @@
 
+Known bugs:
+- need fixes for embeddable urls
+
 Changelog:
+
+0.2.0:
+- bug fix: gallery load incomplete and unable to load more images
+- bug fix: closing one card kills other cards' pending requests
 
 0.1.9:
 - attempt to handle gifs a little better

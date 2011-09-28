@@ -1,6 +1,7 @@
 class RegisterAssistant
 
   constructor: ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @usernameModel = { }
     @passwordModel = { }
     @captchaModel = { }
@@ -36,6 +37,7 @@ class RegisterAssistant
   deactivate: (event) ->
 
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   displayButtonRegistering: ->

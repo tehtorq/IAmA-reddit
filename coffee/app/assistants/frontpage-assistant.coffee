@@ -2,6 +2,7 @@ class FrontpageAssistant extends PowerScrollBase
   
   constructor: (params) ->
     super
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
@@ -154,7 +155,7 @@ class FrontpageAssistant extends PowerScrollBase
     super
 
   cleanup: (event) ->
-    Request.clear_all()
+    Request.clear_all(@cardname)
     
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)

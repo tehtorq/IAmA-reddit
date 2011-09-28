@@ -1,6 +1,7 @@
 class MessageAssistant
   
   constructor: (action) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @listModel =
       items: []
 
@@ -49,6 +50,7 @@ class MessageAssistant
 
   deactivate: (event) ->
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     @controller.stopListening("contentarea", Mojo.Event.listTap, @itemTapped)
   
   timeFormatter: (propertyValue, model) =>

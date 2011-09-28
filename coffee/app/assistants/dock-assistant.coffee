@@ -1,6 +1,7 @@
 class DockAssistant
 
   constructor: (params) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @image_array = []
     @article_array = []
     @current_index = 0
@@ -42,7 +43,7 @@ class DockAssistant
     @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->
-    Request.clear_all()
+    Request.clear_all(@cardname)
   
   tick: ->
     @updateUrls(1)

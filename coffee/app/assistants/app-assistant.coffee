@@ -40,15 +40,15 @@ class AppAssistant
       if stageController?
         stageController.activate()
         return
+        
+    cardname = "card" + Math.floor(Math.random()*10000)
+    cardname = sceneArguments.name if sceneArguments? and (sceneArguments.name in ['prefs','about'])
 
     pushCard = (stageController) =>
       if sceneArguments?
         stageController.pushScene(sceneArguments, sceneParameters)
       else
         stageController.pushScene("frontpage")
-
-    cardname = "NewCardStage" + Math.floor(Math.random()*10000)
-    cardname = sceneArguments.name if sceneArguments? and (sceneArguments.name in ['prefs','about'])
   
     StageAssistant.stages.push(cardname)
 

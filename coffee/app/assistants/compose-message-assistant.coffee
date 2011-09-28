@@ -1,6 +1,7 @@
 class ComposeMessageAssistant
   
   constructor: (params) ->
+    @cardname = "card" + Math.floor(Math.random()*10000)
     @url = 'http://reddit.com' + '/message/compose/'
     @recipientModel = { value : params.to || '' }
     @subjectModel = { value : '' }
@@ -40,6 +41,7 @@ class ComposeMessageAssistant
 
   deactivate: (event) ->
   cleanup: (event) ->
+    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   displayComposeMessage: (object) ->

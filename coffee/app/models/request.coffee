@@ -20,7 +20,7 @@ class Request
       }
     )
 
-    Request.store.push(request)
+    Request.store.push({cardname: @callback.cardname, request: request})
 
   get: (url, params, success, failure) ->
     @request(url, 'get', params, success, failure)
@@ -44,9 +44,11 @@ class Request
 
   @store = []
 
-  @clear_all: ->
-    _.each @store, (request) ->
+  @clear_all: (cardname) ->
+    Mojo.Log.info("clear all called for card #{cardname}")
+    abortions = _.select @store, (request) -> request.cardname is cardname
+    @store = _.select @store, (request) -> request.cardname isnt cardname
+      
+    _.each abortions, (request) ->
       Mojo.Log.info("aborting request")
-      request.transport.abort()
-
-    @store.length = 0
+      request.request.transport.abort()
