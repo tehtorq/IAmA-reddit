@@ -42,16 +42,16 @@ class MessageAssistant
         description: @descriptionFormatter
       }, @listModel)
 
-    @controller.listen("contentarea", Mojo.Event.listTap, @itemTapped)
-
   activate: (event) ->
+    @controller.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadMessages('inbox')
 
   deactivate: (event) ->
+    @controller.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
+    
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    @controller.stopListening("contentarea", Mojo.Event.listTap, @itemTapped)
   
   timeFormatter: (propertyValue, model) =>
     return "" if model.kind not in ['t1','t3','t4']

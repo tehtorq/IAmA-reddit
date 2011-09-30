@@ -21,18 +21,18 @@ class ReplyAssistant
 
     @sendButtonModel = {label : "Send"}
     @controller.setupWidget("sendButton", {type:Mojo.Widget.activityButton}, @sendButtonModel)
-    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
     StageAssistant.defaultWindowOrientation(@, "up")
     @controller.get("bodyTextFieldId").mojo.focus()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
     @reply_data = null
-    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   handleCallback: (params) ->
     return params unless params? and params.success

@@ -89,6 +89,7 @@ class PrefsAssistant
       {value: value8}
     )
 
+  activate: (event) ->
     Mojo.Event.listen(@controller.get("hide_thumbnail_toggle_button"), Mojo.Event.propertyChange, @handleUpdate1)
     Mojo.Event.listen(@controller.get("hide_easylinks_toggle_button"), Mojo.Event.propertyChange, @handleUpdate3)
     Mojo.Event.listen(@controller.get("samecard_toggle_button"), Mojo.Event.propertyChange, @handleUpdate4)
@@ -97,11 +98,18 @@ class PrefsAssistant
     Mojo.Event.listen(@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7)
     Mojo.Event.listen(@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8)
     Mojo.Event.listen(@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9)
-
-  activate: (event) ->
     StageAssistant.defaultWindowOrientation(@, "free")
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("hide_thumbnail_toggle_button"), Mojo.Event.propertyChange, @handleUpdate1)
+    Mojo.Event.stopListening(@controller.get("hide_easylinks_toggle_button"), Mojo.Event.propertyChange, @handleUpdate3)
+    Mojo.Event.stopListening(@controller.get("samecard_toggle_button"), Mojo.Event.propertyChange, @handleUpdate4)
+    Mojo.Event.stopListening(@controller.get("articles_per_page_radio_button"), Mojo.Event.propertyChange, @handleUpdate5)
+    Mojo.Event.stopListening(@controller.get("lock_orientation_toggle_button"), Mojo.Event.propertyChange, @handleUpdate6)
+    Mojo.Event.stopListening(@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7)
+    Mojo.Event.stopListening(@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8)
+    Mojo.Event.stopListening(@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9)
+    
   cleanup: (event) ->
     Request.clear_all(@cardname)
 

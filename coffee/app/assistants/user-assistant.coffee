@@ -9,7 +9,7 @@ class UserAssistant
         []
 
   setup: ->
-    StageAssistant.setTheme(@);
+    StageAssistant.setTheme(@)
     
     @viewMenuModel =
       visible: true
@@ -32,9 +32,8 @@ class UserAssistant
         description: @descriptionFormatter
       }, @listModel)
 
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
     StageAssistant.defaultWindowOrientation(@, "free")
     @listModel.items.clear()
     @controller.modelChanged(@listModel)
@@ -43,10 +42,10 @@ class UserAssistant
     @fetchComments()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'

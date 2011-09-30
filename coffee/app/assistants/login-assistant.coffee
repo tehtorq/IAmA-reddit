@@ -22,16 +22,15 @@ class LoginAssistant
     @activityButtonModel = {label : "Login"}
     @controller.setupWidget("loginButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
 
-    Mojo.Event.listen(@controller.get("loginButton"), Mojo.Event.tap, @login)
-
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("loginButton"), Mojo.Event.tap, @login)
     StageAssistant.defaultWindowOrientation(@, "up")
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("loginButton"), Mojo.Event.tap, @login)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get("loginButton"), Mojo.Event.tap, @login)
 
   displayButtonLoggingIn: ->
     @controller.get('loginButton').mojo.activate()

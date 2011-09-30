@@ -1,4 +1,5 @@
 #!/bin/bash
+rm *.ipk
 palm-package release/
-palm-install -d tcp *.ipk
+palm-install *.ipk
 

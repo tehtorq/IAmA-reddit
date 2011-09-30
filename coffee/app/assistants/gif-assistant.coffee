@@ -51,15 +51,15 @@ class GifAssistant
     
     @controller.get('centered').appendChild(@mydiv)
     
-    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.listen(@controller.get('ImageId'), 'load', @handleImageLoaded)
-    
   handleImageLoaded: =>
     @spinSpinner false
     @controller.get('image_title').show() if @cmdMenuModel.visible
     @mydiv.show()
 
   activate: (event) ->
+    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
+    Mojo.Event.listen(@controller.get('ImageId'), 'load', @handleImageLoaded)
+    
     StageAssistant.defaultWindowOrientation(@, "up")
     
     @setImageSrc @urlForIndex(@current_index)
@@ -71,11 +71,11 @@ class GifAssistant
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
+    Mojo.Event.stopListening(@controller.get('ImageId'), 'load', @handleImageLoaded)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.stopListening(@controller.get('ImageId'), 'load', @handleImageLoaded)
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

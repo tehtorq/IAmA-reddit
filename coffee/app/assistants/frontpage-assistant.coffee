@@ -130,14 +130,15 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
 
+  activate: (event) ->
+    super
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.listen(@controller.document,Mojo.Event.keyup, @handleKeyUp, true)
     Mojo.Event.listen(@controller.document,Mojo.Event.keydown, @handleKeyDown, true)
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
-
-  activate: (event) ->
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     @metakey = false
 
@@ -153,15 +154,15 @@ class FrontpageAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
-
-  cleanup: (event) ->
-    Request.clear_all(@cardname)
-    
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
+
+  cleanup: (event) ->
+    Request.clear_all(@cardname)
   
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?

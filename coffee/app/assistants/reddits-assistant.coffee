@@ -88,27 +88,25 @@ class RedditsAssistant
 
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
-
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)
     @loadReddits()
 
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
+    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
     StageAssistant.defaultWindowOrientation(@, "free")
 
     @loadReddits() if @redditsModel.items.length is 0
 
   deactivate: (event) ->
-
-  cleanup: (event) ->
-    Request.clear_all(@cardname)
-
     Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
+
+  cleanup: (event) ->
+    Request.clear_all(@cardname)
 
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0

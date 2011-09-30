@@ -28,17 +28,16 @@ class RegisterAssistant
     @activityButtonModel = {label : "create account"}
     @controller.setupWidget("registerButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
 
-    Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @register)
-
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @register)
     StageAssistant.defaultWindowOrientation(@, "up")
     @fetchCaptcha()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   displayButtonRegistering: ->
     @controller.get('registerButton').mojo.activate()

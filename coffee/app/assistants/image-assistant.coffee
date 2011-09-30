@@ -59,11 +59,11 @@ class ImageAssistant
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
 
+  activate: (event) ->
     Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
     Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
     Mojo.Event.listen(@controller.window, 'resize', @handleWindowResize, false)
-
-  activate: (event) ->
+    
     @controller.get('image_title').hide()
     StageAssistant.defaultWindowOrientation(@, "free")
     @spinSpinner(true)
@@ -75,12 +75,12 @@ class ImageAssistant
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth,@controller.window.innerHeight)
 
   deactivate: (event) ->
-
-  cleanup: (event) ->
-    Request.clear_all(@cardname)
     Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
     Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
     Mojo.Event.stopListening(@controller.window, 'resize', @handleWindowResize, false)
+
+  cleanup: (event) ->
+    Request.clear_all(@cardname)
 
   changedImage: =>
     @spinSpinner(false)
@@ -148,7 +148,7 @@ class ImageAssistant
     if (@current_index > -1) and (@current_index < (@image_array.length - 1))
       image.mojo.rightUrlProvided(@urlForIndex(@current_index + 1))
     
-    @controller.get('image_title').update(@article_array[@current_index].data.title)
+    @controller.get('image_title').update(@article_array[@current_index].data.title) if @article_array.length > 0
 
   handleTap: =>
     @cmdMenuModel.visible = !@cmdMenuModel.visible

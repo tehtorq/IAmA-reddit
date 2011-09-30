@@ -55,20 +55,19 @@ class GalleryAssistant
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
 
+  activate: (event) ->
     Mojo.Event.listen(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
-
-  activate: (event) ->
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadImages()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
+    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    
-    Mojo.Event.stopListening(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
 
   orientationChanged: (orientation) ->
     @controller.stageController.setWindowOrientation(orientation)

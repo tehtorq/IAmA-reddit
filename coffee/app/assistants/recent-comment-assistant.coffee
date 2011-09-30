@@ -18,10 +18,9 @@ class RecentCommentAssistant extends PowerScrollBase
       shadowindent: @shadowindentFormatter
     }, @commentModel)
 
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-
   activate: (event) ->
     super
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
     StageAssistant.defaultWindowOrientation(@, "free")
     
     @fetchRecentComments() if @commentModel.items.length is 0
@@ -29,13 +28,12 @@ class RecentCommentAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
     @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->
     @controller.window.clearInterval(@timerID)
     Request.clear_all(@cardname)
-
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
   
   tick: =>
     current_seconds = (new Date()).getTime() / 1000

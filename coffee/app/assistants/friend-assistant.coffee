@@ -22,19 +22,19 @@ class FriendAssistant
       #addItemLabel: '+ Add'
       }, @listModel)
 
+  activate: (event) ->
     Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
-
-  activate: (event) ->
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadFriends()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
     
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
   
   handleCallback: (params) ->
     return params unless params? and params.success

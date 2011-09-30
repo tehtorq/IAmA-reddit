@@ -2,7 +2,6 @@ class ArticleAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
-    
     @cardname = "card" + Math.floor(Math.random()*10000)
     @params = params
     @url = 'http://reddit.com'
@@ -74,10 +73,6 @@ class ArticleAssistant extends PowerScrollBase
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
 
-    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
-    Mojo.Event.listen(@controller.document, Mojo.Event.tap, @itemTapped)
-    
     @controller.get("comment-list").observe("click", (event) =>
       element = event.findElement("a")
       
@@ -88,6 +83,10 @@ class ArticleAssistant extends PowerScrollBase
 
   activate: (event) ->
     super
+    
+    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
+
     StageAssistant.defaultWindowOrientation(@, "free")
     
     if event? and event.replied is true
@@ -99,35 +98,36 @@ class ArticleAssistant extends PowerScrollBase
     if @comments.items.length < 2
       @controller.get('loadMoreButton').mojo.activate()
       @fetchComments({})
-  
+
+  deactivate: (event) ->
+    super
+    
+    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
+
+  cleanup: (event) ->
+    Request.clear_all(@cardname)
+    
   findArticleIndex: (article_name) ->
     length = @comments.items.length
     items = @comments.items
-    
+
     index = -1
-    
+
     _.each @comments.items, (item, i) ->
       index = i if item.data.name is article_name
-    
+
     index
-  
+
   loadComments: (params) ->
     item = @comments.items[0]
     @comments.items.clear()
     @comments.items.push(item)
-    
+
     @controller.modelChanged(@comments)
     @controller.get('loadMoreButton').mojo.activate()
     @controller.get('loadMoreButton').show()
     @fetchComments(params)
-
-  deactivate: (event) ->
-    super
-
-  cleanup: (event) ->
-    Request.clear_all(@cardname)
-
-    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
 
   timeFormatter: (propertyValue, model) =>
     return if model.kind not in ['t1','t3']
@@ -281,7 +281,7 @@ class ArticleAssistant extends PowerScrollBase
     @viewMenuModel.items[0].items[1].label = text
     @controller.modelChanged(@viewMenuModel)
 
-  handleCommentActionSelection: (command) =>
+  handleCommentActionSelection: (command) ->
     return unless command?
 
     params = command.split(' ')

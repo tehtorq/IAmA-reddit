@@ -33,16 +33,17 @@ class ComposeMessageAssistant
 
     @controller.setupWidget("sendButton", {}, { label : "Send"})
 
-    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
-
   activate: (event) ->
+    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
+    
     StageAssistant.defaultWindowOrientation(@, "up")
     @displayComposeMessage()
 
   deactivate: (event) ->
+    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
+    
   cleanup: (event) ->
     Request.clear_all(@cardname)
-    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   displayComposeMessage: (object) ->
     @fetchHTMLComposePage()
@@ -118,8 +119,8 @@ class ComposeMessageAssistant
           @controller.get('image_id').src = url
           @controller.get('sendButton').show()
         onFailure: (inTransport) =>
-          $("contentarea").update("Failure")
+          @controller.get("contentarea").update("Failure")
         onException: (inTransport, inException) =>
-          $("contentarea").update("Exception")
+          @controller.get("contentarea").update("Exception")
       }
     )
