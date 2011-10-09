@@ -241,8 +241,6 @@ class ArticleAssistant extends PowerScrollBase
     urls = StageAssistant.parseUrls(model.data.body)
 
     return "" unless urls?
-    
-    #Mojo.Log.info(JSON.stringify(urls))
 
     #urls = urls.unique() // FIX - unique doesnt work
 

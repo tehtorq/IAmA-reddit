@@ -5,21 +5,6 @@ class RedditsAssistant
     @cardname = "card" + Math.floor(Math.random()*10000)
     @reddit_api = new RedditAPI()
     @redditsModel = { items : [] }
-    
-  handleCommand: (event) ->
-    return if event.type isnt Mojo.Event.command
-    
-    switch event.command
-      when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage"})
-      when 'popular-cmd'
-        @handleCategorySwitch('popular')
-      when 'new-cmd'
-        @handleCategorySwitch('new')
-      when 'mine-cmd'
-        @handleCategorySwitch('mine')
-      when 'back'
-        @controller.stageController.popScene()
 
   setup: ->
     StageAssistant.setTheme(@)
@@ -92,7 +77,8 @@ class RedditsAssistant
           [
             items:
               [{},
-              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth},
+              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+              {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]
         ]
@@ -104,16 +90,13 @@ class RedditsAssistant
             items:
               [{},
                {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+              {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]
         ]
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
-
-  handleCategorySwitch: (category) ->
-    @reddit_api.setRedditsCategory(category)
-    @loadReddits()
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
@@ -130,6 +113,32 @@ class RedditsAssistant
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
+    
+  handleCategorySwitch: (category) ->
+    @reddit_api.setRedditsCategory(category)
+    @loadReddits()
+    
+  handleCommand: (event) ->
+    return if event.type isnt Mojo.Event.command
+
+    switch event.command
+      when 'top'
+        @scrollToTop()
+      when 'frontpage-cmd'
+        @controller.stageController.popScene({name:"frontpage"})
+      when 'popular-cmd'
+        @handleCategorySwitch('popular')
+      when 'new-cmd'
+        @handleCategorySwitch('new')
+      when 'mine-cmd'
+        @handleCategorySwitch('mine')
+      when 'back'
+        @controller.stageController.popScene()
+      when 'search'
+        @toggleSearch()
+
+  scrollToTop: ->
+    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
 
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
@@ -137,6 +146,14 @@ class RedditsAssistant
     @controller.get('filterfield').mojo.close()
     @searchReddits(filterEvent.filterString)
 
+  toggleSearch: ->
+    ff = @controller.get("filterfield")
+
+    if (ff._mojoController.assistant.filterOpen)
+       ff.mojo.close()
+    else
+       ff.mojo.open()
+  
   searchReddits: (searchTerm) ->
     @reddit_api.setRedditsSearchTerm(searchTerm)
     #@updateHeading(searchTerm)

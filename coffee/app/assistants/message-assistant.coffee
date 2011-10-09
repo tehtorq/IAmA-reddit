@@ -1,6 +1,7 @@
 class MessageAssistant
   
-  constructor: (action) ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @listModel =
       items: []

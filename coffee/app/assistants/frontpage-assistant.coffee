@@ -1,7 +1,6 @@
 class FrontpageAssistant extends PowerScrollBase
   
   constructor: (params) ->
-    Mojo.Log.info("frontpage constructor")
     super
     @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
@@ -21,8 +20,7 @@ class FrontpageAssistant extends PowerScrollBase
       else if params.search?
         @search = params
 
-  setup: ->    
-    Mojo.Log.info("frontpage setup")
+  setup: ->
     StageAssistant.setTheme(@)
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
@@ -78,7 +76,8 @@ class FrontpageAssistant extends PowerScrollBase
           items: [
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 120}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 180}
+            {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
           ]
@@ -91,8 +90,8 @@ class FrontpageAssistant extends PowerScrollBase
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
             {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 280}
-            {label: $L('Search'), icon:'search', command:'top'}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 340}
+            {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
           ]
@@ -179,7 +178,6 @@ class FrontpageAssistant extends PowerScrollBase
     @fetchSubreddits('mine')
 
   deactivate: (event) ->
-    Mojo.Log.info('frontpage deactivate')
     super
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)
@@ -189,7 +187,6 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
   
   cleanup: (event) ->
-    Mojo.Log.info("frontpage cleanup")
     Request.clear_all(@cardname)
   
   tagFormatter: (propertyValue, model) =>
@@ -424,8 +421,7 @@ class FrontpageAssistant extends PowerScrollBase
     else
       @controller.get('loadMoreButton').hide()
     
-    if @articles.items.length is 0
-      @controller.get('article-list').mojo.noticeAddedItems(0, [null])
+    @controller.get('article-list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
   
   handleRandomSubredditResponse:(response) ->
     headers = response.getAllHeaders()
@@ -475,11 +471,12 @@ class FrontpageAssistant extends PowerScrollBase
     params = command.split ' '
   
     switch params[0]
-      when 'top'
-        @controller.stageController.popScene()
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
         @loadArticles()
+      when 'comments-cmd'
+        article = @articles.items[parseInt(params[1])]
+        @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -522,6 +519,14 @@ class FrontpageAssistant extends PowerScrollBase
       uh: @modhash
   
     new Article(@).unsave(params)
+    
+  toggleSearch: ->
+    ff = @controller.get("filterfield")
+    
+    if (ff._mojoController.assistant.filterOpen)
+       ff.mojo.close()
+    else
+       ff.mojo.open()
   
   voteOnComment: (dir, comment_name, subreddit) ->
     params =
@@ -563,8 +568,34 @@ class FrontpageAssistant extends PowerScrollBase
       }
         
       return
-      
-    @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
+    
+    if @isLoggedIn()
+      upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
+      downvote_icon = if article.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
+      upvote_action = if article.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
+      downvote_action = if article.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
+      save_action = if article.data.saved is true then 'unsave-cmd' else 'save-cmd'
+      save_label = if article.data.saved is true then 'Unsave' else 'Save'
+  
+      @controller.popupSubmenu {
+       onChoose: @handleActionSelection,
+       placeNear:element_tapped,
+       items: [                         
+         {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
+         {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
+         {label: $L('Comments'), command: 'comments-cmd ' + event.index}
+         {label: $L(save_label), command: save_action + ' ' + article.data.name}
+         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+         ]
+      }
+    else
+      @controller.popupSubmenu {
+       onChoose: @handleActionSelection,
+       placeNear:element_tapped,
+       items: [
+         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+         ]
+       }
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -578,6 +609,8 @@ class FrontpageAssistant extends PowerScrollBase
         AppAssistant.cloneCard()
       when 'subreddit'
         @switchSubreddit(params[1])
+      when 'search'
+        @toggleSearch()
     
     switch event.command
       when Mojo.Menu.prefsCmd
@@ -605,33 +638,7 @@ class FrontpageAssistant extends PowerScrollBase
 
   itemHold: (event) =>
     event.preventDefault()
-    element_tapped = event.target
     thing = event.srcElement.up('.thing-container')
     article = @findArticleByName(thing.id)
-
-    if @isLoggedIn()
-      upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
-      downvote_icon = if article.data.likes is false then 'selected_downvote_icon' else 'downvote_icon'
-      upvote_action = if article.data.likes is true then 'reset-vote-cmd' else 'upvote-cmd'
-      downvote_action = if article.data.likes is false then 'reset-vote-cmd' else 'downvote-cmd'
-      save_action = if article.data.saved is true then 'unsave-cmd' else 'save-cmd'
-      save_label = if article.data.saved is true then 'Unsave' else 'Save'
-  
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       placeNear:element_tapped,
-       items: [                         
-         {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
-         {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
-         {label: $L(save_label), command: save_action + ' ' + article.data.name}
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
-         ]
-      }
-    else
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       placeNear:element_tapped,
-       items: [
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
-         ]
-       }
+    
+    @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
