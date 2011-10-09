@@ -75,8 +75,8 @@ class FrontpageAssistant extends PowerScrollBase
         items: [
           items: [
             {}
-            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 180}
+            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 181}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -88,9 +88,9 @@ class FrontpageAssistant extends PowerScrollBase
         items: [
           items: [
             {}
-            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
+            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 340}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 261}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -611,6 +611,8 @@ class FrontpageAssistant extends PowerScrollBase
         @switchSubreddit(params[1])
       when 'search'
         @toggleSearch()
+      when 'back'
+        @controller.stageController.popScene()
     
     switch event.command
       when Mojo.Menu.prefsCmd
