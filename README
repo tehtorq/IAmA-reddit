@@ -4,6 +4,11 @@ Known bugs:
 
 Changelog:
 
+0.2.1:
+- cater for touchpad (back navigation and search icon)
+- hiding/showing comments by long-press on comment
+- less "new card" actions from menus - workaround for hanging cards
+
 0.2.0:
 - bug fix: gallery load incomplete and unable to load more images
 - bug fix: closing one card kills other cards' pending requests
