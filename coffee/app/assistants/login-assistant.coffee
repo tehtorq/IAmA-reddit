@@ -1,6 +1,7 @@
 class LoginAssistant
 
-  constructor: ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @usernameModel = {}
     @passwordModel = {}
@@ -21,6 +22,28 @@ class LoginAssistant
 
     @activityButtonModel = {label : "Login"}
     @controller.setupWidget("loginButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Login'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Login'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("loginButton"), Mojo.Event.tap, @login)
@@ -62,6 +85,13 @@ class LoginAssistant
       api_type: 'json'
 
     new User(@).login(params)
+    
+  handleCommand: (event) ->
+    return unless event.type is Mojo.Event.command
+
+    switch event.command
+      when 'back'
+        @controller.stageController.popScene()
 
   handleLoginResponse: (response) ->
     return if response.readyState isnt 4

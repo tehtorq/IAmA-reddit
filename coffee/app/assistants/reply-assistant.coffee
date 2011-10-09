@@ -21,6 +21,28 @@ class ReplyAssistant
 
     @sendButtonModel = {label : "Send"}
     @controller.setupWidget("sendButton", {type:Mojo.Widget.activityButton}, @sendButtonModel)
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Reply'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Reply'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
@@ -33,6 +55,15 @@ class ReplyAssistant
   cleanup: (event) ->
     Request.clear_all(@cardname)
     @reply_data = null
+    
+  handleCommand: (event) ->
+    return if event.type isnt Mojo.Event.command
+
+    switch event.command
+      when 'top'
+        @scrollToTop()
+      when 'back'
+        @controller.stageController.popScene()
 
   handleCallback: (params) ->
     return params unless params? and params.success

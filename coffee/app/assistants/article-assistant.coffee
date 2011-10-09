@@ -2,6 +2,7 @@ class ArticleAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @params = params
     @url = 'http://reddit.com'
@@ -40,24 +41,38 @@ class ArticleAssistant extends PowerScrollBase
       {label:$L("related"), command:$L("related")},
       {label:$L("other discussions"), command:$L("duplicates")},
       {label:$L("save"), command:$L("save-cmd")},
-      ]})
-
-    @viewMenuModel = {
-      visible: true,
-      items: [
-          {items:[{},
-                  { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
-                  {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
-                  {}]}
-      ]
-    }
+      ]})  
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
+                    {}]}
+        ]
+      }
+    
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     @comments.items.push({kind: 't3', data: @article}) if @article?
 
     @controller.setupWidget("comment-list", {
-    itemTemplate : "article/comment",
+    itemTemplate : "article/comment"
+    #renderLimit: 501 # scroll to top and reveal next OP is perfect - but hiding/showing comments is slow
     formatters:
       time: @timeFormatter
       body: @bodyFormatter
@@ -69,6 +84,7 @@ class ArticleAssistant extends PowerScrollBase
       indent: @indentFormatter
       thumbnail: @thumbnailFormatter
       shadowindent: @shadowindentFormatter
+      hidingComments: @hidingCommentsFormatter
     }, @comments)
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
@@ -83,7 +99,6 @@ class ArticleAssistant extends PowerScrollBase
 
   activate: (event) ->
     super
-    
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
 
@@ -101,7 +116,6 @@ class ArticleAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
-    
     Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
 
@@ -182,6 +196,11 @@ class ArticleAssistant extends PowerScrollBase
   shadowindentFormatter: (propertyValue, model) =>
     return '' if model.kind not in ['t1','more']
     8 + 6 * model.data.indent + ""
+    
+  hidingCommentsFormatter: (propertyValue, model) =>
+    return "hiding #{model.hiding_comments} comment" if model?.hiding_comments is 1
+    return "hiding #{model.hiding_comments} comments" if model?.hiding_comments > 0
+    ''
 
   thumbnailFormatter: (propertyValue, model) =>
     return '' if model.kind not in ['t1','t3']
@@ -252,6 +271,8 @@ class ArticleAssistant extends PowerScrollBase
     return unless event.type is Mojo.Event.command
     
     switch event.command
+      when 'back'
+        @controller.stageController.popScene()
       when 'top'
         @scrollToTop()
       when 'save-cmd'
@@ -267,7 +288,7 @@ class ArticleAssistant extends PowerScrollBase
       when 'related','duplicates'
         url = @url.replace(/\/comments\//, '/'+event.command+'/').replace('http://www.reddit.com/', '').replace('http://reddit.com/', '')          
         AppAssistant.cloneCard(@, {name:"frontpage"},{permalink:url})          
-      when 'sort hot','sort new','sort controversial','sort top','sort old','sort best'
+      when 'sort hot','sort new','sort controversial','sort top','sort old','sort confidence'
         params = event.command.split(' ')
         @loadComments({sort: params[1]})
 
@@ -278,7 +299,11 @@ class ArticleAssistant extends PowerScrollBase
     text = '' unless text?
     text = text.substr(0, 40)
 
-    @viewMenuModel.items[0].items[1].label = text
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel.items[0].items[1].label = text
+    else
+      @viewMenuModel.items[0].items[2].label = text
+      
     @controller.modelChanged(@viewMenuModel)
 
   handleCommentActionSelection: (command) ->
@@ -290,12 +315,12 @@ class ArticleAssistant extends PowerScrollBase
       when 'reply-cmd'
         @controller.stageController.pushScene(
           {name: "reply",transition: Mojo.Transition.crossFade}
-          {thing_id:params[1], user: params[2], modhash: @modhash, subreddit: params[4]}
+          {thing_id:params[1], user: params[2], modhash: @modhash, subreddit: params[4],allow_back:true}
         )
       when 'view-cmd'
-        AppAssistant.cloneCard(@, {name:"user"}, {user:params[1]})
+        @controller.stageController.pushScene({name:"user"}, {user:params[1]})
       when 'message-cmd'
-        AppAssistant.cloneCard(@, {name:"compose-message"}, {to:params[1]})
+        @controller.stageController.pushScene({name:"compose-message"}, {to:params[1]})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -319,27 +344,63 @@ class ArticleAssistant extends PowerScrollBase
       @comments.items.push({kind: 't3', data: @article})
       @controller.modelChanged(@comments)
     
-    @populateReplies(object[1].data.children, 0)
+    @populateReplies(object[1].data.children, 0, @comments)
     
-    @controller.get('comment-list').mojo.setLength(@comments.items.length)
-    @controller.get('comment-list').mojo.noticeUpdatedItems(0, @comments.items)
+    @controller.modelChanged(@comments)
+    
+    #@controller.get('comment-list').mojo.setLengthAndInvalidate(@comments.items.length)
 
-  populateReplies: (replies, indent) ->
+  populateReplies: (replies, indent, array) ->
     _.each replies, (child) =>
       if child.kind isnt 'more'
         child.data.indent = indent
-        @comments.items.push(child)
+        array.items.push(child)
       
         data = child.data
       
-        if (data.replies?) and (data.replies isnt "")
-          if data.replies.data? and data.replies.data.children?
-            @populateReplies(data.replies.data.children, indent + 1)
+        if data.replies?.data?.children?
+          unless child?.hiding_comments > 0 
+            @populateReplies(data.replies.data.children, indent + 1, array)
 
   fetchComments: (params) ->
     params.url = @url + '.json'    
     new Article(@).comments(params)
-
+    
+  hideChildren: (index) ->
+    return if index is @comments.items.length - 1
+    first_candidate = index + 1
+    
+    indent = parseInt(@comments.items[index].data.indent)
+    check = true
+    checked_until = index
+    remove = false
+    
+    while check is true and checked_until < @comments.items.length - 1
+      if (@comments.items[checked_until+1].kind isnt 't1') or (parseInt(@comments.items[checked_until+1].data.indent) > indent)
+        remove = true
+        checked_until++
+      else
+        check = false
+    
+    if remove is true
+      @comments.items[index].hiding_comments = checked_until - index
+      @comments.items.splice(first_candidate, checked_until - index)
+      @controller.get('comment-list').mojo.invalidateItems(index,1)
+      @controller.get('comment-list').mojo.noticeRemovedItems(first_candidate, checked_until - index)
+      
+  showChildren: (index) ->
+    comment = @comments.items[index]
+    array = {items: []}
+    @populateReplies(comment.data.replies.data.children, comment.data.indent + 1, array)
+    
+    comment.hiding_comments = 0
+    
+    if array.items.length > 0
+      items = array.items
+      @comments.items.splice(index+1,0, items...)
+      @controller.get('comment-list').mojo.invalidateItems(index,1)
+      @controller.get('comment-list').mojo.noticeAddedItems(index+1, items)
+  
   handlefetchCommentsResponse: (response) ->
     return unless response? and response.responseJSON?
     
@@ -511,14 +572,6 @@ class ArticleAssistant extends PowerScrollBase
         })
 
       return
-
-  itemHold: (event) =>
-    event.preventDefault()
-    element_tapped = event.target
-    thing = event.srcElement.up('.thing-container')    
-    id = thing.id
-    
-    comment = _.first _.select @comments.items, (item) => item.data.name is id
     
     if @isLoggedIn()  
       upvote_icon = if comment.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
@@ -543,6 +596,20 @@ class ArticleAssistant extends PowerScrollBase
                  items: [
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]
                  })
+
+  itemHold: (event) =>
+    event.preventDefault()
+    thing = event.srcElement.up('.thing-container')    
+    id = thing.id
+    
+    index = @findArticleIndex(id)
+    
+    comment = _.first _.select @comments.items, (item) => item.data.name is id
+    
+    if comment.hiding_comments > 0
+      return @showChildren(index)
+    else  
+      return @hideChildren(index)
   
   handleClickedLink: (element) ->
     

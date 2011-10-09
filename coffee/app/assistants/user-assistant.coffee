@@ -1,6 +1,7 @@
 class UserAssistant
 
   constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @user = params.user
     @url = 'http://reddit.com/user/' + @user + '.json'
@@ -11,16 +12,29 @@ class UserAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @viewMenuModel =
-      visible: true
-      items: 
-        [
-          items:
-            [{},
-            { label: "overview for " + @user, command: 'top', icon: "", width: @controller.window.innerWidth},
-            {}
-            ]
-      ]
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+              { label: "overview for " + @user, command: 'top', icon: "", width: @controller.window.innerWidth},
+              {}
+              ]
+        ]
+    else
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+               {label: $L('Back'), icon:'', command:'back', width:80}
+              { label: "overview for " + @user, command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+              {}
+              ]
+        ]
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
@@ -35,11 +49,10 @@ class UserAssistant
   activate: (event) ->
     Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
     StageAssistant.defaultWindowOrientation(@, "free")
-    @listModel.items.clear()
-    @controller.modelChanged(@listModel)
 
-    @about()
-    @fetchComments()
+    if @listModel.items.length is 0
+      @about()
+      @fetchComments()
 
   deactivate: (event) ->
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
@@ -71,6 +84,8 @@ class UserAssistant
     switch event.command
       when 'top'
         @scrollToTop()
+      when 'back'
+        @controller.stageController.popScene()
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -124,5 +139,6 @@ class UserAssistant
     hash =
       url: 'http://reddit.com/comments/' + thread_id.substr(3)
       title: thread_title
+      allow_back: true
 
     @controller.stageController.pushScene({name:"article",transition: Mojo.Transition.crossFade}, hash)

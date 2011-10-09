@@ -1,6 +1,7 @@
 class RegisterAssistant
 
-  constructor: ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @usernameModel = { }
     @passwordModel = { }
@@ -27,6 +28,28 @@ class RegisterAssistant
 
     @activityButtonModel = {label : "create account"}
     @controller.setupWidget("registerButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Register'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Register'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @register)
@@ -38,6 +61,13 @@ class RegisterAssistant
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
+    
+  handleCommand: (event) ->
+    return unless event.type is Mojo.Event.command
+
+    switch event.command
+      when 'back'
+        @controller.stageController.popScene()
 
   displayButtonRegistering: ->
     @controller.get('registerButton').mojo.activate()

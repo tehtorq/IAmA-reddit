@@ -1,6 +1,7 @@
 class ComposeMessageAssistant
   
   constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @url = 'http://reddit.com' + '/message/compose/'
     @recipientModel = { value : params.to || '' }
@@ -32,6 +33,28 @@ class ComposeMessageAssistant
       )
 
     @controller.setupWidget("sendButton", {}, { label : "Send"})
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Send a message'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Send a message'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
@@ -124,3 +147,14 @@ class ComposeMessageAssistant
           @controller.get("contentarea").update("Exception")
       }
     )
+    
+  handleCommand: (event) ->
+    return if event.type isnt Mojo.Event.command
+
+    params = event.command.split(' ')
+
+    switch params[0]
+      when 'top'
+        @scrollToTop()
+      when 'back'
+        @controller.stageController.popScene()

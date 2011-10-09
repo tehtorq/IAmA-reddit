@@ -1,6 +1,7 @@
 class RedditsAssistant
 
-  constructor: ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @reddit_api = new RedditAPI()
     @redditsModel = { items : [] }
@@ -9,18 +10,16 @@ class RedditsAssistant
     return if event.type isnt Mojo.Event.command
     
     switch event.command
-      when 'login-cmd'
-        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade})
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage",disableSceneScroller:true})
-      when 'gallery-cmd'
-        @controller.stageController.swapScene({name:"gallery",disableSceneScroller:true,transition: Mojo.Transition.crossFade}, {subreddit:@reddit_api.subreddit})
+        @controller.stageController.popScene({name:"frontpage"})
       when 'popular-cmd'
         @handleCategorySwitch('popular')
       when 'new-cmd'
         @handleCategorySwitch('new')
       when 'mine-cmd'
         @handleCategorySwitch('mine')
+      when 'back'
+        @controller.stageController.popScene()
 
   setup: ->
     StageAssistant.setTheme(@)
@@ -63,9 +62,7 @@ class RedditsAssistant
       visible: true,
       items:
         [
-          {label: "Login", command: 'login-cmd'},
-          {label: "Frontpage", command: 'frontpage-cmd'},
-          {label: "Gallery", command: 'gallery-cmd'}
+          {label: "Frontpage", command: 'frontpage-cmd'}
         ]
       }
     )
@@ -87,6 +84,32 @@ class RedditsAssistant
     @controller.setupWidget('filterfield', {delay: 2000})
 
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth},
+              {}
+              ]
+        ]
+    else
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+               {label: $L('Back'), icon:'', command:'back', width:80}
+              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+              {}
+              ]
+        ]
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)

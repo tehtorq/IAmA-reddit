@@ -1,6 +1,7 @@
 class ImageAssistant
 
   constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @image_array = params.images
     @article_array = params.articles
@@ -32,25 +33,54 @@ class ImageAssistant
       
     command_menu_items = null
     
-    if @article_array.length > 0
-      command_menu_items = [
-        {}
-        {label: $L('Back'), icon:'back', command:'back'}
-        {label: $L('Article'), icon:'info', command:'article'}
-        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 240}
-        {label: $L('Save'), icon:'save', command:'save'}
-        {label: $L('Forward'), icon:'forward', command:'forward'}
-        {}
-      ]
+    @controller.setupWidget('sub-menu', null, {items: [
+      {label:$L("email"), command:$L("email-cmd")},
+      {label:$L("sms"), command:$L("sms-cmd")},
+      {label: $L('save'), icon:'save', command:'save'}
+      ]})
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      if @article_array.length > 0
+        command_menu_items = [
+          {}
+          {label: $L('Prev'), icon:'back', command:'prev'}
+          {label: $L('Article'), icon:'info', command:'article'}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 240}
+          {submenu: "sub-menu", iconPath: 'images/options.png'}
+          {label: $L('Forward'), icon:'forward', command:'forward'}
+          {}
+        ]
+      else
+        command_menu_items = [
+          {}
+          {label: $L('Prev'), icon:'back', command:'prev'}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 180}
+          {submenu: "sub-menu", iconPath: 'images/options.png'}
+          {label: $L('Forward'), icon:'forward', command:'forward'}
+          {}
+        ]
     else
-      command_menu_items = [
-        {}
-        {label: $L('Back'), icon:'back', command:'back'}
-        {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 180}
-        {label: $L('Save'), icon:'save', command:'save'}
-        {label: $L('Forward'), icon:'forward', command:'forward'}
-        {}
-      ]
+      if @article_array.length > 0
+        command_menu_items = [
+          {}
+          {label: $L('Prev'), icon:'back', command:'prev'}
+          {label: $L('Article'), icon:'info', command:'article'}
+          {label: $L('Back'), icon:'', command:'back', width:80}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 320}
+          {submenu: "sub-menu", iconPath: 'images/options.png'}
+          {label: $L('Forward'), icon:'forward', command:'forward'}
+          {}
+        ]
+      else
+        command_menu_items = [
+          {}
+          {label: $L('Prev'), icon:'back', command:'prev'}
+          {label: $L('Back'), icon:'', command:'back', width:80}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 260}
+          {submenu: "sub-menu", iconPath: 'images/options.png'}
+          {label: $L('Forward'), icon:'forward', command:'forward'}
+          {}
+        ]
 
     @cmdMenuModel = {
       visible: false
@@ -92,6 +122,8 @@ class ImageAssistant
       @controller.get('loading').hide()
 
   handleWindowResize: (event) =>
+    @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
+    @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth, @controller.window.innerHeight)
 
   handleCommand: (event) ->
@@ -100,14 +132,20 @@ class ImageAssistant
     switch event.command
       when 'save'
         @download(@urlForIndex(@current_index))
+      when 'email-cmd'
+        @mail()
+      when 'sms-cmd'
+        @sms()
       when 'article'
         AppAssistant.cloneCard(@, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
-      when 'back'
+      when 'prev'
         @spinSpinner(true)
         @updateUrls(-1)
       when 'forward'
         @spinSpinner(true)
         @updateUrls(1)
+      when 'back'
+        @controller.stageController.popScene()
 
   urlForIndex: (index) ->
     if index < 0
@@ -126,14 +164,24 @@ class ImageAssistant
 
     @current_index = new_index
 
-    if @article_array.length > 0
-      @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
-      @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-      @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      if @article_array.length > 0
+        @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
+        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
+        @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))
+      else
+        @cmdMenuModel.items[0].items[2].label = (@current_index + 1) + "/" + @image_array.length
+        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
+        @cmdMenuModel.items[0].items[4].disabled = (@current_index == (@image_array.length - 1))
     else
-      @cmdMenuModel.items[0].items[2].label = (@current_index + 1) + "/" + @image_array.length
-      @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-      @cmdMenuModel.items[0].items[4].disabled = (@current_index == (@image_array.length - 1))
+      if @article_array.length > 0
+        @cmdMenuModel.items[0].items[4].label = (@current_index + 1) + "/" + @image_array.length
+        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
+        @cmdMenuModel.items[0].items[6].disabled = (@current_index == (@image_array.length - 1))
+      else
+        @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
+        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
+        @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))
     
     @controller.modelChanged(@cmdMenuModel)
 
@@ -148,12 +196,23 @@ class ImageAssistant
     if (@current_index > -1) and (@current_index < (@image_array.length - 1))
       image.mojo.rightUrlProvided(@urlForIndex(@current_index + 1))
     
-    @controller.get('image_title').update(@article_array[@current_index].data.title) if @article_array.length > 0
+    @controller.get('image_title').update(@currentTitle())
+    
+  currentTitle: ->
+    if @article_array.length > 0
+      @article_array[@current_index].data.title
+    else
+      ''
 
   handleTap: =>
     @cmdMenuModel.visible = !@cmdMenuModel.visible
     @controller.modelChanged(@cmdMenuModel)
     @controller.get('image_title').toggle()
+    
+    if @cmdMenuModel.visible and @currentTitle() isnt ''
+      @controller.get('image_title').show()
+    else
+      @controller.get('image_title').hide()
 
   download: (filename) ->
     name = filename.substring(filename.lastIndexOf('/') + 1)
@@ -171,3 +230,34 @@ class ImageAssistant
           new Banner("Saved image " + name).send() if response.completed is true
       )
     catch e
+  
+  mail: ->
+    @controller.serviceRequest(
+      "palm://com.palm.applicationManager",
+      {
+        method: 'open'
+        parameters:
+          id: "com.palm.app.email",
+          params:
+            summary: @currentTitle(),
+            text: @urlForIndex(@current_index),
+            recipients: [{
+              type:"email",
+              role:1,
+              value:"",
+              contactDisplay:""
+            }]
+      }
+    )
+
+  sms: ->
+    @controller.serviceRequest(
+      "palm://com.palm.applicationManager"
+      {
+        method: 'open'
+        parameters:
+          id: "com.palm.app.messaging",
+          params:
+            messageText: @currentTitle() + "\n\n" + @urlForIndex(@current_index)
+      }
+    )

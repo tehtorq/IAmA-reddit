@@ -2,6 +2,7 @@ class RecentCommentAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @params = params
     @commentModel = { items : [] }
@@ -17,6 +18,32 @@ class RecentCommentAssistant extends PowerScrollBase
       indent: @indentFormatter
       shadowindent: @shadowindentFormatter
     }, @commentModel)
+    
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+              { label: $L('Recent comments'), command: 'top', icon: "", width: @controller.window.innerWidth},
+              {}
+              ]
+        ]
+    else
+      @viewMenuModel =
+        visible: true
+        items: 
+          [
+            items:
+              [{},
+               {label: $L('Back'), icon:'', command:'back', width:80}
+              { label: $L('Recent comments'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+              {}
+              ]
+        ]
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -25,7 +52,7 @@ class RecentCommentAssistant extends PowerScrollBase
     
     @fetchRecentComments() if @commentModel.items.length is 0
     @timerID = @controller.window.setInterval(@tick, 5000)
-
+  
   deactivate: (event) ->
     super
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
@@ -70,7 +97,12 @@ class RecentCommentAssistant extends PowerScrollBase
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
-    @scrollToTop() if event.command is 'top'
+
+    switch event.command
+      when 'top'
+        @scrollToTop()
+      when 'back'
+        @controller.stageController.popScene()
 
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -83,7 +115,7 @@ class RecentCommentAssistant extends PowerScrollBase
     if params[0] is 'view-cmd'
       #@controller.stageController.popScenesTo("user", {linky:params[1]})
       controller = Mojo.Controller.getAppController().getActiveStageController()
-      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{user:params[1]})
+      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{user:params[1],allow_back: true})
 
   populateComments: (object) ->
     _.each object.data.children, (comment) =>  

@@ -23,14 +23,25 @@ class MessageAssistant
       {label:$L("sent"), command:$L("message sent")}
     ]}
     
-    @viewMenuModel =
-      visible: true,
-      items: [
-          {items:[{},
-                  { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
-                  {icon:'search', submenu: "sub-menu", width: 60},
-                  {}]}
-      ]
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel =
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+                    {icon:'search', submenu: "sub-menu", width: 60},
+                    {}]}
+        ]
+    else
+      @viewMenuModel =
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+                    {icon:'search', submenu: "sub-menu", width: 60},
+                    {}]}
+        ]    
     
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
@@ -104,7 +115,7 @@ class MessageAssistant
 
   itemTapped: (event) =>
     item = event.item
-    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
+    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"],allow_back:true})
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
@@ -119,6 +130,8 @@ class MessageAssistant
         @scrollToTop()
       when 'message'
         @loadMessages(params[1])
+      when 'back'
+        @controller.stageController.popScene()
   
   spinSpinner: (bool) ->
     if bool

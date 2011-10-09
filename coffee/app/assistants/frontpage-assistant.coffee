@@ -1,7 +1,9 @@
 class FrontpageAssistant extends PowerScrollBase
   
   constructor: (params) ->
+    Mojo.Log.info("frontpage constructor")
     super
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
@@ -16,10 +18,11 @@ class FrontpageAssistant extends PowerScrollBase
         @reddit_api.setSubreddit(params.reddit)
       else if params.permalink?
         @reddit_api.set_permalink(params.permalink)
-      else
+      else if params.search?
         @search = params
 
   setup: ->    
+    Mojo.Log.info("frontpage setup")
     StageAssistant.setTheme(@)
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
@@ -68,17 +71,32 @@ class FrontpageAssistant extends PowerScrollBase
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
 
-    @viewMenuModel =
-      visible: true
-      items: [
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel =
+        visible: true
         items: [
-          {}
-          { label: '', submenu: "subreddit-submenu", icon: "search", width: 60}
-          { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 120}
-          { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
-          {}
+          items: [
+            {}
+            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 120}
+            { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
+            {}
+          ]
         ]
-      ]
+    else
+      @viewMenuModel =
+        visible: true
+        items: [
+          items: [
+            {}
+            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 60}
+            {label: $L('Back'), icon:'', command:'back', width:80}
+            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 280}
+            {label: $L('Search'), icon:'search', command:'top'}
+            { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
+            {}
+          ]
+        ]    
     
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
@@ -130,6 +148,14 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
 
+       #  
+       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.activate, this.gainedFocus.bind(this) );
+       # 
+       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.deactivate, this.lostFocus.bind(this) );
+       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.stageActivate, this.stageGainedFocus.bind(this) );
+       # 
+       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.stageDeactivate, this.stageLostFocus.bind(this) );
+
   activate: (event) ->
     super
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
@@ -153,6 +179,7 @@ class FrontpageAssistant extends PowerScrollBase
     @fetchSubreddits('mine')
 
   deactivate: (event) ->
+    Mojo.Log.info('frontpage deactivate')
     super
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
     Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)
@@ -160,8 +187,9 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
-
+  
   cleanup: (event) ->
+    Mojo.Log.info("frontpage cleanup")
     Request.clear_all(@cardname)
   
   tagFormatter: (propertyValue, model) =>
@@ -321,7 +349,11 @@ class FrontpageAssistant extends PowerScrollBase
   updateHeading: (text) ->
     text = '' unless text?
   
-    @viewMenuModel.items[0].items[2].label = text
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel.items[0].items[2].label = text
+    else
+      @viewMenuModel.items[0].items[3].label = text
+    
     @controller.modelChanged(@viewMenuModel)
   
   loadMoreArticles: =>
@@ -443,6 +475,8 @@ class FrontpageAssistant extends PowerScrollBase
     params = command.split ' '
   
     switch params[0]
+      when 'top'
+        @controller.stageController.popScene()
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
         @loadArticles()
@@ -530,7 +564,7 @@ class FrontpageAssistant extends PowerScrollBase
         
       return
       
-    @controller.stageController.pushScene({name:"article"}, {article: article})
+    @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -545,45 +579,29 @@ class FrontpageAssistant extends PowerScrollBase
       when 'subreddit'
         @switchSubreddit(params[1])
     
-    controller = Mojo.Controller.getAppController().getActiveStageController()
-    currentScene = controller.activeScene()
-  
-    switch event.type
-      when Mojo.Event.commandEnable
-        switch event.command
-          when Mojo.Menu.prefsCmd
-            if not currentScene.assistant.prefsMenuDisabled
-              event.stopPropagation()
-          when Mojo.Menu.helpCmd
-            if not currentScene.assistant.helpMenuDisabled
-              event.stopPropagation()
-        
-      when Mojo.Event.command
-        switch event.command
-          when Mojo.Menu.helpCmd
-            controller.pushScene('support')
-          when Mojo.Menu.prefsCmd
-            AppAssistant.cloneCard(@, {name:"prefs"}, {})
-          when 'login-cmd'
-            controller.pushScene({name:"login",transition: Mojo.Transition.crossFade})
-          when 'logout-cmd'
-            new User(@).logout({})        
-          when 'register-cmd'
-            controller.pushScene({name:"register",transition: Mojo.Transition.crossFade})
-          when 'reddits-cmd'
-            AppAssistant.cloneCard(@, {name:"reddits"}, {})
-          when 'gallery-cmd'
-            AppAssistant.cloneCard(@, {name:"gallery"}, {})
-          when 'recent-comments-cmd'
-            AppAssistant.cloneCard(@, {name:"recent-comment"}, {})
-          when 'friend-scene'
-            AppAssistant.cloneCard(@, {name:"friend"}, {})
-          when 'messages-cmd'
-            AppAssistant.cloneCard(@, {name:"message"}, {})
-          when 'compose-message-cmd'
-            AppAssistant.cloneCard(@, {name:"compose-message"},{})
-          when 'about-scene'
-            AppAssistant.cloneCard(@, {name:"about"}, {})
+    switch event.command
+      when Mojo.Menu.prefsCmd
+        @controller.stageController.pushScene({name:"prefs"}, {allow_back: true})
+      when 'login-cmd'
+        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {allow_back: true})
+      when 'logout-cmd'
+        new User(@).logout({})        
+      when 'register-cmd'
+        @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {allow_back: true})
+      when 'reddits-cmd'
+        @controller.stageController.pushScene({name:"reddits"}, {allow_back: true})
+      when 'gallery-cmd'
+        @controller.stageController.pushScene({name:"gallery"}, {allow_back: true})
+      when 'recent-comments-cmd'
+        @controller.stageController.pushScene({name:"recent-comment"}, {allow_back: true})
+      when 'friend-scene'
+        @controller.stageController.pushScene({name:"friend"}, {allow_back: true})
+      when 'messages-cmd'
+        @controller.stageController.pushScene({name:"message"}, {allow_back: true})
+      when 'compose-message-cmd'
+        @controller.stageController.pushScene({name:"compose-message"},{allow_back: true})
+      when 'about-scene'
+        @controller.stageController.pushScene({name:"about"}, {allow_back: true})
 
   itemHold: (event) =>
     event.preventDefault()

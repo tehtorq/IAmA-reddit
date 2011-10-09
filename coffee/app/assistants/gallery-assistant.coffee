@@ -1,6 +1,7 @@
 class GalleryAssistant
 
   constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @image_limit = 20
     @fetching_images = false
@@ -27,16 +28,28 @@ class GalleryAssistant
 
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
-    @viewMenuModel = {
-      visible: true,
-      items: [
-          {items:[{},
-                  { label: '', submenu: "category-submenu", width: 60},
-                  { label: "Reddit", command: 'new-card', icon: "", width: @controller.window.innerWidth - 120},
-                  { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
-                  {}]}
-      ]
-    }
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: '', command: "", width: 60},
+                    { label: "Reddit", command: 'new-card', icon: "", width: @controller.window.innerWidth - 120},
+                    { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: "Reddit", command: 'new-card', icon: "", width: @controller.window.innerWidth - 140},
+                    { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
+                    {}]}
+        ]
+      }
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
     
@@ -60,7 +73,7 @@ class GalleryAssistant
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
     
     StageAssistant.defaultWindowOrientation(@, "free")
-    @loadImages()
+    @switchSubreddit("pics")
 
   deactivate: (event) ->
     Mojo.Event.stopListening(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
@@ -88,7 +101,7 @@ class GalleryAssistant
       else
         "image"
         
-      AppAssistant.cloneCard(@, {name:scene,disableSceneScroller:true},{index:parseInt(element_tapped.alt),images:image_array, articles:articles})
+      AppAssistant.cloneCard(@, {name:scene},{index:parseInt(element_tapped.alt),images:image_array, articles:articles})
 
   storeThumb: (reddit_article) ->
     url = reddit_article.data.url
@@ -157,11 +170,18 @@ class GalleryAssistant
     parameters.sr = @sr if @sr?
 
     new Article(@).list(parameters)
+    
+  updateHeading: (text) ->
+    text = 'Gallery' unless text?
+
+    @viewMenuModel.items[0].items[2].label = text
+    @controller.modelChanged(@viewMenuModel)
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?
     @fetching_images = false
-
+    
+    @updateHeading("#{subreddit}")
     @sr = subreddit
     @clearImages()
     @loadImages()
@@ -173,9 +193,11 @@ class GalleryAssistant
 
     switch event.command
       when 'frontpage-cmd'
-        AppAssistant.cloneCard(@, {name:"frontpage"}, {})
+        @controller.stageController.popScene({name:"frontpage"})
       when 'manage-cmd'
-        AppAssistant.cloneCard(@, {name:"prefs"}, {})
+        @controller.stageController.pushScene({name:"prefs"}, {allow_back: true})
+      when 'back'
+        @controller.stageController.popScene()
       
     params = event.command.split(' ')
 

@@ -1,6 +1,7 @@
 class PrefsAssistant
   
-  constructor: ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
 
   setup: ->
     @cardname = "card" + Math.floor(Math.random()*10000)
@@ -88,6 +89,28 @@ class PrefsAssistant
       { choices : reddits },
       {value: value8}
     )
+    
+    @viewMenuModel = if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+    
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("hide_thumbnail_toggle_button"), Mojo.Event.propertyChange, @handleUpdate1)
@@ -98,7 +121,6 @@ class PrefsAssistant
     Mojo.Event.listen(@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7)
     Mojo.Event.listen(@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8)
     Mojo.Event.listen(@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9)
-    StageAssistant.defaultWindowOrientation(@, "free")
 
   deactivate: (event) ->
     Mojo.Event.stopListening(@controller.get("hide_thumbnail_toggle_button"), Mojo.Event.propertyChange, @handleUpdate1)
@@ -109,6 +131,10 @@ class PrefsAssistant
     Mojo.Event.stopListening(@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7)
     Mojo.Event.stopListening(@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8)
     Mojo.Event.stopListening(@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9)
+    
+  ready: ->
+    @controller.setInitialFocusedElement(null)
+    StageAssistant.defaultWindowOrientation(@, "free")
     
   cleanup: (event) ->
     Request.clear_all(@cardname)
@@ -151,3 +177,11 @@ class PrefsAssistant
     return cookie.get() if cookie? and cookie.get()?
       
     default_value
+    
+  handleCommand: (event) ->
+    return unless event.type is Mojo.Event.command
+
+    switch event.command
+      when 'back'
+        @controller.stageController.popScene()
+          

@@ -25,9 +25,9 @@ class StageAssistant
     article.url = Linky.parse(article.data.url) if article.kind?
   
     if lowercase_subreddit in ['gif','gifs','nsfw_gif','nsfw_gifs'] or article.url.url.endsWith('.gif')
-      AppAssistant.cloneCard(assistant, {name:"gif",disableSceneScroller:true},{index:0,images:[article.url.url], articles: [article]})
+      AppAssistant.cloneCard(assistant, {name:"gif"},{index:0,images:[article.url.url], articles: [article]})
     else
-      AppAssistant.cloneCard(assistant, {name:"image",disableSceneScroller:true},{index:0,images:[article.url.url], articles: [article]})
+      AppAssistant.cloneCard(assistant, {name:"image"},{index:0,images:[article.url.url], articles: [article]})
 
   @stages = []
   @current_theme = null

@@ -26,11 +26,15 @@ class AppAssistant
       @controller.createStageWithCallback({name: 'dock', lightweight: true}, f, "dockMode")
 
   @cloneCard = (assistant, sceneArguments, sceneParameters) ->
+    sceneParameters or= {}
     samecard = StageAssistant.cookieValue("prefs-samecard", "off")
   
     if (samecard is "on") and (StageAssistant.stages.length > 0)
+      sceneParameters.allow_back = true
       assistant.controller.stageController.pushScene(sceneArguments, sceneParameters)
       return
+      
+    #assistant.deactivate() if assistant?
   
     # only allow one card for prefs
   
@@ -48,9 +52,9 @@ class AppAssistant
       if sceneArguments?
         stageController.pushScene(sceneArguments, sceneParameters)
       else
-        stageController.pushScene("frontpage")
+        stageController.pushScene("frontpage",{})
+        
+      #assistant.deactivate() if assistant?
   
     StageAssistant.stages.push(cardname)
-
-    appController = Mojo.Controller.getAppController()
-    appController.createStageWithCallback({name: cardname, lightweight: true}, pushCard, "card")
+    Mojo.Controller.getAppController().createStageWithCallback({name: cardname, lightweight: true}, pushCard, "card")

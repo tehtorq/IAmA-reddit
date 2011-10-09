@@ -1,6 +1,7 @@
 class FriendAssistant
   
-  constructor: (action) ->
+  constructor: (params) ->
+    @allow_back = params.allow_back
     @cardname = "card" + Math.floor(Math.random()*10000)
     @listModel =
       items: []
@@ -21,17 +22,40 @@ class FriendAssistant
       # swipeToDelete: true
       #addItemLabel: '+ Add'
       }, @listModel)
+      
+    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    { label: $L('Friends'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    {}]}
+        ]
+      }
+    else
+      @viewMenuModel = {
+        visible: true,
+        items: [
+            {items:[{},
+                    {label: $L('Back'), icon:'', command:'back', width:80}
+                    { label: $L('Friends'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    {}]}
+        ]
+      }
+
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
-    
-    StageAssistant.defaultWindowOrientation(@, "free")
-    @loadFriends()
-
+  
   deactivate: (event) ->
     Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
+    
+  ready: ->
+    StageAssistant.defaultWindowOrientation(@, "free")
+    @loadFriends()
     
   cleanup: (event) ->
     Request.clear_all(@cardname)
@@ -111,6 +135,8 @@ class FriendAssistant
     switch params[0]
       when 'top'
         @scrollToTop()
+      when 'back'
+        @controller.stageController.popScene()
         
   handleFriendActionSelection: (command) =>
     return unless command?
@@ -119,7 +145,7 @@ class FriendAssistant
 
     switch params[0]
       when 'message-cmd'
-        AppAssistant.cloneCard(@, {name:"compose-message"}, {to:params[1]})
+        @controller.stageController.pushScene({name:"compose-message"}, {to:params[1],allow_back: true})
   
   spinSpinner: (bool) ->
     if bool
