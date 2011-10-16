@@ -29,14 +29,12 @@ class AppAssistant
     sceneParameters or= {}
     samecard = StageAssistant.cookieValue("prefs-samecard", "off")
   
-    if (samecard is "on") and (StageAssistant.stages.length > 0)
+    if assistant? and (samecard is "on") and (StageAssistant.stages.length > 0)
       sceneParameters.allow_back = true
       assistant.controller.stageController.pushScene(sceneArguments, sceneParameters)
       return
-      
-    #assistant.deactivate() if assistant?
   
-    # only allow one card for prefs
+    # only allow one card for prefs and about scenes
   
     if sceneArguments? and (sceneArguments.name in ['prefs','about'])
       stageController = Mojo.Controller.getAppController().getStageController(sceneArguments.name)
@@ -53,8 +51,6 @@ class AppAssistant
         stageController.pushScene(sceneArguments, sceneParameters)
       else
         stageController.pushScene("frontpage",{})
-        
-      #assistant.deactivate() if assistant?
   
     StageAssistant.stages.push(cardname)
     Mojo.Controller.getAppController().createStageWithCallback({name: cardname, lightweight: true}, pushCard, "card")
