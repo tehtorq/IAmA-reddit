@@ -9,10 +9,7 @@ class RedditsAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget("spinner",
-      attributes = {},
-      @model = {spinning: true}
-    )
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget(Mojo.Menu.commandMenu,
       { menuClass:'no-fade' },
@@ -163,9 +160,11 @@ class RedditsAssistant
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
 
   handleCallback: (params) ->
     return params unless params? and params.success

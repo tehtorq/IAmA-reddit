@@ -20,12 +20,7 @@ class ArticleAssistant extends PowerScrollBase
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget("spinner",
-      @attributes = {},
-      @model = {spinning: true}
-    ) 
-      
-    @spinSpinner(false)
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget('sub-menu', null, {items: [
       {label:$L("sorted by"), items: [{label:$L("hot"), command:$L("sort hot")},
@@ -105,6 +100,7 @@ class ArticleAssistant extends PowerScrollBase
     Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
 
     StageAssistant.defaultWindowOrientation(@, "free")
+    @spinSpinner(false)
     
     if event? and event.replied is true
       item = @comments.items[0]
@@ -333,9 +329,11 @@ class ArticleAssistant extends PowerScrollBase
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
 
   populateComments: (object) ->
     unless @article?

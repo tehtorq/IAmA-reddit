@@ -12,10 +12,7 @@ class GifAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget("spinner",
-      @attributes = {}
-      @model = {spinning: true}
-    )
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     command_menu_items = null
     
@@ -95,10 +92,10 @@ class GifAssistant
     StageAssistant.defaultWindowOrientation(@, "up")
     
     @setImageSrc @urlForIndex(@current_index)
-    @mydiv.setAttribute('style', "max-width: #{@controller.window.innerWidth}px")
-    #mydiv.setAttribute('align', 'middle')
+    @updateCommandMenu()
 
   ready: ->
+    @mydiv.setAttribute('style', "max-width: #{@controller.window.innerWidth}px")
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
 
@@ -139,14 +136,8 @@ class GifAssistant
       index -= @image_array.length
 
     @image_array[index]
-      
-  updateUrls: (delta) ->
-    new_index = @current_index + delta
-
-    return if new_index < 0 or new_index >= @image_array.length
-
-    @current_index = new_index
-
+    
+  updateCommandMenu: ->
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       if @article_array.length > 0
         @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
@@ -167,15 +158,24 @@ class GifAssistant
         @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))    
 
     @controller.modelChanged(@cmdMenuModel)
+      
+  updateUrls: (delta) ->
+    new_index = @current_index + delta
+
+    return if new_index < 0 or new_index >= @image_array.length
+
+    @current_index = new_index
+    
+    @updateCommandMenu()
 
     if (@current_index > -1) and (@current_index < @image_array.length)
+      @spinSpinner(true)
+      @mydiv.hide()
       @setImageSrc @urlForIndex(@current_index)
     
   setImageSrc: (src) ->
-    @mydiv.hide()
     @controller.get('image_title').hide() unless @cmdMenuModel.visible
     @controller.get('image_title').update(@currentTitle())
-    @spinSpinner(true)
     @mydiv.setAttribute('src', src)
 
   handleTap: =>
@@ -202,9 +202,11 @@ class GifAssistant
       
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
       
   currentTitle: ->
     if @article_array.length > 0

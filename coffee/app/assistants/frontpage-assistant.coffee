@@ -148,15 +148,7 @@ class FrontpageAssistant extends PowerScrollBase
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
-
-       #  
-       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.activate, this.gainedFocus.bind(this) );
-       # 
-       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.deactivate, this.lostFocus.bind(this) );
-       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.stageActivate, this.stageGainedFocus.bind(this) );
-       # 
-       # Mojo.Event.listen( this.controller.stageController.document,Mojo.Event.stageDeactivate, this.stageLostFocus.bind(this) );
-
+  
   activate: (event) ->
     super
     Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
@@ -224,9 +216,11 @@ class FrontpageAssistant extends PowerScrollBase
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
   
   handleCategorySwitch: (params) ->
     return unless params?

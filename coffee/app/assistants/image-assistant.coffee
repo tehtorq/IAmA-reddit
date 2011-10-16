@@ -15,10 +15,7 @@ class ImageAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget("spinner",
-      @attributes = {}
-      @model = {spinning: true}
-    )
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget(
       "ImageId" 
@@ -98,7 +95,6 @@ class ImageAssistant
     
     @controller.get('image_title').hide()
     StageAssistant.defaultWindowOrientation(@, "free")
-    @spinSpinner(true)
     @updateUrls(0)
 
   ready: ->
@@ -119,9 +115,11 @@ class ImageAssistant
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
 
   handleWindowResize: (event) =>
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"

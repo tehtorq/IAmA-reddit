@@ -9,11 +9,7 @@ class FriendAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget(
-      "spinner"
-      @attributes = {}
-      @model = {spinning: true}
-    )
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget("contentarea", {
       itemTemplate: "friend/list-item"
@@ -151,6 +147,8 @@ class FriendAssistant
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()

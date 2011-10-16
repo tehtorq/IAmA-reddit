@@ -9,11 +9,7 @@ class MessageAssistant
   setup: ->
     StageAssistant.setTheme(@)
     
-    @controller.setupWidget(
-      "spinner"
-      @attributes = {}
-      @model = {spinning: true}
-    )
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget 'sub-menu', null, {items: [
       {label:$L("all"), command:$L("message inbox")}
@@ -138,6 +134,8 @@ class MessageAssistant
   
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()

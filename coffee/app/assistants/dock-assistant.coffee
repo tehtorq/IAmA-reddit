@@ -13,11 +13,7 @@ class DockAssistant
   setup: ->
     @controller.enableFullScreenMode(true)
     
-    @controller.setupWidget(
-      "spinner"
-      @attributes = {}
-      @model = {spinning: true}
-    ) 
+    @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget("ImageId",
       @attributes = {
@@ -70,12 +66,14 @@ class DockAssistant
     
     @spinSpinner(false)
     @fetching_images = false
-  
+
   spinSpinner: (bool) ->
     if bool
+      @controller.get('spinner').mojo.start()
       @controller.get('loading').show()
     else
       @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()
   
   clearImages: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)
