@@ -41,14 +41,16 @@ class ArticleAssistant extends PowerScrollBase
       {label:$L("related"), command:$L("related")},
       {label:$L("other discussions"), command:$L("duplicates")},
       {label:$L("save"), command:$L("save-cmd")},
-      ]})  
+      ]})
+      
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
     
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: viewmenu_width - 60},
                     {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
                     {}]}
         ]
@@ -59,7 +61,7 @@ class ArticleAssistant extends PowerScrollBase
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: viewmenu_width - 140},
                     {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
                     {}]}
         ]

@@ -46,7 +46,7 @@ class StageAssistant
 
   @setTheme: (assistant) ->
     unless StageAssistant.current_theme?
-      StageAssistant.current_theme = StageAssistant.cookieValue("prefs-theme", "stylesheets/reddit-dark.css")
+      StageAssistant.current_theme = StageAssistant.cookieValue("prefs-theme", "stylesheets/themes/dark.css")
   
     Mojo.loadStylesheet(assistant.controller.document, StageAssistant.current_theme)
 

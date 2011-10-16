@@ -70,6 +70,8 @@ class RedditsAssistant
 
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
     
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel =
         visible: true
@@ -77,7 +79,7 @@ class RedditsAssistant
           [
             items:
               [{},
-              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+              { label: $L('Reddits'), command: 'top', icon: "", width: viewmenu_width - 60},
               {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]
@@ -90,7 +92,7 @@ class RedditsAssistant
             items:
               [{},
                {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: $L('Reddits'), command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+              { label: $L('Reddits'), command: 'top', icon: "", width: viewmenu_width - 140},
               {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]

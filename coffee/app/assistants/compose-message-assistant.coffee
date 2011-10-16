@@ -34,12 +34,14 @@ class ComposeMessageAssistant
 
     @controller.setupWidget("sendButton", {}, { label : "Send"})
     
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Send a message'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    { label: $L('Send a message'), command: 'top', icon: "", width: viewmenu_width},
                     {}]}
         ]
       }
@@ -49,7 +51,7 @@ class ComposeMessageAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Send a message'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    { label: $L('Send a message'), command: 'top', icon: "", width: viewmenu_width - 80},
                     {}]}
         ]
       }

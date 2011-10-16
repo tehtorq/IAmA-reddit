@@ -68,6 +68,8 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
+    
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
 
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel =
@@ -76,7 +78,7 @@ class FrontpageAssistant extends PowerScrollBase
           items: [
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 181}
+            { label: heading, command: 'new-card', icon: "", width: viewmenu_width - 181}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -90,7 +92,7 @@ class FrontpageAssistant extends PowerScrollBase
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: heading, command: 'new-card', icon: "", width: @controller.window.innerWidth - 261}
+            { label: heading, command: 'new-card', icon: "", width: viewmenu_width - 261}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}

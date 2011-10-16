@@ -24,12 +24,14 @@ class MessageAssistant
       {label:$L("sent"), command:$L("message sent")}
     ]}
     
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel =
         visible: true,
         items: [
             {items:[{},
-                    { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 60},
+                    { label: 'inbox', command: 'top', icon: "", width: viewmenu_width - 60},
                     {icon:'search', submenu: "sub-menu", width: 60},
                     {}]}
         ]
@@ -39,7 +41,7 @@ class MessageAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: 'inbox', command: 'top', icon: "", width: @controller.window.innerWidth - 140},
+                    { label: 'inbox', command: 'top', icon: "", width: viewmenu_width - 140},
                     {icon:'search', submenu: "sub-menu", width: 60},
                     {}]}
         ]    

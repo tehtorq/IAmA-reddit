@@ -28,13 +28,15 @@ class GalleryAssistant
 
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
                     { label: '', command: "", width: 60},
-                    { label: "Reddit", command: 'new-card', icon: "", width: @controller.window.innerWidth - 120},
+                    { label: "Reddit", command: 'new-card', icon: "", width: viewmenu_width - 120},
                     { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
                     {}]}
         ]
@@ -45,7 +47,7 @@ class GalleryAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: "Reddit", command: 'new-card', icon: "", width: @controller.window.innerWidth - 140},
+                    { label: "Reddit", command: 'new-card', icon: "", width: viewmenu_width - 140},
                     { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
                     {}]}
         ]

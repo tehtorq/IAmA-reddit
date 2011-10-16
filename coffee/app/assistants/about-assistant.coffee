@@ -4,12 +4,14 @@ class AboutAssistant
     @allow_back = params.allow_back
   
   setup: ->
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('About'), command: 'top', icon: "", width: @controller.window.innerWidth},
+                    { label: $L('About'), command: 'top', icon: "", width: viewmenu_width},
                     {}]}
         ]
       }
@@ -19,7 +21,7 @@ class AboutAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('About'), command: 'top', icon: "", width: @controller.window.innerWidth - 80},
+                    { label: $L('About'), command: 'top', icon: "", width: viewmenu_width - 80},
                     {}]}
         ]
       }

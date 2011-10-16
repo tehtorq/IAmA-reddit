@@ -12,7 +12,7 @@ class PrefsAssistant
     value4 = @cookieValue("prefs-samecard", "off")
     value5 = @cookieValue("prefs-articles-per-page", "25")
     value6 = @cookieValue("prefs-lock-orientation", "off")
-    value7 = @cookieValue("prefs-theme", "stylesheets/reddit-dark.css")
+    value7 = @cookieValue("prefs-theme", "stylesheets/themes/dark.css")
     value8 = @cookieValue("prefs-frontpage", "all")
     value9 = @cookieValue('prefs-galleries','1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots')
     
@@ -64,12 +64,11 @@ class PrefsAssistant
       label: $L('Theme'), 
       choices: 
         [
-          { label : "light", value : "stylesheets/reddit-light.css" }
-          { label : "dark", value : "stylesheets/reddit-dark.css" }
-          { label : "custom", value : "stylesheets/reddit-custom.css" }
-          #{ label : "custom-dark", value : "stylesheets/reddit-custom-dark.css" }
-          { label : "kuler", value : "stylesheets/reddit-kuler.css" }
-          #{ label : "lcd", value : "stylesheets/lcd-theme.css" }
+          { label : "custom", value : "stylesheets/themes/custom.css" }
+          { label : "dark", value : "stylesheets/themes/dark.css" }
+          { label : "kuler", value : "stylesheets/themes/kuler.css" }
+          { label : "light", value : "stylesheets/themes/light.css" }
+          { label : "wood", value : "stylesheets/themes/wood.css" }
         ]
       }
       {value: value7}
@@ -90,12 +89,14 @@ class PrefsAssistant
       {value: value8}
     )
     
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    
     @viewMenuModel = if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @controller.window.innerWidth},
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: viewmenu_width},
                     {}]}
         ]
       }
@@ -105,7 +106,7 @@ class PrefsAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @controller.window.innerWidth - 80},
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: viewmenu_width - 80},
                     {}]}
         ]
       }

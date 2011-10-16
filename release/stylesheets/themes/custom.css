@@ -1,6 +1,6 @@
 
 body.palm-default {
- background: url(../images/gradient-background-custom.png) center center repeat;
+ background: url(../../images/gradient-background-custom.png) center center repeat;
  background-attachment:fixed;
  -webkit-background-size: 100% 100%;
 }
@@ -34,28 +34,28 @@ body.palm-default {
 .upvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/upvote.png) center center repeat;
+  background: url(../../images/upvote.png) center center repeat;
   margin-top: 15px;
 }
 
 .selected_upvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/upvote-selected.png) center center repeat;
+  background: url(../../images/upvote-selected.png) center center repeat;
   margin-top: 15px;
 }
 
 .downvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/downvote.png) center center repeat;
+  background: url(../../images/downvote.png) center center repeat;
   margin-top: 15px;
 }
 
 .selected_downvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/downvote-selected.png) center center repeat;
+  background: url(../../images/downvote-selected.png) center center repeat;
   margin-top: 15px;
 }
 
@@ -129,7 +129,7 @@ body.palm-default {
   color: black;  
   padding: 0px 4px;
   margin-top:0px;  
-  background: url(../images/comment-light.png) no-repeat;
+  background: url(../../images/comment-light.png) no-repeat;
   -webkit-background-size: 100% 100%;
 }
 
@@ -142,7 +142,7 @@ body.palm-default {
   color: red;  
   padding: 0px;
   margin: 0px -10px 5px 5px;  
-  background: url(../images/comment_tag.png) no-repeat;
+  background: url(../../images/comment_tag.png) no-repeat;
   background-size: 100%;
   float:right;
 }

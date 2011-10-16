@@ -24,6 +24,8 @@ class GifAssistant
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
       ]})
+      
+    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
     
     if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
       if @article_array.length > 0
@@ -31,7 +33,7 @@ class GifAssistant
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 240}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 240}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -40,7 +42,7 @@ class GifAssistant
         command_menu_items = [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 180}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 180}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -52,7 +54,7 @@ class GifAssistant
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 260}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 260}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -62,7 +64,7 @@ class GifAssistant
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @controller.window.innerWidth - 200}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 200}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}

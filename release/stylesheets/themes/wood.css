@@ -1,36 +1,16 @@
 
 body.palm-default {
- background: url(../images/gradient-background.png) center center repeat;
+ background: url(../../images/textures/3.png) center center repeat;
  background-attachment:fixed;
- -webkit-background-size: 100% 100%;
+ /*-webkit-background-size: 100% 100%;*/
 }
 
 .wrappertest {
   background-color : black;
 }
 
-.lcddisplay {
-	width: 500px;
-	padding: 10px;
-	background: #B3CBB3; /* old browsers */
-	background: -moz-linear-gradient(top, #B3CBB3 14%, #A2BCA2 56%); /* firefox */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#B3CBB3), color-stop(56%,#A2BCA2)); /* webkit */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B3CBB3', endColorstr='#A2BCA2',GradientType=0 ); /* ie */
-	-webkit-box-shadow: inset 1px 1px 5px #333333;
-	-moz-box-shadow: inset 1px 1px 5px #333333;
-	box-shadow: inset 1px 1px 5px #333333;	color: #000;
-	font-size: 1em;
-	line-height: 1.2em;
-	text-shadow: 2px 2px 0px #9ebb9e;
-	border-bottom: 1px rgba(255,255,255,0.2) solid;
-	border-right: 1px rgba(255,255,255,0.2) solid;
-	border-top: 1px rgba(0,0,0,0.7) solid;
-	border-left: 1px rgba(0,0,0,0.7) solid;
-	margin-bottom: 1em;
-}
-
 .thing {
-  background: url(../images/squared5.png) center center repeat;
+  background: url(../../images/textures/2.png) center center repeat;
   font-size: 15px;
   background-color: black;
   color: silver;
@@ -39,19 +19,6 @@ body.palm-default {
   /*margin: 6px;*/
   -webkit-border-radius: 6px;
   overflow: auto;
-  
-	background: #B3CBB3; /* old browsers */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,#B3CBB3), color-stop(56%,#A2BCA2)); /* webkit */
-	-webkit-box-shadow: inset 1px 1px 5px #333333;
-	box-shadow: inset 1px 1px 5px #333333;	color: #000;
-	font-size: 1em;
-	line-height: 1.2em;
-	text-shadow: 2px 2px 0px #9ebb9e;
-	border-bottom: 1px rgba(255,255,255,0.2) solid;
-	border-right: 1px rgba(255,255,255,0.2) solid;
-	border-top: 1px rgba(0,0,0,0.7) solid;
-	border-left: 1px rgba(0,0,0,0.7) solid;
-	margin-bottom: 1em;
 }
 
 .toggle_hidden {
@@ -73,28 +40,28 @@ body.palm-default {
 .upvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/upvote.png) center center repeat;
+  background: url(../../images/upvote.png) center center repeat;
   margin-top: 15px;
 }
 
 .selected_upvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/upvote-selected.png) center center repeat;
+  background: url(../../images/upvote-selected.png) center center repeat;
   margin-top: 15px;
 }
 
 .downvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/downvote.png) center center repeat;
+  background: url(../../images/downvote.png) center center repeat;
   margin-top: 15px;
 }
 
 .selected_downvote_icon {
   width: 22px;
   height: 20px;
-  background: url(../images/downvote-selected.png) center center repeat;
+  background: url(../../images/downvote-selected.png) center center repeat;
   margin-top: 15px;
 }
 
@@ -125,7 +92,7 @@ body.palm-default {
 }
 
 .subreddit_info {
-  background: url(../images/squared5.png) center center repeat;
+  background: url(../../images/squared5.png) center center repeat;
   /*visibility: hidden;*/
   z-index: -100;
   width: 80%;  
@@ -139,14 +106,14 @@ body.palm-default {
 }
 
 .comment_shadow {
-  background: url(../images/bottom-shadow.png) center center repeat;
+  background: url(../../images/bottom-shadow.png) center center repeat;
   padding: 0px;
   margin: -3px 0px -5px 8px;
   height: 10px;
 }
 
 .shadow_footer {
-  background: url(../images/bottom-shadow.png) center center repeat;
+  background: url(../../images/bottom-shadow.png) center center repeat;
   padding: 0px;
   margin: -3px 12px -5px 12px;
   height: 10px;
@@ -172,7 +139,7 @@ body.palm-default {
   color: silver;  
   padding: 0px 4px;
   margin-top:0px;  
-  background: url(../images/comment.png) no-repeat;
+  background: url(../../images/comment.png) no-repeat;
   -webkit-background-size: 100% 100%;
 }
 
@@ -185,7 +152,7 @@ body.palm-default {
   color: red;  
   padding: 0px;
   margin: 0px -18px 5px 5px;  
-  background: url(../images/comment_tag.png) no-repeat;
+  background: url(../../images/comment_tag.png) no-repeat;
   background-size: 100%;
   float:right;
 }
