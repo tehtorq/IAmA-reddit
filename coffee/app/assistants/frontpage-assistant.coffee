@@ -441,12 +441,22 @@ class FrontpageAssistant extends PowerScrollBase
     params = command.split ' '
   
     switch params[0]
+      when 'open-link-cmd'
+        article = @articles.items[parseInt(params[1])]
+        
+        if article.data.url?
+          @controller.serviceRequest("palm://com.palm.applicationManager", {
+            method: "open",
+            parameters:
+              target: article.data.url
+              onSuccess: ->
+              onFailure: ->
+            })
+        else
+          @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
         @loadArticles()
-      when 'comments-cmd'
-        article = @articles.items[parseInt(params[1])]
-        @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -553,7 +563,7 @@ class FrontpageAssistant extends PowerScrollBase
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
          {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
-         {label: $L('Comments'), command: 'comments-cmd ' + event.index}
+         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
          {label: $L(save_label), command: save_action + ' ' + article.data.name}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
