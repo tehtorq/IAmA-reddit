@@ -69,18 +69,15 @@ class GalleryAssistant extends BaseAssistant
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
+    super
+    
+    @addListeners(
+      [@controller.get("gallery"), Mojo.Event.tap, @handleTap]
+      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages]
+    )
     
     StageAssistant.defaultWindowOrientation(@, "free")
     @switchSubreddit("pics")
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("gallery"), Mojo.Event.tap, @handleTap)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
-
-  cleanup: (event) ->
-    super
 
   orientationChanged: (orientation) ->
     @controller.stageController.setWindowOrientation(orientation)

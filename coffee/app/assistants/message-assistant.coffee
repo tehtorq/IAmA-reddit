@@ -51,16 +51,15 @@ class MessageAssistant extends BaseAssistant
       }, @listModel)
 
   activate: (event) ->
-    @controller.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
+    super
+    
+    @addListeners(
+      [@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped]
+    )
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadMessages('inbox')
 
-  deactivate: (event) ->
-    @controller.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
-    
-  cleanup: (event) ->
-    super
-  
   timeFormatter: (propertyValue, model) =>
     return "" if model.kind not in ['t1','t3','t4']
     StageAssistant.timeFormatter(model.data.created_utc)

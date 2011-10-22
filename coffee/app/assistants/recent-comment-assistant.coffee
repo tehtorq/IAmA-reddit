@@ -46,7 +46,11 @@ class RecentCommentAssistant extends PowerScrollBase
 
   activate: (event) ->
     super
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    
+    @addListeners(
+      [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
+    )
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     
     @fetchRecentComments() if @commentModel.items.length is 0
@@ -54,7 +58,6 @@ class RecentCommentAssistant extends PowerScrollBase
   
   deactivate: (event) ->
     super
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
     @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->

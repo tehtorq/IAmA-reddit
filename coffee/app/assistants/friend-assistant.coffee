@@ -42,19 +42,16 @@ class FriendAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
-  
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("contentarea"), Mojo.Event.hold, @itemHold)
+    super
     
+    @addListeners(
+      [@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("contentarea"), Mojo.Event.hold, @itemHold]
+    )
+  
   ready: ->
     StageAssistant.defaultWindowOrientation(@, "free")
     @loadFriends()
-    
-  cleanup: (event) ->
-    super
   
   handleCallback: (params) ->
     return params unless params? and params.success

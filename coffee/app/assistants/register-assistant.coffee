@@ -52,16 +52,15 @@ class RegisterAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("registerButton"), Mojo.Event.tap, @register)
+    super
+    
+    @addListeners(
+      [@controller.get("registerButton"), Mojo.Event.tap, @register]
+    )
+    
     StageAssistant.defaultWindowOrientation(@, "up")
     @fetchCaptcha()
 
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
-
-  cleanup: (event) ->
-    super
-    
   handleCommand: (event) ->
     return unless event.type is Mojo.Event.command
 

@@ -146,10 +146,13 @@ class FrontpageAssistant extends PowerScrollBase
   
   activate: (event) ->
     super
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.hold, @itemHold)
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
+    
+    @addListeners(
+      [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("list"), Mojo.Event.hold, @itemHold]
+      [@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem]
+      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
+    )
     
     StageAssistant.defaultWindowOrientation(@, "free")
 
@@ -165,10 +168,6 @@ class FrontpageAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem)
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.hold, @itemHold)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
   
   cleanup: (event) ->
     super

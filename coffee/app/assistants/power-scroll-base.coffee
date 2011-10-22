@@ -20,11 +20,13 @@ class PowerScrollBase extends BaseAssistant
     super
   
   activate: ->
+    super
     # Add listeners for two-finger gesture events
     Mojo.Event.listen(@controller.document, "gesturestart", @twoFingerStartBound)
     Mojo.Event.listen(@controller.document, "gestureend", @twoFingerEndBound)
 
   deactivate: ->
+    super
     # Stop listening to two-finger gesture events
     Mojo.Event.stopListening(@controller.document, "gesturestart", @twoFingerStartBound)
     Mojo.Event.stopListening(@controller.document, "gestureend", @twoFingerEndBound)

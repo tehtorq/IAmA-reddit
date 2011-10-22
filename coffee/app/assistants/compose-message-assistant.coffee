@@ -57,16 +57,14 @@ class ComposeMessageAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
+    super
+    
+    @addListeners(
+      [@controller.get("sendButton"), Mojo.Event.tap, @sendMessage]
+    )
     
     StageAssistant.defaultWindowOrientation(@, "up")
     @displayComposeMessage()
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
-    
-  cleanup: (event) ->
-    super
 
   displayComposeMessage: (object) ->
     @fetchHTMLComposePage()

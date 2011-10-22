@@ -88,9 +88,13 @@ class ImageAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
-    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.listen(@controller.window, 'resize', @handleWindowResize, false)
+    super
+    
+    @addListeners(
+      [@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage]
+      [@controller.get('wrappertest'), Mojo.Event.tap, @handleTap]
+      [@controller.window, 'resize', @handleWindowResize, false]
+    )
     
     @controller.get('image_title').hide()
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -100,14 +104,6 @@ class ImageAssistant extends BaseAssistant
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth,@controller.window.innerHeight)
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get('ImageId'), Mojo.Event.imageViewChanged, @changedImage)
-    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.stopListening(@controller.window, 'resize', @handleWindowResize, false)
-
-  cleanup: (event) ->
-    super
 
   changedImage: =>
     @spinSpinner(false)

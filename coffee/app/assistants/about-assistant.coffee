@@ -27,12 +27,6 @@ class AboutAssistant extends BaseAssistant
       }
 
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
-  
-  activate: (event) ->
-  deactivate: (event) ->
-  
-  cleanup: (event) ->
-    super
     
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

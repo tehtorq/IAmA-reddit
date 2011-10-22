@@ -29,6 +29,8 @@ class DockAssistant extends BaseAssistant
     )
 
   activate: (event) ->
+    super
+    
     StageAssistant.defaultWindowOrientation(@, "free")
     @timerID = @controller.window.setInterval(@tick.bind(@),15000)
   

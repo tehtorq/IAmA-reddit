@@ -9,6 +9,11 @@ class BaseAssistant
     
     StageAssistant.setTheme(@)
     
+  activate: ->
+    
+  deactivate: ->
+    @removeListeners()
+    
   cleanup: ->
     Request.clear_all(@cardname)
   
@@ -32,3 +37,11 @@ class BaseAssistant
     else
       @controller.get('loading').hide()
       @controller.get('spinner').mojo.stop()
+      
+  addListeners: ->
+    @listeners = arguments
+    
+    _.each @listeners, (listener) => Mojo.Event.listen(listener...)
+    
+  removeListeners: ->
+    _.each @listeners, (listener) => Mojo.Event.stopListening(listener...)

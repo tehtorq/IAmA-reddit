@@ -96,20 +96,16 @@ class RedditsAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
-    Mojo.Event.listen(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
-    StageAssistant.defaultWindowOrientation(@, "free")
-
-    @loadReddits() if @redditsModel.items.length is 0
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem)
-    Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
-
-  cleanup: (event) ->
     super
+    
+    @addListeners(
+      [@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits]
+      [@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem]
+    )
+    
+    StageAssistant.defaultWindowOrientation(@, "free")
+    @loadReddits() if @redditsModel.items.length is 0
     
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)

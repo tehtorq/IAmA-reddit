@@ -47,24 +47,23 @@ class UserAssistant extends BaseAssistant
       }, @listModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    super
+    
+    @addListeners(
+      [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
+    )
+
     StageAssistant.defaultWindowOrientation(@, "free")
 
     if @listModel.items.length is 0
       @about()
       @fetchComments()
 
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-
-  cleanup: (event) ->
-    super
-
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'
     return model.data.title if model.kind is 't3'
     ""
-
+  
   contentFormatter: (propertyValue, model) =>
     return model.data.body if model.kind is 't1'
     return model.data.selftext if model.kind is 't3'

@@ -93,8 +93,11 @@ class ArticleAssistant extends PowerScrollBase
 
   activate: (event) ->
     super
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("list"), Mojo.Event.hold, @itemHold)
+    
+    @addListeners(
+      [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("list"), Mojo.Event.hold, @itemHold]
+    )
 
     StageAssistant.defaultWindowOrientation(@, "free")
     @spinSpinner(false)
@@ -108,14 +111,6 @@ class ArticleAssistant extends PowerScrollBase
     if @comments.items.length < 2
       @controller.get('loadMoreButton').mojo.activate()
       @fetchComments({})
-
-  deactivate: (event) ->
-    super
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.hold, @itemHold)
-
-  cleanup: (event) ->
-    super
     
   findArticleIndex: (article_name) ->
     length = @comments.items.length

@@ -84,8 +84,12 @@ class GifAssistant extends BaseAssistant
     @mydiv.show()
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.listen(@controller.get('ImageId'), 'load', @handleImageLoaded)
+    super
+    
+    @addListeners(
+      [@controller.get('wrappertest'), Mojo.Event.tap, @handleTap]
+      [@controller.get('ImageId'), 'load', @handleImageLoaded]
+    )
     
     StageAssistant.defaultWindowOrientation(@, "up")
     
@@ -96,13 +100,6 @@ class GifAssistant extends BaseAssistant
     @mydiv.setAttribute('style', "max-width: #{@controller.window.innerWidth}px")
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get('wrappertest'), Mojo.Event.tap, @handleTap)
-    Mojo.Event.stopListening(@controller.get('ImageId'), 'load', @handleImageLoaded)
-
-  cleanup: (event) ->
-    super
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

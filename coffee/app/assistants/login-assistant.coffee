@@ -46,14 +46,13 @@ class LoginAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
-    Mojo.Event.listen(@controller.get("loginButton"), Mojo.Event.tap, @login)
-    StageAssistant.defaultWindowOrientation(@, "up")
-
-  deactivate: (event) ->
-    Mojo.Event.stopListening(@controller.get("loginButton"), Mojo.Event.tap, @login)
-
-  cleanup: (event) ->
     super
+    
+    @addListeners(
+      [@controller.get("loginButton"), Mojo.Event.tap, @login]
+    )
+
+    StageAssistant.defaultWindowOrientation(@, "up")
 
   displayButtonLoggingIn: ->
     @controller.get('loginButton').mojo.activate()
