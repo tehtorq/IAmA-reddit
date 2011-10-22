@@ -137,8 +137,6 @@ class FrontpageAssistant extends PowerScrollBase
       nullItemTemplate: "list/null_item_template"
       swipeToDelete: true
       preventDeleteProperty: 'can_unsave'
-      lookahead: 25
-      renderLimit: 1000
       formatters: 
         tag: @tagFormatter
         thumbnail: @thumbnailFormatter
@@ -234,11 +232,11 @@ class FrontpageAssistant extends PowerScrollBase
   
   handleCallback: (params) ->
     return params unless params? and params.success
-  
-    @spinSpinner(false)
-  
+    
     index = -1
     params.type = params.type.split(' ')
+    
+    @spinSpinner(false) unless params.type[0] in ['subreddit-load','subreddit-load-mine']
 
     switch params.type[0]
       when "article-unsave"
@@ -390,6 +388,7 @@ class FrontpageAssistant extends PowerScrollBase
     new Request(@).get(@reddit_api.getArticlesUrl(), parameters, 'load-articles')
   
   handleLoadArticlesResponse: (response) ->
+    length = @articles.items.length
     @reddit_api.load_next = false
     json = response.responseJSON
   
@@ -404,7 +403,7 @@ class FrontpageAssistant extends PowerScrollBase
       item.can_unsave = if item.data.saved then false else true
       @articles.items.push(item)
     
-    @controller.modelChanged(@articles)
+    @controller.get('article-list').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
