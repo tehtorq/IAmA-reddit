@@ -131,7 +131,7 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget('filterfield', {delay: 2000})
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
-    @controller.setupWidget("article-list", {
+    @controller.setupWidget("list", {
       itemTemplate: "frontpage/article"
       emptyTemplate: "frontpage/emptylist"
       nullItemTemplate: "list/null_item_template"
@@ -149,15 +149,12 @@ class FrontpageAssistant extends PowerScrollBase
   
   activate: (event) ->
     super
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
-    Mojo.Event.listen(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keyup, @handleKeyUp, true)
-    Mojo.Event.listen(@controller.document,Mojo.Event.keydown, @handleKeyDown, true)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.hold, @itemHold)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem)
     Mojo.Event.listen(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
     
     StageAssistant.defaultWindowOrientation(@, "free")
-    @metakey = false
 
     if @articles.items.length is 0
       if @search?
@@ -171,11 +168,9 @@ class FrontpageAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keyup, @handleKeyUp)
-    Mojo.Event.stopListening(@controller.document,Mojo.Event.keydown, @handleKeyDown)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem)
-    Mojo.Event.stopListening(@controller.get("article-list"), Mojo.Event.hold, @itemHold)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.hold, @itemHold)
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
   
   cleanup: (event) ->
@@ -203,14 +198,6 @@ class FrontpageAssistant extends PowerScrollBase
     
     @controller.get('filterfield').mojo.close()
     @searchReddit(filterEvent.filterString)
-  
-  handleKeyUp: (event) =>
-    e = event.originalEvent
-    @metakey = false if e.metaKey is false
-  
-  handleKeyDown: (event) =>
-    e = event.originalEvent
-    @metakey = true if e.metaKey is true
   
   spinSpinner: (bool) ->
     if bool
@@ -245,7 +232,7 @@ class FrontpageAssistant extends PowerScrollBase
       
           if index > -1
             @articles.items[index].data.saved = false
-            @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+            @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         new Banner("Unsaved!").send()
       when "article-save"
@@ -254,7 +241,7 @@ class FrontpageAssistant extends PowerScrollBase
       
           if index > -1
             @articles.items[index].data.saved = true
-            @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+            @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         new Banner("Saved!").send()
       when 'load-articles'
@@ -275,7 +262,7 @@ class FrontpageAssistant extends PowerScrollBase
 
           @articles.items[index].data.likes = true
           @articles.items[index].data.ups++
-          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         new Banner("Upvoted!").send()
       when "comment-downvote"
@@ -287,7 +274,7 @@ class FrontpageAssistant extends PowerScrollBase
 
           @articles.items[index].data.likes = false
           @articles.items[index].data.downs++
-          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         new Banner("Downvoted!").send()
       when "comment-vote-reset"
@@ -300,7 +287,7 @@ class FrontpageAssistant extends PowerScrollBase
             @articles.items[index].data.downs--
 
           @articles.items[index].data.likes = null     
-          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         new Banner("Vote reset!").send()
 
@@ -369,7 +356,7 @@ class FrontpageAssistant extends PowerScrollBase
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
-      @controller.get('article-list').mojo.noticeRemovedItems(0, length)
+      @controller.get('list').mojo.noticeRemovedItems(0, length)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
       @updateHeading(@reddit_api.category)    
@@ -403,7 +390,7 @@ class FrontpageAssistant extends PowerScrollBase
       item.can_unsave = if item.data.saved then false else true
       @articles.items.push(item)
     
-    @controller.get('article-list').mojo.noticeAddedItems(length, items)
+    @controller.get('list').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
@@ -416,7 +403,7 @@ class FrontpageAssistant extends PowerScrollBase
     else
       @controller.get('loadMoreButton').hide()
     
-    @controller.get('article-list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
+    @controller.get('list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
   
   handleRandomSubredditResponse:(response) ->
     headers = response.getAllHeaders()

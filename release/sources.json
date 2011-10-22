@@ -1,7 +1,6 @@
 [
     {"source": "app/lib/utils.js"},
     {"source": "app/lib/underscore-min.js"},
-    {"source": "app/models/debugger.js"},
 		{"source": "app/models/request.js"},
 		{"source": "app/models/article.js"},
 		{"source": "app/models/comment.js"},

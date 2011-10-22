@@ -67,7 +67,7 @@ class ArticleAssistant extends PowerScrollBase
     
     @comments.items.push({kind: 't3', data: @article}) if @article?
 
-    @controller.setupWidget("comment-list", {
+    @controller.setupWidget("list", {
     itemTemplate : "article/comment"
     #renderLimit: 501 # scroll to top and reveal next OP is perfect - but hiding/showing comments is slow
     formatters:
@@ -86,7 +86,7 @@ class ArticleAssistant extends PowerScrollBase
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
 
-    @controller.get("comment-list").observe("click", (event) =>
+    @controller.get("list").observe("click", (event) =>
       element = event.findElement("a")
       
       if element?
@@ -96,8 +96,8 @@ class ArticleAssistant extends PowerScrollBase
 
   activate: (event) ->
     super
-    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.listen(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.listen(@controller.get("list"), Mojo.Event.hold, @itemHold)
 
     StageAssistant.defaultWindowOrientation(@, "free")
     @spinSpinner(false)
@@ -114,8 +114,8 @@ class ArticleAssistant extends PowerScrollBase
 
   deactivate: (event) ->
     super
-    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.listTap, @itemTapped)
-    Mojo.Event.stopListening(@controller.get("comment-list"), Mojo.Event.hold, @itemHold)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
+    Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.hold, @itemHold)
 
   cleanup: (event) ->
     Request.clear_all(@cardname)
@@ -346,7 +346,7 @@ class ArticleAssistant extends PowerScrollBase
     
     @controller.modelChanged(@comments)
     
-    #@controller.get('comment-list').mojo.setLengthAndInvalidate(@comments.items.length)
+    #@controller.get('list').mojo.setLengthAndInvalidate(@comments.items.length)
 
   populateReplies: (replies, indent, array) ->
     _.each replies, (child) =>
@@ -383,8 +383,8 @@ class ArticleAssistant extends PowerScrollBase
     if remove is true
       @comments.items[index].hiding_comments = checked_until - index
       @comments.items.splice(first_candidate, checked_until - index)
-      @controller.get('comment-list').mojo.invalidateItems(index,1)
-      @controller.get('comment-list').mojo.noticeRemovedItems(first_candidate, checked_until - index)
+      @controller.get('list').mojo.invalidateItems(index,1)
+      @controller.get('list').mojo.noticeRemovedItems(first_candidate, checked_until - index)
       
   showChildren: (index) ->
     comment = @comments.items[index]
@@ -396,8 +396,8 @@ class ArticleAssistant extends PowerScrollBase
     if array.items.length > 0
       items = array.items
       @comments.items.splice(index+1,0, items...)
-      @controller.get('comment-list').mojo.invalidateItems(index,1)
-      @controller.get('comment-list').mojo.noticeAddedItems(index+1, items)
+      @controller.get('list').mojo.invalidateItems(index,1)
+      @controller.get('list').mojo.noticeAddedItems(index+1, items)
   
   handlefetchCommentsResponse: (response) ->
     return unless response? and response.responseJSON?
@@ -430,7 +430,7 @@ class ArticleAssistant extends PowerScrollBase
 
         @comments.items[index].data.likes = true
         @comments.items[index].data.ups++
-        @controller.get('comment-list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
+        @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
       new Banner("Upvoted!").send()
     else if params.type[0] is "comment-downvote"
@@ -442,7 +442,7 @@ class ArticleAssistant extends PowerScrollBase
 
         @comments.items[index].data.likes = false
         @comments.items[index].data.downs++
-        @controller.get('comment-list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
+        @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
       new Banner("Downvoted!").send()
     else if params.type[0] is "comment-vote-reset"
@@ -455,7 +455,7 @@ class ArticleAssistant extends PowerScrollBase
           @comments.items[index].data.downs--
 
         @comments.items[index].data.likes = null      
-        @controller.get('comment-list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
+        @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
       new Banner("Vote reset!").send()
     else if params.type[0] is "article-save"
@@ -537,7 +537,7 @@ class ArticleAssistant extends PowerScrollBase
         index = 0 if index is @comments.items.length
         
         if @comments.items[index].data.author and (@comments.items[index].data.author is author)
-          @controller.get('comment-list').mojo.revealItem(index, true)
+          @controller.get('list').mojo.revealItem(index, true)
           return
       
       return
