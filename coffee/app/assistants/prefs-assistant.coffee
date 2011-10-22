@@ -1,11 +1,10 @@
-class PrefsAssistant
+class PrefsAssistant extends BaseAssistant
   
   constructor: (params) ->
-    @allow_back = params.allow_back
+    super
 
   setup: ->
-    @cardname = "card" + Math.floor(Math.random()*10000)
-    StageAssistant.setTheme(@)
+    super
     
     value1 = @cookieValue("prefs-hide-thumbnails", "off")
     value3 = @cookieValue("prefs-hide-easylinks", "off")
@@ -89,14 +88,12 @@ class PrefsAssistant
       {value: value8}
     )
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    @viewMenuModel = if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    @viewMenuModel = if not @showBackNavigation()
       {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: viewmenu_width},
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -106,7 +103,7 @@ class PrefsAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -138,7 +135,7 @@ class PrefsAssistant
     StageAssistant.defaultWindowOrientation(@, "free")
     
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   handleUpdate1: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-hide-thumbnails")  

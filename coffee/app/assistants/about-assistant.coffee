@@ -1,17 +1,17 @@
-class AboutAssistant
+class AboutAssistant extends BaseAssistant
   
   constructor: (params) ->
-    @allow_back = params.allow_back
+    super
   
   setup: ->
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
+    super
     
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('About'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('About'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -21,7 +21,7 @@ class AboutAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('About'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('About'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -30,7 +30,9 @@ class AboutAssistant
   
   activate: (event) ->
   deactivate: (event) ->
+  
   cleanup: (event) ->
+    super
     
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

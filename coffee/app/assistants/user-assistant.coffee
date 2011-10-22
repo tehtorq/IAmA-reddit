@@ -1,8 +1,8 @@
-class UserAssistant
+class UserAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @user = params.user
     @url = 'http://reddit.com/user/' + @user + '.json'
     @listModel =
@@ -10,18 +10,16 @@ class UserAssistant
         []
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel =
         visible: true
         items: 
           [
             items:
               [{},
-              { label: "overview for " + @user, command: 'top', icon: "", width: viewmenu_width},
+              { label: "overview for " + @user, command: 'top', icon: "", width: @getViewMenuWidth()},
               {}
               ]
         ]
@@ -33,7 +31,7 @@ class UserAssistant
             items:
               [{},
                {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: "overview for " + @user, command: 'top', icon: "", width: viewmenu_width - 80},
+              { label: "overview for " + @user, command: 'top', icon: "", width: @getViewMenuWidth() - 80},
               {}
               ]
         ]
@@ -60,7 +58,7 @@ class UserAssistant
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.listTap, @itemTapped)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'
@@ -141,6 +139,5 @@ class UserAssistant
     hash =
       url: 'http://reddit.com/comments/' + thread_id.substr(3)
       title: thread_title
-      allow_back: true
 
     @controller.stageController.pushScene({name:"article",transition: Mojo.Transition.crossFade}, hash)

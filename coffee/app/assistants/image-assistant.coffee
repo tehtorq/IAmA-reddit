@@ -1,8 +1,8 @@
-class ImageAssistant
+class ImageAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @image_array = params.images
     @article_array = params.articles
     @current_index = params.index
@@ -13,7 +13,7 @@ class ImageAssistant
       @article_array = []
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -35,16 +35,15 @@ class ImageAssistant
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
       ]})
-      
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
     
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    
+    if not @showBackNavigation()
       if @article_array.length > 0
         command_menu_items = [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 240}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 240}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -53,7 +52,7 @@ class ImageAssistant
         command_menu_items = [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 180}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 180}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -65,7 +64,7 @@ class ImageAssistant
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 320}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 320}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -75,7 +74,7 @@ class ImageAssistant
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: viewmenu_width - 260}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 260}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -108,7 +107,7 @@ class ImageAssistant
     Mojo.Event.stopListening(@controller.window, 'resize', @handleWindowResize, false)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   changedImage: =>
     @spinSpinner(false)
@@ -164,7 +163,7 @@ class ImageAssistant
 
     @current_index = new_index
 
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       if @article_array.length > 0
         @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
         @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)

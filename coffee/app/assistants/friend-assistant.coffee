@@ -1,13 +1,13 @@
-class FriendAssistant
+class FriendAssistant extends BaseAssistant
   
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @listModel =
       items: []
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -19,14 +19,12 @@ class FriendAssistant
       #addItemLabel: '+ Add'
       }, @listModel)
       
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-      
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Friends'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('Friends'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -36,7 +34,7 @@ class FriendAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Friends'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Friends'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -56,7 +54,7 @@ class FriendAssistant
     @loadFriends()
     
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
   
   handleCallback: (params) ->
     return params unless params? and params.success
@@ -143,7 +141,7 @@ class FriendAssistant
 
     switch params[0]
       when 'message-cmd'
-        @controller.stageController.pushScene({name:"compose-message"}, {to:params[1],allow_back: true})
+        @controller.stageController.pushScene({name:"compose-message"}, {to:params[1]})
   
   spinSpinner: (bool) ->
     if bool

@@ -2,14 +2,13 @@ class RecentCommentAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    
     @params = params
     @commentModel = { items : [] }
     @comments = []
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget("list", {
     itemTemplate : "recent-comment/comment",
@@ -19,16 +18,14 @@ class RecentCommentAssistant extends PowerScrollBase
       shadowindent: @shadowindentFormatter
     }, @commentModel)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel =
         visible: true
         items: 
           [
             items:
               [{},
-              { label: $L('Recent comments'), command: 'top', icon: "", width: viewmenu_width},
+              { label: $L('Recent comments'), command: 'top', icon: "", width: @getViewMenuWidth()},
               {}
               ]
         ]
@@ -40,7 +37,7 @@ class RecentCommentAssistant extends PowerScrollBase
             items:
               [{},
                {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: $L('Recent comments'), command: 'top', icon: "", width: viewmenu_width - 80},
+              { label: $L('Recent comments'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
               {}
               ]
         ]
@@ -61,8 +58,8 @@ class RecentCommentAssistant extends PowerScrollBase
     @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->
+    super
     @controller.window.clearInterval(@timerID)
-    Request.clear_all(@cardname)
   
   tick: =>
     current_seconds = (new Date()).getTime() / 1000
@@ -117,7 +114,7 @@ class RecentCommentAssistant extends PowerScrollBase
     if params[0] is 'view-cmd'
       #@controller.stageController.popScenesTo("user", {linky:params[1]})
       controller = Mojo.Controller.getAppController().getActiveStageController()
-      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{user:params[1],allow_back: true})
+      controller.pushScene({name:"user",transition: Mojo.Transition.crossFade},{user:params[1]})
 
   populateComments: (object) ->
     _.each object.data.children, (comment) =>  

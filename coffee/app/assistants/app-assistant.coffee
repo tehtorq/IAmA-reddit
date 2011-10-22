@@ -30,7 +30,6 @@ class AppAssistant
     samecard = StageAssistant.cookieValue("prefs-samecard", "off")
   
     if assistant? and (samecard is "on") and (StageAssistant.stages.length > 0)
-      sceneParameters.allow_back = true
       assistant.controller.stageController.pushScene(sceneArguments, sceneParameters)
       return
   

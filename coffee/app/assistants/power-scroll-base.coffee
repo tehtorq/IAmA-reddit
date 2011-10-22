@@ -9,11 +9,15 @@
 # - http://pastebin.com/6JqcQT4a
 # - https://gist.github.com/786358
 
-class PowerScrollBase
+class PowerScrollBase extends BaseAssistant
   
   constructor: ->
+    super
     @twoFingerStartBound = @twoFingerStart.bind(@)
     @twoFingerEndBound = @twoFingerEnd.bind(@)
+    
+  setup: ->
+    super
   
   activate: ->
     # Add listeners for two-finger gesture events
@@ -24,6 +28,9 @@ class PowerScrollBase
     # Stop listening to two-finger gesture events
     Mojo.Event.stopListening(@controller.document, "gesturestart", @twoFingerStartBound)
     Mojo.Event.stopListening(@controller.document, "gestureend", @twoFingerEndBound)
+    
+  cleanup: ->
+    super
 
   twoFingerStart: (event) ->
     @gestureStartY = event.centerY

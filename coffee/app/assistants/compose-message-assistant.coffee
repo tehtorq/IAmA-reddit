@@ -1,8 +1,8 @@
-class ComposeMessageAssistant
+class ComposeMessageAssistant extends BaseAssistant
   
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @url = 'http://reddit.com' + '/message/compose/'
     @recipientModel = { value : params.to || '' }
     @subjectModel = { value : '' }
@@ -10,7 +10,7 @@ class ComposeMessageAssistant
     @captchaModel = { value : '' }
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
 
     @controller.setupWidget("recipientTextFieldId",
       { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
@@ -34,14 +34,12 @@ class ComposeMessageAssistant
 
     @controller.setupWidget("sendButton", {}, { label : "Send"})
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Send a message'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('Send a message'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -51,7 +49,7 @@ class ComposeMessageAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Send a message'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Send a message'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -68,7 +66,7 @@ class ComposeMessageAssistant
     Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
     
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   displayComposeMessage: (object) ->
     @fetchHTMLComposePage()

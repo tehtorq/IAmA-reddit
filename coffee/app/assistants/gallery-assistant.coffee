@@ -1,8 +1,8 @@
-class GalleryAssistant
+class GalleryAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @image_limit = 20
     @fetching_images = false
     @last_article_id = null
@@ -16,7 +16,7 @@ class GalleryAssistant
       @handleLoadArticlesResponse(params.response) if params.success?
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     sfw_reddits = StageAssistant.cookieValue("prefs-galleries", '1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots').split(',')
     sfw_reddits_items = []
@@ -28,15 +28,13 @@ class GalleryAssistant
 
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
                     { label: '', command: "", width: 60},
-                    { label: "Reddit", command: 'new-card', icon: "", width: viewmenu_width - 120},
+                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 120},
                     { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
                     {}]}
         ]
@@ -47,7 +45,7 @@ class GalleryAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: "Reddit", command: 'new-card', icon: "", width: viewmenu_width - 140},
+                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 140},
                     { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
                     {}]}
         ]
@@ -82,7 +80,7 @@ class GalleryAssistant
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   orientationChanged: (orientation) ->
     @controller.stageController.setWindowOrientation(orientation)
@@ -197,7 +195,7 @@ class GalleryAssistant
       when 'frontpage-cmd'
         @controller.stageController.popScene({name:"frontpage"})
       when 'manage-cmd'
-        @controller.stageController.pushScene({name:"prefs"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"prefs"}, {})
       when 'back'
         @controller.stageController.popScene()
       

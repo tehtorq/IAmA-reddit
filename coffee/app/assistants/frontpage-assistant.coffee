@@ -2,8 +2,7 @@ class FrontpageAssistant extends PowerScrollBase
   
   constructor: (params) ->
     super
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
@@ -21,7 +20,7 @@ class FrontpageAssistant extends PowerScrollBase
         @search = params
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -68,17 +67,15 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
-    
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
 
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel =
         visible: true
         items: [
           items: [
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
-            { label: heading, command: 'new-card', icon: "", width: viewmenu_width - 181}
+            { label: heading, command: 'new-card', icon: "", width: @getViewMenuWidth() - 181}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -92,7 +89,7 @@ class FrontpageAssistant extends PowerScrollBase
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: heading, command: 'new-card', icon: "", width: viewmenu_width - 261}
+            { label: heading, command: 'new-card', icon: "", width: @getViewMenuWidth() - 261}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -174,7 +171,7 @@ class FrontpageAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles)
   
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
   
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
@@ -327,7 +324,7 @@ class FrontpageAssistant extends PowerScrollBase
   updateHeading: (text) ->
     text = '' unless text?
   
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel.items[0].items[2].label = text
     else
       @viewMenuModel.items[0].items[3].label = text
@@ -458,7 +455,7 @@ class FrontpageAssistant extends PowerScrollBase
         @loadArticles()
       when 'comments-cmd'
         article = @articles.items[parseInt(params[1])]
-        @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
+        @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'upvote-cmd'
         @spinSpinner(true)
         @voteOnComment('1', params[1], params[2])
@@ -598,31 +595,31 @@ class FrontpageAssistant extends PowerScrollBase
     
     switch event.command
       when Mojo.Menu.prefsCmd
-        @controller.stageController.pushScene({name:"prefs"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"prefs"}, {})
       when 'login-cmd'
-        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {allow_back: true})
+        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
       when 'logout-cmd'
         new User(@).logout({})        
       when 'register-cmd'
-        @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {allow_back: true})
+        @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
       when 'reddits-cmd'
-        @controller.stageController.pushScene({name:"reddits"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"reddits"}, {})
       when 'gallery-cmd'
-        @controller.stageController.pushScene({name:"gallery"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"gallery"}, {})
       when 'recent-comments-cmd'
-        @controller.stageController.pushScene({name:"recent-comment"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"recent-comment"}, {})
       when 'friend-scene'
-        @controller.stageController.pushScene({name:"friend"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"friend"}, {})
       when 'messages-cmd'
-        @controller.stageController.pushScene({name:"message"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"message"}, {})
       when 'compose-message-cmd'
-        @controller.stageController.pushScene({name:"compose-message"},{allow_back: true})
+        @controller.stageController.pushScene({name:"compose-message"},{})
       when 'about-scene'
-        @controller.stageController.pushScene({name:"about"}, {allow_back: true})
+        @controller.stageController.pushScene({name:"about"}, {})
 
   itemHold: (event) =>
     event.preventDefault()
     thing = event.srcElement.up('.thing-container')
     article = @findArticleByName(thing.id)
     
-    @controller.stageController.pushScene({name:"article"}, {article: article, allow_back: true})
+    @controller.stageController.pushScene({name:"article"}, {article: article})

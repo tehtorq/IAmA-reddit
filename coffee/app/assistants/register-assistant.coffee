@@ -1,15 +1,15 @@
-class RegisterAssistant
+class RegisterAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @usernameModel = { }
     @passwordModel = { }
     @captchaModel = { }
     @iden = null
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget("textFieldId",
       { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
@@ -29,14 +29,12 @@ class RegisterAssistant
     @activityButtonModel = {label : "create account"}
     @controller.setupWidget("registerButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Register'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('Register'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -46,7 +44,7 @@ class RegisterAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Register'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Register'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -62,7 +60,7 @@ class RegisterAssistant
     Mojo.Event.stopListening(@controller.get("registerButton"), Mojo.Event.tap, @register)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
     
   handleCommand: (event) ->
     return unless event.type is Mojo.Event.command

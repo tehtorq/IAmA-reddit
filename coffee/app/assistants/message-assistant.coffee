@@ -1,13 +1,13 @@
-class MessageAssistant
+class MessageAssistant extends BaseAssistant
   
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @listModel =
       items: []
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -20,14 +20,12 @@ class MessageAssistant
       {label:$L("sent"), command:$L("message sent")}
     ]}
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel =
         visible: true,
         items: [
             {items:[{},
-                    { label: 'inbox', command: 'top', icon: "", width: viewmenu_width - 60},
+                    { label: 'inbox', command: 'top', icon: "", width: @getViewMenuWidth() - 60},
                     {icon:'search', submenu: "sub-menu", width: 60},
                     {}]}
         ]
@@ -37,7 +35,7 @@ class MessageAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: 'inbox', command: 'top', icon: "", width: viewmenu_width - 140},
+                    { label: 'inbox', command: 'top', icon: "", width: @getViewMenuWidth() - 140},
                     {icon:'search', submenu: "sub-menu", width: 60},
                     {}]}
         ]    
@@ -61,7 +59,7 @@ class MessageAssistant
     @controller.stopListening(@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped)
     
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
   
   timeFormatter: (propertyValue, model) =>
     return "" if model.kind not in ['t1','t3','t4']
@@ -114,7 +112,7 @@ class MessageAssistant
 
   itemTapped: (event) =>
     item = event.item
-    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"],allow_back:true})
+    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
   
   scrollToTop: ->
     @controller.getSceneScroller().mojo.scrollTo(0,0, true)

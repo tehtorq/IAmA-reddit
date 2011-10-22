@@ -1,13 +1,13 @@
-class RedditsAssistant
+class RedditsAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @reddit_api = new RedditAPI()
     @redditsModel = { items : [] }
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -67,16 +67,14 @@ class RedditsAssistant
 
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel =
         visible: true
         items: 
           [
             items:
               [{},
-              { label: $L('Reddits'), command: 'top', icon: "", width: viewmenu_width - 60},
+              { label: $L('Reddits'), command: 'top', icon: "", width: @getViewMenuWidth() - 60},
               {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]
@@ -89,7 +87,7 @@ class RedditsAssistant
             items:
               [{},
                {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: $L('Reddits'), command: 'top', icon: "", width: viewmenu_width - 140},
+              { label: $L('Reddits'), command: 'top', icon: "", width: @getViewMenuWidth() - 140},
               {label: $L('Search'), icon:'search', command:'search'}
               {}
               ]
@@ -111,7 +109,7 @@ class RedditsAssistant
     Mojo.Event.stopListening(@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
     
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)

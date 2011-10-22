@@ -1,13 +1,13 @@
-class LoginAssistant
+class LoginAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @usernameModel = {}
     @passwordModel = {}
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "textFieldId", { 
       focusMode: Mojo.Widget.focusSelectMode
@@ -23,14 +23,12 @@ class LoginAssistant
     @activityButtonModel = {label : "Login"}
     @controller.setupWidget("loginButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Login'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('Login'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -40,7 +38,7 @@ class LoginAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Login'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Login'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -55,7 +53,7 @@ class LoginAssistant
     Mojo.Event.stopListening(@controller.get("loginButton"), Mojo.Event.tap, @login)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
 
   displayButtonLoggingIn: ->
     @controller.get('loginButton').mojo.activate()

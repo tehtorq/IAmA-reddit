@@ -2,8 +2,7 @@ class ArticleAssistant extends PowerScrollBase
 
   constructor: (params) ->
     super
-    @allow_back = params.allow_back
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    
     @params = params
     @url = 'http://reddit.com'
 
@@ -18,7 +17,7 @@ class ArticleAssistant extends PowerScrollBase
     @comments = { items : [] }
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -37,15 +36,13 @@ class ArticleAssistant extends PowerScrollBase
       {label:$L("other discussions"), command:$L("duplicates")},
       {label:$L("save"), command:$L("save-cmd")},
       ]})
-      
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
     
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: viewmenu_width - 60},
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @getViewMenuWidth() - 60},
                     {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
                     {}]}
         ]
@@ -56,7 +53,7 @@ class ArticleAssistant extends PowerScrollBase
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: viewmenu_width - 140},
+                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @getViewMenuWidth() - 140},
                     {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
                     {}]}
         ]
@@ -118,7 +115,7 @@ class ArticleAssistant extends PowerScrollBase
     Mojo.Event.stopListening(@controller.get("list"), Mojo.Event.hold, @itemHold)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
     
   findArticleIndex: (article_name) ->
     length = @comments.items.length
@@ -295,7 +292,7 @@ class ArticleAssistant extends PowerScrollBase
     text = '' unless text?
     text = text.substr(0, 40)
 
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel.items[0].items[1].label = text
     else
       @viewMenuModel.items[0].items[2].label = text
@@ -311,7 +308,7 @@ class ArticleAssistant extends PowerScrollBase
       when 'reply-cmd'
         @controller.stageController.pushScene(
           {name: "reply",transition: Mojo.Transition.crossFade}
-          {thing_id:params[1], user: params[2], modhash: @modhash, subreddit: params[4],allow_back:true}
+          {thing_id:params[1], user: params[2], modhash: @modhash, subreddit: params[4]}
         )
       when 'view-cmd'
         @controller.stageController.pushScene({name:"user"}, {user:params[1]})
@@ -521,6 +518,7 @@ class ArticleAssistant extends PowerScrollBase
     @modhash and (@modhash isnt "")
     
   itemTapped: (event) =>
+    @canNavigateBack()
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0

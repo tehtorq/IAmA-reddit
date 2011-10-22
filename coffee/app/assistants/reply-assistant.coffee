@@ -1,11 +1,12 @@
-class ReplyAssistant
+class ReplyAssistant extends BaseAssistant
 
   constructor: (reply_data) ->
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
+    
     @reply_data = reply_data
 
   setup: ->
-    StageAssistant.setTheme(@)
+    super
     
     @bodyModel = { items : [] }
 
@@ -22,14 +23,12 @@ class ReplyAssistant
     @sendButtonModel = {label : "Send"}
     @controller.setupWidget("sendButton", {type:Mojo.Widget.activityButton}, @sendButtonModel)
     
-    viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    if Mojo.Environment.DeviceInfo.keyboardAvailable or not @allow_back
+    if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: $L('Reply'), command: 'top', icon: "", width: viewmenu_width},
+                    { label: $L('Reply'), command: 'top', icon: "", width: @getViewMenuWidth()},
                     {}]}
         ]
       }
@@ -39,7 +38,7 @@ class ReplyAssistant
         items: [
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Reply'), command: 'top', icon: "", width: viewmenu_width - 80},
+                    { label: $L('Reply'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
                     {}]}
         ]
       }
@@ -55,8 +54,7 @@ class ReplyAssistant
     Mojo.Event.stopListening(@controller.get("sendButton"), Mojo.Event.tap, @sendMessage)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
-    @reply_data = null
+    super
     
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

@@ -1,7 +1,7 @@
-class DockAssistant
+class DockAssistant extends BaseAssistant
 
   constructor: (params) ->
-    @cardname = "card" + Math.floor(Math.random()*10000)
+    super
     @image_array = []
     @article_array = []
     @current_index = 0
@@ -11,6 +11,7 @@ class DockAssistant
     @sr = 'pics'
 
   setup: ->
+    super
     @controller.enableFullScreenMode(true)
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
@@ -39,7 +40,7 @@ class DockAssistant
     @controller.window.clearInterval(@timerID)
 
   cleanup: (event) ->
-    Request.clear_all(@cardname)
+    super
   
   tick: ->
     @updateUrls(1)
