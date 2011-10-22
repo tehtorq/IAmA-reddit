@@ -191,7 +191,8 @@ body.palm-default {
 }
 
 .palm-scrim {
-  -webkit-background-size: 100% 100%;
+  opacity: 0;
+  -webkit-background-size: 0% 0%;
 }
 
 /*#mojo-scene-gif-scene-scroller {
