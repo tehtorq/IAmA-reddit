@@ -287,14 +287,14 @@ class RedditsAssistant extends BaseAssistant
       
       @controller.popupSubmenu({
                onChoose: @handleActionCommand,
-               placeNear:element_tapped,
+               #placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name},
                          {label: $L(edit_option), command: edit_action + ' ' + item.name}]
       })
     else
       @controller.popupSubmenu({
                onChoose: @handleActionCommand,
-               placeNear:element_tapped,
+               #placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name}]
       })
   

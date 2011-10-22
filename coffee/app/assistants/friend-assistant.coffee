@@ -112,7 +112,7 @@ class FriendAssistant extends BaseAssistant
 
     @controller.popupSubmenu({
                onChoose: @handleFriendActionSelection,
-               placeNear:element_tapped,
+               #placeNear:element_tapped,
                items: [
                  {label: $L("Message"), command: "message-cmd #{friend}"}]
                })

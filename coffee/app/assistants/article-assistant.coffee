@@ -560,7 +560,7 @@ class ArticleAssistant extends PowerScrollBase
 
       @controller.popupSubmenu({
                  onChoose: @handleCommentActionSelection,
-                 placeNear:element_tapped,
+                 #placeNear:element_tapped,
                  items: [                         
                    {label: $L('Upvote'), command: upvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: upvote_icon},
                    {label: $L('Downvote'), command: downvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: downvote_icon},
@@ -571,7 +571,7 @@ class ArticleAssistant extends PowerScrollBase
     else
       @controller.popupSubmenu({
                  onChoose: @handleCommentActionSelection,
-                 placeNear:element_tapped,
+                 #placeNear:element_tapped,
                  items: [
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}]
                  })

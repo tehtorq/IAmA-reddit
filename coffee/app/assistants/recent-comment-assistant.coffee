@@ -207,6 +207,6 @@ class RecentCommentAssistant extends PowerScrollBase
 
     @controller.popupSubmenu({
       onChoose: @handleCommentActionSelection,
-      placeNear:element_tapped,
+      #placeNear:element_tapped,
       items: [{label: $L('View Posts'), command: 'view-cmd ' + comment.data.author}]
     })

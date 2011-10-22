@@ -190,12 +190,9 @@ body.palm-default {
   z-index: 999;
 }
 
-.transparent-scrim {
-  opacity: 0.3;
-}
-
 .palm-scrim {
-  -webkit-background-size: 100% 100%;
+  opacity: 0;
+  -webkit-background-size: 0% 0%;
 }
 
 /*#mojo-scene-gif-scene-scroller {

@@ -549,7 +549,7 @@ class FrontpageAssistant extends PowerScrollBase
   
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       placeNear:element_tapped,
+       #placeNear:element_tapped,
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
          {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
@@ -561,7 +561,7 @@ class FrontpageAssistant extends PowerScrollBase
     else
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       placeNear:element_tapped,
+       #placeNear:element_tapped,
        items: [
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
