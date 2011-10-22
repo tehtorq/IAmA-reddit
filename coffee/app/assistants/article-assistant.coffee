@@ -284,9 +284,6 @@ class ArticleAssistant extends PowerScrollBase
       when 'sort hot','sort new','sort controversial','sort top','sort old','sort confidence'
         params = event.command.split(' ')
         @loadComments({sort: params[1]})
-
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
     
   updateHeading: (text) ->
     text = '' unless text?
@@ -323,14 +320,6 @@ class ArticleAssistant extends PowerScrollBase
       when 'reset-vote-cmd'
         @spinSpinner(true)
         @voteOnComment('0', params[1], params[2])
-  
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
 
   populateComments: (object) ->
     unless @article?

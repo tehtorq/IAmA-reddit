@@ -114,9 +114,6 @@ class MessageAssistant extends BaseAssistant
     item = event.item
     #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
   
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
-  
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
     
@@ -129,11 +126,3 @@ class MessageAssistant extends BaseAssistant
         @loadMessages(params[1])
       when 'back'
         @controller.stageController.popScene()
-  
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()

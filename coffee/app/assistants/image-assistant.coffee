@@ -111,14 +111,6 @@ class ImageAssistant extends BaseAssistant
 
   changedImage: =>
     @spinSpinner(false)
-  
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
 
   handleWindowResize: (event) =>
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"

@@ -103,9 +103,6 @@ class RecentCommentAssistant extends PowerScrollBase
       when 'back'
         @controller.stageController.popScene()
 
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
-
   handleCommentActionSelection: (command) =>
     return unless command?
 

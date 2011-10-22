@@ -198,14 +198,6 @@ class GifAssistant extends BaseAssistant
       }
     catch e
       
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
-      
   currentTitle: ->
     if @article_array.length > 0
       @article_array[@current_index].data.title

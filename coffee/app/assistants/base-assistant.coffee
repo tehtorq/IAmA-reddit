@@ -21,3 +21,14 @@ class BaseAssistant
     
   getViewMenuWidth: ->
     @viewmenu_width
+    
+  scrollToTop: ->
+    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
+    
+  spinSpinner: (bool) ->
+    if bool
+      @controller.get('spinner').mojo.start()
+      @controller.get('loading').show()
+    else
+      @controller.get('loading').hide()
+      @controller.get('spinner').mojo.stop()

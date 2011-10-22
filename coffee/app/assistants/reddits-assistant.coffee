@@ -134,9 +134,6 @@ class RedditsAssistant extends BaseAssistant
       when 'search'
         @toggleSearch()
 
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
-
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
 
@@ -155,14 +152,6 @@ class RedditsAssistant extends BaseAssistant
     @reddit_api.setRedditsSearchTerm(searchTerm)
     #@updateHeading(searchTerm)
     @loadReddits()
-  
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
 
   handleCallback: (params) ->
     return params unless params? and params.success

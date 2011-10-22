@@ -196,14 +196,6 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.get('filterfield').mojo.close()
     @searchReddit(filterEvent.filterString)
   
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
-  
   handleCategorySwitch: (params) ->
     return unless params?
     

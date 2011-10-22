@@ -120,9 +120,6 @@ class FriendAssistant extends BaseAssistant
                  {label: $L("Message"), command: "message-cmd #{friend}"}]
                })
   
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
-  
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
     
@@ -142,11 +139,3 @@ class FriendAssistant extends BaseAssistant
     switch params[0]
       when 'message-cmd'
         @controller.stageController.pushScene({name:"compose-message"}, {to:params[1]})
-  
-  spinSpinner: (bool) ->
-    if bool
-      @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
-    else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()

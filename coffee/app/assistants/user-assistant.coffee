@@ -86,9 +86,6 @@ class UserAssistant extends BaseAssistant
         @scrollToTop()
       when 'back'
         @controller.stageController.popScene()
-  
-  scrollToTop: ->
-    @controller.getSceneScroller().mojo.scrollTo(0,0, true)
 
   handleCallback: (params) ->
     return params unless params? and params.success
