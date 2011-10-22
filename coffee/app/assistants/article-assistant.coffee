@@ -502,7 +502,6 @@ class ArticleAssistant extends PowerScrollBase
     @modhash and (@modhash isnt "")
     
   itemTapped: (event) =>
-    @canNavigateBack()
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0

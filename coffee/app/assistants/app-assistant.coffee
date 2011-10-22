@@ -1,4 +1,11 @@
+
+class IamaReddit
+
 class AppAssistant
+  
+  setup: ->
+    IamaReddit.Metrix = new Metrix() # instantiate metrix library
+    IamaReddit.Metrix.postDeviceData()
 
   considerForNotification: (params) ->
     return unless params?

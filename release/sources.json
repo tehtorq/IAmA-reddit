@@ -1,4 +1,6 @@
 [
+    {"source": "app/models/metrix.js"},
+    {"source": "app/models/asyncWrappers.js"},
     {"source": "app/lib/utils.js"},
     {"source": "app/lib/underscore-min.js"},
 		{"source": "app/models/request.js"},
