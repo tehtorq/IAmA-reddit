@@ -17,12 +17,11 @@ class BaseAssistant
   cleanup: ->
     Request.clear_all(@cardname)
   
-  canNavigateBack: -> # only increments after setup finishes
-    Mojo.Log.info("number of scenes: #{@controller.stageController.getScenes().length}")
-    @controller.stageController.getScenes().length > 0
+  canNavigateBack: ->
+    @controller.stageController.getScenes().length > 0 # only increments after setup finishes
     
   showBackNavigation: ->
-    @can_navigate_back #and not Mojo.Environment.DeviceInfo.keyboardAvailable
+    @can_navigate_back and not Mojo.Environment.DeviceInfo.keyboardAvailable
     
   getViewMenuWidth: ->
     @viewmenu_width

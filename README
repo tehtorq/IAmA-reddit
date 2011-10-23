@@ -4,6 +4,10 @@ Known bugs:
 
 Changelog:
 
+0.2.2:
+- Metrix
+- Minor interface tweaks and refactoring
+
 0.2.1:
 - cater for touchpad (back navigation and search icon)
 - hiding/showing comments by long-press on comment
