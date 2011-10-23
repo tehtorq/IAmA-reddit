@@ -21,18 +21,6 @@ class Article
     return null unless @data.url?
     Linky.parse(@data.url)
 
-  urls: ->
-    urls = @data.selftext.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
-
-    if urls?
-      _.each urls, (url) ->
-        if url.indexOf(')') >= 0
-          url = url.substr(0, url.indexOf(')'))
-
-        url = Linky.parse(url)
-
-    urls
-
   hasThumbnail: ->
     @data.thumbnail and (@data.thumbnail != "")
 

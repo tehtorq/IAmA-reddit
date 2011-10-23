@@ -53,10 +53,12 @@ class StageAssistant
   @parseUrls: (text) ->
     return null unless text? and (text.indexOf('http') > -1)
 
-    urls = text.match(/([^\[])*https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
+    #urls = @data.selftext.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
+    #urls = text.match(/([^\[])*https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
+    urls = text.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
 
     if urls?
-      _.each urls, (url) ->
+      urls = _.map urls, (url) ->
         url = url.substr(0, url.indexOf(')')) if url.indexOf(')') >= 0
         url = Linky.parse(url.substr(url.indexOf('http'), url.length))
 
@@ -88,6 +90,27 @@ class StageAssistant
 
   @scoreFormatter: (model) ->
     "#{model.data.ups - model.data.downs} points"
+    
+  @easylinksFormatter: (model) =>
+    return '' if model.kind not in ['t1','t3']
+    return unless StageAssistant.cookieValue("prefs-show-easylinks", "off") is "on"
+
+    id = model.data.id
+    urls = StageAssistant.parseUrls(model.data.body)
+    return "" unless urls?
+
+    #urls = urls.unique() // FIX - unique doesnt work
+
+    image_url_html = ""
+
+    _.each urls, (url) ->
+      image_url_html += "<a class='reddit_embedded_link' href='#{url.url}'>"
+      image_url_html += '<img class="reddit_embedded_link" src="./images/picture.png">' if url.type is 'image'
+      image_url_html += '<img class="reddit_embedded_link" src="./images/youtube.png">' if url.type is 'youtube_video'
+      image_url_html += '<img class="reddit_embedded_link" src="./images/web.png">' if url.type is 'web'
+      image_url_html += "</a>"
+    
+    image_url_html
 
   @defaultWindowOrientation: (assistant, orientation) ->
     value = StageAssistant.cookieValue("prefs-lock-orientation", "off")

@@ -7,7 +7,7 @@ class PrefsAssistant extends BaseAssistant
     super
     
     value1 = @cookieValue("prefs-hide-thumbnails", "off")
-    value3 = @cookieValue("prefs-hide-easylinks", "off")
+    value3 = @cookieValue("prefs-show-easylinks", "off")
     value4 = @cookieValue("prefs-samecard", "off")
     value5 = @cookieValue("prefs-articles-per-page", "25")
     value6 = @cookieValue("prefs-lock-orientation", "off")
@@ -133,7 +133,7 @@ class PrefsAssistant extends BaseAssistant
     cookie.put(event.value)
 
   handleUpdate3: (event) =>
-    cookie = new Mojo.Model.Cookie("prefs-hide-easylinks")
+    cookie = new Mojo.Model.Cookie("prefs-show-easylinks")
     cookie.put(event.value)
 
   handleUpdate4: (event) =>

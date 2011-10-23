@@ -72,7 +72,6 @@ class ArticleAssistant extends PowerScrollBase
       body: @bodyFormatter
       score: @scoreFormatter
       vote: @voteFormatter
-      easylinks: @easylinksFormatter
       cssclass: @cssclassFormatter
       tagClass: @tagClassFormatter
       indent: @indentFormatter
@@ -84,11 +83,7 @@ class ArticleAssistant extends PowerScrollBase
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
 
     @controller.get("list").observe("click", (event) =>
-      element = event.findElement("a")
-      
-      if element?
-        event.preventDefault()
-        @handleClickedLink(element)
+      event.preventDefault() if event.findElement("a")?
     )
 
   activate: (event) ->
@@ -220,41 +215,6 @@ class ArticleAssistant extends PowerScrollBase
 
     ""
 
-  easylinksFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','t3']
-    
-    hide_thumbnails = StageAssistant.cookieValue("prefs-hide-easylinks", "off")
-    
-    return "" if hide_thumbnails is "on"
-    
-    id = model.data.id
-    urls = StageAssistant.parseUrls(model.data.body)
-
-    return "" unless urls?
-
-    #urls = urls.unique() // FIX - unique doesnt work
-
-    image_url_html = ""
-    imagecount = 0
-    
-    _.each urls, (url) ->
-      image_link = ""
-
-      # check if its a link to image
-
-      if url.type is 'image'
-        image_link = './images/picture.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+image_link+'" alt="Loading" id="image_'+imagecount+'_'+ id + '">'
-        imagecount++
-      else if url.type is 'youtube_video'
-        image_link = './images/youtube.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+image_link+'" alt="Loading" id="youtube_'+i+'_'+ id + '">'
-      else if url.type is 'web'
-        image_link = './images/web.png'
-        image_url_html += '<img class="reddit_embedded_link" src="'+image_link+'" alt="Loading" id="web_'+i+'_'+ id + '">'
-
-    image_url_html
-
   handleCommand: (event) ->
     return unless event.type is Mojo.Event.command
     
@@ -332,7 +292,10 @@ class ArticleAssistant extends PowerScrollBase
   populateReplies: (replies, indent, array) ->
     _.each replies, (child) =>
       if child.kind isnt 'more'
+        
         child.data.indent = indent
+        child.easyLinksHTML = StageAssistant.easylinksFormatter(child)
+        
         array.items.push(child)
       
         data = child.data
@@ -502,6 +465,17 @@ class ArticleAssistant extends PowerScrollBase
     @modhash and (@modhash isnt "")
     
   itemTapped: (event) =>
+    
+    # if a link was tapped then...
+    element = event.originalEvent.findElement("a")
+    
+    if element?
+      event.originalEvent.preventDefault()
+      event.preventDefault()
+      @handleClickedLink(element)
+      return
+      
+    # else handle list item tap
     comment = event.item
     element_tapped = event.originalEvent.target
     index = 0
@@ -591,7 +565,7 @@ class ArticleAssistant extends PowerScrollBase
       return @hideChildren(index)
   
   handleClickedLink: (element) ->
-    
+
     Mojo.Log.info("#{element.href} clicked")
     
     # handle gameofthrones links
