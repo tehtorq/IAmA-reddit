@@ -4,6 +4,7 @@ class FrontpageAssistant extends PowerScrollBase
     super
     
     @articles = { items : [] }
+    @articles2 = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
     
@@ -139,6 +140,18 @@ class FrontpageAssistant extends PowerScrollBase
         thumbnail: @thumbnailFormatter
         vote: @voteFormatter
       }, @articles)
+      
+    @controller.setupWidget("list2", {
+      itemTemplate: "frontpage/article"
+      emptyTemplate: "frontpage/emptylist"
+      nullItemTemplate: "list/null_item_template"
+      swipeToDelete: true
+      preventDeleteProperty: 'can_unsave'
+      formatters: 
+        tag: @tagFormatter
+        thumbnail: @thumbnailFormatter
+        vote: @voteFormatter
+      }, @articles2)
 
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
@@ -152,6 +165,7 @@ class FrontpageAssistant extends PowerScrollBase
       [@controller.get("list"), Mojo.Event.hold, @itemHold]
       [@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
+     # [@controller.document, "orientationchange", @orientationChanged]
     )
     
     StageAssistant.defaultWindowOrientation(@, "free")
@@ -171,6 +185,13 @@ class FrontpageAssistant extends PowerScrollBase
   
   cleanup: (event) ->
     super
+    
+  orientationChanged: (orientation) ->
+    Mojo.Log.info("orientation change=====#{@controller.window.innerWidth/2} #{@controller.window.innerHeight/2}")
+    @controller.get('scroller1').style.width = "#{@controller.window.innerWidth/2}px"
+    @controller.get('scroller1').style.height = "#{@controller.window.innerHeight/2}px"
+    @controller.get('scroller2').style.width = "#{@controller.window.innerWidth/2}px"
+    @controller.get('scroller2').style.height = "#{@controller.window.innerHeight/2}px"
   
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
@@ -342,9 +363,11 @@ class FrontpageAssistant extends PowerScrollBase
     else
       length = @articles.items.length
       @articles.items.clear()
+      @articles2.items.clear()
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
       @controller.get('list').mojo.noticeRemovedItems(0, length)
+      @controller.get('list2').mojo.noticeRemovedItems(0, length)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
       @updateHeading(@reddit_api.category)    
@@ -377,8 +400,10 @@ class FrontpageAssistant extends PowerScrollBase
     _.each items, (item) =>
       item.can_unsave = if item.data.saved then false else true
       @articles.items.push(item)
+      @articles2.items.push(item)
     
     @controller.get('list').mojo.noticeAddedItems(length, items)
+    @controller.get('list2').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
@@ -392,6 +417,7 @@ class FrontpageAssistant extends PowerScrollBase
       @controller.get('loadMoreButton').hide()
     
     @controller.get('list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
+    @controller.get('list2').mojo.noticeAddedItems(0, [null]) if @articles2.items.length is 0
   
   handleRandomSubredditResponse:(response) ->
     headers = response.getAllHeaders()
