@@ -195,6 +195,12 @@ body.palm-default {
   -webkit-background-size: 0% 0%;
 }
 
+.palm-button {
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /*#mojo-scene-gif-scene-scroller {
   background-color: black;
 }*/
