@@ -60,7 +60,10 @@ class StageAssistant
     if urls?
       urls = _.map urls, (url) ->
         url = url.substr(0, url.indexOf(')')) if url.indexOf(')') >= 0
-        url = Linky.parse(url.substr(url.indexOf('http'), url.length))
+        url = url.substr(url.indexOf('http'), url.length)
+      
+      #urls = _.uniq(urls)
+      urls = _.map urls, (url) -> Linky.parse(url)
 
     urls
 
