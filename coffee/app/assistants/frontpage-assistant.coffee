@@ -189,9 +189,9 @@ class FrontpageAssistant extends PowerScrollBase
   orientationChanged: (orientation) ->
     Mojo.Log.info("orientation change=====#{@controller.window.innerWidth/2} #{@controller.window.innerHeight/2}")
     @controller.get('scroller1').style.width = "#{@controller.window.innerWidth/2}px"
-    @controller.get('scroller1').style.height = "#{@controller.window.innerHeight/2}px"
+    @controller.get('scroller1').style.height = "#{@controller.window.innerHeight}px"
     @controller.get('scroller2').style.width = "#{@controller.window.innerWidth/2}px"
-    @controller.get('scroller2').style.height = "#{@controller.window.innerHeight/2}px"
+    @controller.get('scroller2').style.height = "#{@controller.window.innerHeight}px"
   
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
