@@ -7,7 +7,6 @@ class ArticleAssistant extends PowerScrollBase
     @url = 'http://reddit.com'
 
     if params.article?
-      @original_article = params.article
       @article = params.article.data      
       @url += @article.permalink
       @params.title = @article.title
@@ -499,7 +498,7 @@ class ArticleAssistant extends PowerScrollBase
 
     if element_tapped.id.indexOf('image_') isnt -1
       if element_tapped.className is 'reddit_thumbnail'
-        StageAssistant.cloneImageCard(@, @original_article)
+        StageAssistant.cloneImageCard(@, {kind: 't3', data: @article})
       else
         index = element_tapped.id.match(/_(\d+)_/g)[0].replace(/_/g,'')
         index = parseInt(index)
