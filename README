@@ -1,8 +1,15 @@
 
 Known bugs:
-- need fixes for embeddable urls
+- reddits scene urls don't work & drawers look messy
+- need fix for no captcha required when composing message
 
 Changelog:
+
+0.2.3:
+- Minor bug fixes
+  - fix easy links
+  - fix image thumbnail from article through user scene
+  - fix rage faces (possibly temporarily)
 
 0.2.2:
 - Metrix

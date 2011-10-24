@@ -3,7 +3,7 @@ class ComposeMessageAssistant extends BaseAssistant
   constructor: (params) ->
     super
     
-    @url = 'http://reddit.com' + '/message/compose/'
+    @url = 'http://reddit.com/message/compose/'
     @recipientModel = { value : params.to || '' }
     @subjectModel = { value : '' }
     @bodyModel = { value : '' }
@@ -116,26 +116,36 @@ class ComposeMessageAssistant extends BaseAssistant
         method: "get"
         onSuccess: (inTransport) =>
           responseText = inTransport.responseText
+          #Mojo.Log.info(responseText)
 
           # work out captcha
 
           start = responseText.indexOf('src="/captcha/') + 14
           end = responseText.indexOf('.png', start)
 
-          return false if (start is -1) or (end is -1)
+          if (start is -1) or (end is -1)
+            @controller.get('no_captcha_msg').update('No captcha required!')
           
           @iden = responseText.substr(start, end - start)
+          
+          #Mojo.Log.info("iden #{iden}")
 
           # work out uh
                     
           startx = responseText.lastIndexOf("modhash: '") + 10
           endx = responseText.indexOf(',', startx)
           
-          return false if (startx is -1) or (endx is -1)
+          if (startx is -1) or (endx is -1)
+            new Banner("Are you logged in?").send()
+            return false
 
           @modhash = responseText.substr(startx, endx - startx - 1)
+          
+          #Mojo.Log.info("modhash #{@modhash}")
 
           url = 'http://www.reddit.com/captcha/' + @iden + '.png'
+          
+          #Mojo.Log.info("url #{url}")
 
           @controller.get('image_id').src = url
           @controller.get('sendButton').show()
