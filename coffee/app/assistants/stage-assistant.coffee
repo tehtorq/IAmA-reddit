@@ -53,8 +53,6 @@ class StageAssistant
   @parseUrls: (text) ->
     return null unless text? and (text.indexOf('http') > -1)
 
-    #urls = @data.selftext.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
-    #urls = text.match(/([^\[])*https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
     urls = text.match(/https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w-/_\.]*(\?\S+)?)?)?/g)
 
     if urls?
@@ -62,7 +60,9 @@ class StageAssistant
         url = url.substr(0, url.indexOf(')')) if url.indexOf(')') >= 0
         url = url.substr(url.indexOf('http'), url.length)
       
-      #urls = _.uniq(urls)
+      uniq_urls = []
+      _.each urls, (url) -> uniq_urls.push(url) if uniq_urls.indexOf(url) is -1
+      urls = uniq_urls
       urls = _.map urls, (url) -> Linky.parse(url)
 
     urls

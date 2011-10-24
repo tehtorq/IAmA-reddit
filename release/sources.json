@@ -10,7 +10,6 @@
 		{"source": "app/models/reddit_api.js"},
 		{"source": "app/models/linky.js"},
 		{"source": "app/models/banner.js"},
-		{"source": "app/models/prototype.js"},
     {"source": "app/models/subreddit.js"},
     {"source": "app/models/user.js"},
     {"source": "app/models/message.js"},

@@ -573,6 +573,7 @@ class FrontpageAssistant extends PowerScrollBase
        onChoose: @handleActionSelection,
        #placeNear:element_tapped,
        items: [
+         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
        }
