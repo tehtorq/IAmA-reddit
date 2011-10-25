@@ -46,3 +46,12 @@ class BaseAssistant
     
   loadTheme: ->
     Mojo.loadStylesheet(@controller.document, Preferences.getThemePath())
+    
+  toggleSearch: ->
+    @scrollToTop() # prevent grey area in list
+    ff = @controller.get("filterfield")
+
+    if (ff._mojoController.assistant.filterOpen)
+       ff.mojo.close()
+    else
+       ff.mojo.open()

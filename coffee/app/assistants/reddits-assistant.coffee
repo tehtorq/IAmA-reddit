@@ -135,14 +135,6 @@ class RedditsAssistant extends BaseAssistant
 
     @controller.get('filterfield').mojo.close()
     @searchReddits(filterEvent.filterString)
-
-  toggleSearch: ->
-    ff = @controller.get("filterfield")
-
-    if (ff._mojoController.assistant.filterOpen)
-       ff.mojo.close()
-    else
-       ff.mojo.open()
   
   searchReddits: (searchTerm) ->
     @reddit_api.setRedditsSearchTerm(searchTerm)

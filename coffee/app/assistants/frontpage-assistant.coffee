@@ -499,14 +499,6 @@ class FrontpageAssistant extends PowerScrollBase
       uh: @modhash
   
     new Article(@).unsave(params)
-    
-  toggleSearch: ->
-    ff = @controller.get("filterfield")
-    
-    if (ff._mojoController.assistant.filterOpen)
-       ff.mojo.close()
-    else
-       ff.mojo.open()
   
   voteOnComment: (dir, comment_name, subreddit) ->
     params =
