@@ -31,18 +31,15 @@ class StageAssistant
 
   @stages = []
   
-  @switchTheme: ->
-    theme_path = Preferences.themePath()
+  @switchTheme: (new_theme_path, old_theme_path) ->
     appController = Mojo.Controller.getAppController()
     
     _.each @stages, (stage) ->
       controller = appController.getStageController(stage)
     
       if controller?
-        controller.unloadStylesheet(@current_theme_path) if @current_theme_path?
-        controller.loadStylesheet(theme_path)
-  
-    @current_theme_path = theme_path
+        controller.unloadStylesheet(old_theme_path)
+        controller.loadStylesheet(new_theme_path)
 
   @parseUrls: (text) ->
     return null unless text? and (text.indexOf('http') > -1)

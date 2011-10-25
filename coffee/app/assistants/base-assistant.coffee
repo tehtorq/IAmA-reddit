@@ -45,4 +45,4 @@ class BaseAssistant
     _.each @listeners, (listener) => Mojo.Event.stopListening(listener...)
     
   loadTheme: ->
-    Mojo.loadStylesheet(@controller.document, Preferences.themePath())
+    Mojo.loadStylesheet(@controller.document, Preferences.getThemePath())
