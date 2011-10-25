@@ -11,7 +11,7 @@ class PrefsAssistant extends BaseAssistant
     value4 = @cookieValue("prefs-samecard", "off")
     value5 = @cookieValue("prefs-articles-per-page", "25")
     value6 = @cookieValue("prefs-lock-orientation", "off")
-    value7 = @cookieValue("prefs-theme", "stylesheets/themes/dark.css")
+    value7 = Preferences.getTheme()
     value8 = @cookieValue("prefs-frontpage", "all")
     value9 = @cookieValue('prefs-galleries','1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots')
     
@@ -58,17 +58,12 @@ class PrefsAssistant extends BaseAssistant
                   ] },
       {value: value5}
     )
+    
+    theme_choices = _.map Preferences.themes, (theme) -> { label : theme, value : theme }
                                                         
     @controller.setupWidget("theme_radio_button", {
       label: $L('Theme'), 
-      choices: 
-        [
-          { label : "custom", value : "stylesheets/themes/custom.css" }
-          { label : "dark", value : "stylesheets/themes/dark.css" }
-          { label : "kuler", value : "stylesheets/themes/kuler.css" }
-          { label : "light", value : "stylesheets/themes/light.css" }
-          { label : "wood", value : "stylesheets/themes/wood.css" }
-        ]
+      choices: theme_choices
       }
       {value: value7}
     )
@@ -149,9 +144,7 @@ class PrefsAssistant extends BaseAssistant
     cookie.put(event.value)
 
   handleUpdate7: (event) =>
-    cookie = new Mojo.Model.Cookie("prefs-theme")
-    cookie.put(event.value)
-    StageAssistant.switchTheme(event.value)
+    Preferences.setTheme(event.value)
 
   handleUpdate8: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-frontpage")

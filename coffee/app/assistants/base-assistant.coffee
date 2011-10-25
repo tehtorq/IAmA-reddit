@@ -6,8 +6,7 @@ class BaseAssistant
   setup: ->
     @can_navigate_back = @canNavigateBack()
     @viewmenu_width = _.min([@controller.window.innerWidth, @controller.window.innerHeight])
-    
-    StageAssistant.setTheme(@)
+    @loadTheme()
     
   activate: ->
     
@@ -44,3 +43,6 @@ class BaseAssistant
     
   removeListeners: ->
     _.each @listeners, (listener) => Mojo.Event.stopListening(listener...)
+    
+  loadTheme: ->
+    Mojo.loadStylesheet(@controller.document, Preferences.themePath())

@@ -30,25 +30,19 @@ class StageAssistant
       AppAssistant.cloneCard(assistant, {name:"image"},{index:0,images:[article.url.url], articles: [article]})
 
   @stages = []
-  @current_theme = null
-
-  @switchTheme = (theme) ->
+  
+  @switchTheme: ->
+    theme_path = Preferences.themePath()
     appController = Mojo.Controller.getAppController()
     
     _.each @stages, (stage) ->
       controller = appController.getStageController(stage)
     
       if controller?
-        controller.unloadStylesheet(StageAssistant.current_theme)
-        controller.loadStylesheet(theme)
+        controller.unloadStylesheet(@current_theme_path) if @current_theme_path?
+        controller.loadStylesheet(theme_path)
   
-    StageAssistant.current_theme = theme
-
-  @setTheme: (assistant) ->
-    unless StageAssistant.current_theme?
-      StageAssistant.current_theme = StageAssistant.cookieValue("prefs-theme", "stylesheets/themes/dark.css")
-  
-    Mojo.loadStylesheet(assistant.controller.document, StageAssistant.current_theme)
+    @current_theme_path = theme_path
 
   @parseUrls: (text) ->
     return null unless text? and (text.indexOf('http') > -1)
