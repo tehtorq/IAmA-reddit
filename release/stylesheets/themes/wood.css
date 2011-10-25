@@ -2,7 +2,7 @@
 body.palm-default {
  background: url(../../images/textures/3.png) center center repeat;
  background-attachment:fixed;
- /*-webkit-background-size: 100% 100%;*/
+ -webkit-background-size: 128px 128px;
 }
 
 .thing {
