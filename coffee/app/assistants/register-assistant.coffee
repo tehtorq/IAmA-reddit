@@ -123,12 +123,12 @@ class RegisterAssistant extends BaseAssistant
     modhash = response.data.modhash
 
     new Mojo.Model.Cookie("reddit_session").put(cookie)
-    new Banner("Created " + @usernameModel.value).send()
+    Banner.send("Created " + @usernameModel.value)
     @menu()
 
   registerFailure: (response) ->
     @fetchCaptcha()
-    new Banner(response.errors[0][1]).send()
+    Banner.send(response.errors[0][1])
 
   fetchCaptcha: ->
     new Request(@).post('http://www.reddit.com/api/new_captcha', {uh: ''}, 'load-captcha')

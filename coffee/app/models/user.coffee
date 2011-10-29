@@ -13,7 +13,7 @@ class User
     cookie = new Mojo.Model.Cookie("reddit_session")
     cookie.remove()
 
-    new Banner("Logged out").send()
+    Banner.send("Logged out")
 
   comments: (params) ->
     new Request(@callback).get('http://reddit.com/user/' + params.user + '.json', {}, 'user-comments')

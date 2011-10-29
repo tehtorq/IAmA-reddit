@@ -222,7 +222,7 @@ class FrontpageAssistant extends PowerScrollBase
             @articles.items[index].data.saved = false
             @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
-        new Banner("Unsaved!").send()
+        Banner.send("Unsaved!")
       when "article-save"
         if params.type[1]?
           index = @findArticleIndex(params.type[1])
@@ -231,7 +231,7 @@ class FrontpageAssistant extends PowerScrollBase
             @articles.items[index].data.saved = true
             @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
-        new Banner("Saved!").send()
+        Banner.send("Saved!")
       when 'load-articles'
         @handleLoadArticlesResponse(params.response)
       when 'random-subreddit'
@@ -252,7 +252,7 @@ class FrontpageAssistant extends PowerScrollBase
           @articles.items[index].data.ups++
           @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
-        new Banner("Upvoted!").send()
+        Banner.send("Upvoted!")
       when "comment-downvote"
         index = @findArticleIndex(params.type[1]);
     
@@ -264,7 +264,7 @@ class FrontpageAssistant extends PowerScrollBase
           @articles.items[index].data.downs++
           @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
-        new Banner("Downvoted!").send()
+        Banner.send("Downvoted!")
       when "comment-vote-reset"
         index = @findArticleIndex(params.type[1])
     
@@ -277,7 +277,7 @@ class FrontpageAssistant extends PowerScrollBase
           @articles.items[index].data.likes = null     
           @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
-        new Banner("Vote reset!").send()
+        Banner.send("Vote reset!")
 
   handleDeleteItem: (event) =>
     @unsaveArticle(event.item)

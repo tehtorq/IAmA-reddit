@@ -214,7 +214,7 @@ class ImageAssistant extends BaseAssistant
           keepFilenameOnRedirect: false
           subscribe: true
         onSuccess: (response) =>
-          new Banner("Saved image " + name).send() if response.completed is true
+          Banner.send("Saved image " + name) if response.completed is true
       )
     catch e
   

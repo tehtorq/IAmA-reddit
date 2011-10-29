@@ -106,18 +106,18 @@ class LoginAssistant extends BaseAssistant
       else
         @loginFailure(json)
     else
-      new Banner("Login failure").send()
+      Banner.send("Login failure")
 
   loginSuccess: (response) ->
     cookie = response.data.cookie
     modhash = response.data.modhash
 
     new Mojo.Model.Cookie("reddit_session").put(cookie)
-    new Banner("Logged in as " + @usernameModel.value).send()
+    Banner.send("Logged in as " + @usernameModel.value)
     @menu()
 
   loginFailure: (response) ->
-    new Banner(response.errors[0][1]).send()
+    Banner.send(response.errors[0][1])
 
   menu: ->
     @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade})

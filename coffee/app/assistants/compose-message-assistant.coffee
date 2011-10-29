@@ -80,14 +80,14 @@ class ComposeMessageAssistant extends BaseAssistant
     json_string = JSON.stringify(response.responseText)
   
     if json_string.indexOf('your message has been delivered') isnt -1
-      new Banner("Message sent to #{@recipientModel.value}").send()
+      Banner.send("Message sent to #{@recipientModel.value}")
       return
     else if json_string.indexOf('BAD_CAPTCHA') isnt -1
-      new Banner("Are you human?").send()
+      Banner.send("Are you human?")
     else if json_string.indexOf('USER_DOESNT_EXIST') isnt -1
-      new Banner("User doesn't exist!").send()
+      Banner.send("User doesn't exist!")
     else
-      new Banner("Something went wrong!").send()
+      Banner.send("Something went wrong!")
         
     @fetchHTMLComposePage()
 
@@ -136,7 +136,7 @@ class ComposeMessageAssistant extends BaseAssistant
           endx = responseText.indexOf(',', startx)
           
           if (startx is -1) or (endx is -1)
-            new Banner("Are you logged in?").send()
+            Banner.send("Are you logged in?")
             return false
 
           @modhash = responseText.substr(startx, endx - startx - 1)

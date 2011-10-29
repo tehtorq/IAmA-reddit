@@ -27,7 +27,7 @@ class Request
 
   post: (url, params, success, failure) ->
     unless params.uh?
-      new Banner("Not logged in.").send()
+      Banner.send("Not logged in.")
       return
     
     @request(url, 'post', params, success, failure)

@@ -69,7 +69,7 @@ class ReplyAssistant extends BaseAssistant
    
     if params.type is "comment-reply"
       @displayButtonSent()
-      new Banner("Replied to " + @reply_data.user + ".").send()
+      Banner.send("Replied to " + @reply_data.user + ".")
       @controller.stageController.popScene({replied: true, comment_id: @reply_data.thing_id})
 
   sendMessage: =>

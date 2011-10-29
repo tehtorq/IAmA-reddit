@@ -151,13 +151,13 @@ class RedditsAssistant extends BaseAssistant
         _.each Subreddit.cached_list, (item) ->
           item.subscribed = true if item.name is params.type[1]
       
-      new Banner("Subscribed!").send()
+      Banner.send("Subscribed!")
     else if params.type[0] is "subreddit-unsubscribe"
       if params.type[1]?
         _.each Subreddit.cached_list, (item) ->
           item.subscribed = false if item.name is params.type[1]
       
-      new Banner("Unsubscribed!").send()
+      Banner.send("Unsubscribed!")
     else if params.type[0] is "subreddit-load"
       @handleLoadRedditsResponse(params.response)
 

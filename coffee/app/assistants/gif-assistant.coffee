@@ -191,7 +191,7 @@ class GifAssistant extends BaseAssistant
           keepFilenameOnRedirect: false,
           subscribe: true
         onSuccess: (response) ->
-          new Banner("Saved image " + name).send() if response.completed
+          Banner.send("Saved image " + name) if response.completed
       }
     catch e
       

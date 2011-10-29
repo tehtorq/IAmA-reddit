@@ -11,9 +11,9 @@ class AppAssistant
     return unless params?
 
     if params.success
-      new Banner("Action completed.").send()
+      Banner.send("Action completed.")
     else
-      new Banner("Action not completed.").send()
+      Banner.send("Action not completed.")
   
   handleLaunch: (params) ->
     if params.dockMode or params.touchstoneMode

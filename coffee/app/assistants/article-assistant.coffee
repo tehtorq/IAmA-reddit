@@ -375,7 +375,7 @@ class ArticleAssistant extends PowerScrollBase
         @comments.items[index].data.ups++
         @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
-      new Banner("Upvoted!").send()
+      Banner.send("Upvoted!")
     else if params.type[0] is "comment-downvote"
       index = @findArticleIndex(params.type[1])
       
@@ -387,7 +387,7 @@ class ArticleAssistant extends PowerScrollBase
         @comments.items[index].data.downs++
         @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
-      new Banner("Downvoted!").send()
+      Banner.send("Downvoted!")
     else if params.type[0] is "comment-vote-reset"
       index = @findArticleIndex(params.type[1])
       
@@ -400,9 +400,9 @@ class ArticleAssistant extends PowerScrollBase
         @comments.items[index].data.likes = null      
         @controller.get('list').mojo.noticeUpdatedItems(index, [@comments.items[index]])
       
-      new Banner("Vote reset!").send()
+      Banner.send("Vote reset!")
     else if params.type[0] is "article-save"
-      new Banner("Saved!").send()
+      Banner.send("Saved!")
     else if params.type[0] is "article-comments"
       @handlefetchCommentsResponse(params.response)
 
