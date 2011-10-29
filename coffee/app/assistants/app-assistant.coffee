@@ -18,6 +18,8 @@ class AppAssistant
   handleLaunch: (params) ->
     if params.dockMode or params.touchstoneMode
       @launchDockMode()
+    else if params.searchString
+      AppAssistant.cloneCard(null, {name:"frontpage"}, {search: params.searchString})
     else
       AppAssistant.cloneCard(null, {name:"frontpage"})
   

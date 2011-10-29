@@ -17,7 +17,7 @@ class FrontpageAssistant extends PowerScrollBase
       else if params.permalink?
         @reddit_api.set_permalink(params.permalink)
       else if params.search?
-        @search = params
+        @search = unescape(params.search)
 
   setup: ->
     super
