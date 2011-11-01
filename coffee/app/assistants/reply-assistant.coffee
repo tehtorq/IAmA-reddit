@@ -52,7 +52,6 @@ class ReplyAssistant extends BaseAssistant
       [@controller.get("sendButton"), Mojo.Event.tap, @sendMessage]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "up")
     @controller.get("bodyTextFieldId").mojo.focus()
 
   handleCommand: (event) ->

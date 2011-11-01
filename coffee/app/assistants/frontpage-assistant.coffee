@@ -155,8 +155,6 @@ class FrontpageAssistant extends PowerScrollBase
       [@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
     )
-    
-    StageAssistant.defaultWindowOrientation(@, "free")
 
     if @articles.items.length is 0
       if @search?

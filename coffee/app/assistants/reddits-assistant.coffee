@@ -104,7 +104,6 @@ class RedditsAssistant extends BaseAssistant
       [@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "free")
     @loadReddits() if @redditsModel.items.length is 0
     
   handleCategorySwitch: (category) ->

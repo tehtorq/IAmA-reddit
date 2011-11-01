@@ -97,7 +97,6 @@ class ImageAssistant extends BaseAssistant
     )
     
     @controller.get('image_title').hide()
-    StageAssistant.defaultWindowOrientation(@, "free")
     @updateUrls(0)
 
   ready: ->

@@ -76,7 +76,6 @@ class GalleryAssistant extends BaseAssistant
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "free")
     @switchSubreddit("pics")
 
   orientationChanged: (orientation) ->

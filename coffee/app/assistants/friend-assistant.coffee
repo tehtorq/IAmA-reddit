@@ -50,7 +50,6 @@ class FriendAssistant extends BaseAssistant
     )
   
   ready: ->
-    StageAssistant.defaultWindowOrientation(@, "free")
     @loadFriends()
   
   handleCallback: (params) ->

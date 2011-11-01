@@ -93,7 +93,6 @@ class ArticleAssistant extends PowerScrollBase
       [@controller.get("list"), Mojo.Event.hold, @itemHold]
     )
 
-    StageAssistant.defaultWindowOrientation(@, "free")
     @spinSpinner(false)
     
     if event? and event.replied is true

@@ -9,6 +9,7 @@ class BaseAssistant
     @loadTheme()
     
   activate: ->
+    StageAssistant.defaultWindowOrientation(@, "free")
     
   deactivate: ->
     @removeListeners()

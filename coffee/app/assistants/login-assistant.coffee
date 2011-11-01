@@ -52,8 +52,6 @@ class LoginAssistant extends BaseAssistant
       [@controller.get("loginButton"), Mojo.Event.tap, @login]
     )
 
-    StageAssistant.defaultWindowOrientation(@, "up")
-
   displayButtonLoggingIn: ->
     @controller.get('loginButton').mojo.activate()
     @activityButtonModel.label = "Logging in"

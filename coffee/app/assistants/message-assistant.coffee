@@ -57,7 +57,6 @@ class MessageAssistant extends BaseAssistant
       [@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "free")
     @loadMessages('inbox')
 
   timeFormatter: (propertyValue, model) =>

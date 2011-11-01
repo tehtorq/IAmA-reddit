@@ -149,7 +149,6 @@ class PrefsAssistant extends BaseAssistant
   
   ready: ->
     @controller.setInitialFocusedElement(null)
-    StageAssistant.defaultWindowOrientation(@, "free")
   
   handleUpdate1: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-hide-thumbnails")  

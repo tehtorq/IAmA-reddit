@@ -85,13 +85,12 @@ class GifAssistant extends BaseAssistant
 
   activate: (event) ->
     super
+    StageAssistant.defaultWindowOrientation(@, "up")
     
     @addListeners(
       [@controller.get('wrappertest'), Mojo.Event.tap, @handleTap]
       [@controller.get('ImageId'), 'load', @handleImageLoaded]
     )
-    
-    StageAssistant.defaultWindowOrientation(@, "up")
     
     @setImageSrc @urlForIndex(@current_index)
     @updateCommandMenu()

@@ -63,7 +63,6 @@ class ComposeMessageAssistant extends BaseAssistant
       [@controller.get("sendButton"), Mojo.Event.tap, @sendMessage]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "up")
     @displayComposeMessage()
 
   displayComposeMessage: (object) ->

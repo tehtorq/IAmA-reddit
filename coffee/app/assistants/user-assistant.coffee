@@ -53,8 +53,6 @@ class UserAssistant extends BaseAssistant
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
     )
 
-    StageAssistant.defaultWindowOrientation(@, "free")
-
     if @listModel.items.length is 0
       @about()
       @fetchComments()

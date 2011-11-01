@@ -58,7 +58,6 @@ class RegisterAssistant extends BaseAssistant
       [@controller.get("registerButton"), Mojo.Event.tap, @register]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "up")
     @fetchCaptcha()
 
   handleCommand: (event) ->

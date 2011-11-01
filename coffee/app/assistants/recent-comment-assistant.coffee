@@ -51,8 +51,6 @@ class RecentCommentAssistant extends PowerScrollBase
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
     )
     
-    StageAssistant.defaultWindowOrientation(@, "free")
-    
     @fetchRecentComments() if @commentModel.items.length is 0
     @timerID = @controller.window.setInterval(@tick, 5000)
   
