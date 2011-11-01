@@ -20,3 +20,6 @@ class User
 
   about: (params) ->
     new Request(@callback).get('http://www.reddit.com/user/' + params.user + '/about.json', {}, 'user-about')
+    
+  me: (params) ->
+    new Request(@callback).get('http://www.reddit.com/api/me.json', {}, 'user-me')

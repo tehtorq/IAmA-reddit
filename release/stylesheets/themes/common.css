@@ -9,6 +9,11 @@
   margin-right: auto;
 }
 
+.dashboard-icon-reddit {
+	background: url(../../icon.png) center center no-repeat;
+	-webkit-background-size: 32px 32px;
+}
+
 .wrappertest {
   background-color : black;
   -webkit-background-size: 100% 100%;

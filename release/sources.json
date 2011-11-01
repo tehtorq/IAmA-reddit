@@ -85,5 +85,9 @@
     {
         "scenes": "about",
         "source": "app/assistants/about-assistant.js"
+    },
+    {
+        "scenes": "dashboard",
+        "source": "app/assistants/dashboard-assistant.js"
     }
 ]

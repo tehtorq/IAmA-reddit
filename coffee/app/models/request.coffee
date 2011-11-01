@@ -20,17 +20,17 @@ class Request
       }
     )
 
-    Request.store.push({cardname: @callback.cardname, request: request})
+    Request.store.push({cardname: @callback?.cardname, request: request})
 
-  get: (url, params, success, failure) ->
-    @request(url, 'get', params, success, failure)
+  get: (url, params, token) ->
+    @request(url, 'get', params, token)
 
-  post: (url, params, success, failure) ->
+  post: (url, params, token) ->
     unless params.uh?
       Banner.send("Not logged in.")
       return
     
-    @request(url, 'post', params, success, failure)
+    @request(url, 'post', params, token)
 
   handleResponse: (token, response, success) ->
     #return unless response.readyState is 4

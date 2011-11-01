@@ -14,9 +14,7 @@ class StageAssistant
     cookie = new Mojo.Model.Cookie(cookieName)
 
     if cookie?
-      value = cookie.get()
-      return default_value unless value?
-      return value
+      return cookie.get() || default_value
 
     default_value
 

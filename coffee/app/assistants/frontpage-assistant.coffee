@@ -22,6 +22,8 @@ class FrontpageAssistant extends PowerScrollBase
   setup: ->
     super
     
+    Preferences.updateNotifications()
+    
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     new_items = [{label:$L("what's new"), command:$L("category new")},{label:$L("new"), command:$L("category new sort new")},{label:$L("rising"), command:$L("category new sort rising")}]

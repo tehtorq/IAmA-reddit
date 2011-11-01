@@ -14,6 +14,9 @@ class PrefsAssistant extends BaseAssistant
     value7 = Preferences.getTheme()
     value8 = @cookieValue("prefs-frontpage", "all")
     value9 = @cookieValue('prefs-galleries','1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots')
+    value10 = @cookieValue("prefs-message-notifications", "off")
+    value11 = @cookieValue("prefs-karma-notifications", "off")
+    value12 = @cookieValue("prefs-notification-interval", "30")
     
     @galleriesModel = { value : value9 }
 
@@ -45,6 +48,16 @@ class PrefsAssistant extends BaseAssistant
     @controller.setupWidget("lock_orientation_toggle_button",
       { trueValue : "on", falseValue : "off"}
       {value: value6, disabled: false}
+    )
+    
+    @controller.setupWidget("message_notifications_toggle_button",
+      { trueValue : "on", falseValue : "off"}
+      {value: value10, disabled: false}
+    )
+
+    @controller.setupWidget("karma_notifications_toggle_button",
+      { trueValue : "on", falseValue : "off"}
+      {value: value11, disabled: false}
     )
     
     @controller.setupWidget("articles_per_page_radio_button",
@@ -83,6 +96,18 @@ class PrefsAssistant extends BaseAssistant
       {value: value8}
     )
     
+    @controller.setupWidget("notification_interval",
+      {
+        label: 'Minutes Interval',
+        labelPlacement: Mojo.Widget.labelPlacementRight,
+        modelProperty: 'value',
+        min: 1,
+        max: 59,
+        padNumbers: true
+      },
+      { value: value12}
+    )
+    
     @viewMenuModel = if not @showBackNavigation()
       {
         visible: true,
@@ -117,6 +142,9 @@ class PrefsAssistant extends BaseAssistant
       [@controller.get("theme_radio_button"), Mojo.Event.propertyChange, @handleUpdate7]
       [@controller.get("frontpage_button"), Mojo.Event.propertyChange, @handleUpdate8]
       [@controller.get("galleriesTextFieldId"), Mojo.Event.propertyChange, @handleUpdate9]
+      [@controller.get("message_notifications_toggle_button"), Mojo.Event.propertyChange, @handleUpdate10]
+      [@controller.get("karma_notifications_toggle_button"), Mojo.Event.propertyChange, @handleUpdate11]
+      [@controller.get("notification_interval"), Mojo.Event.propertyChange, @handleUpdate12]
     )
   
   ready: ->
@@ -153,6 +181,18 @@ class PrefsAssistant extends BaseAssistant
   handleUpdate9: (event) =>
     cookie = new Mojo.Model.Cookie("prefs-galleries")
     cookie.put(event.value)
+    
+  handleUpdate10: (event) =>
+    new Mojo.Model.Cookie("prefs-message-notifications").put(event.value)
+    Preferences.updateNotifications()
+    
+  handleUpdate11: (event) =>
+    new Mojo.Model.Cookie("prefs-karma-notifications").put(event.value)
+    Preferences.updateNotifications()
+    
+  handleUpdate12: (event) =>
+    new Mojo.Model.Cookie("prefs-notification-interval").put(event.value)
+    Preferences.updateNotifications()
 
   cookieValue: (cookieName, default_value) ->
     cookie = new Mojo.Model.Cookie(cookieName)
