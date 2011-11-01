@@ -16,7 +16,7 @@ class ReplyAssistant extends BaseAssistant
     )
 
     @controller.setupWidget("bodyTextFieldId",
-      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, multiline: true },
+      { focusMode : Mojo.Widget.focusSelectMode, multiline: true },
       @bodyModel
     )
 

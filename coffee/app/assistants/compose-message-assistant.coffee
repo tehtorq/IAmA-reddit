@@ -18,12 +18,12 @@ class ComposeMessageAssistant extends BaseAssistant
       )
 
     @controller.setupWidget("subjectTextFieldId",
-      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },
+      { focusMode : Mojo.Widget.focusSelectMode, maxLength : 30 },
       @subjectModel
       )
 
     @controller.setupWidget("bodyTextFieldId",
-      { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, multiline: true },
+      { focusMode : Mojo.Widget.focusSelectMode, multiline: true },
       @bodyModel
       )
 
