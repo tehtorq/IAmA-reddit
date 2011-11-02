@@ -1,7 +1,7 @@
 {
   "uiRevision": "2",
-	"id": "com.tehtorq.reddit",
-	"version": "0.2.3",
+	"id": "com.tehtorq.reddit-hb",
+	"version": "0.2.4",
 	"vendor": "tehtorq",
 	"type": "web",
 	"main": "index.html",
@@ -16,7 +16,7 @@
   "universalSearch":{
       "search" :  {
           "displayName": "IAmA reddit",
-          "url":"com.tehtorq.reddit",
+          "url":"com.tehtorq.reddit-hb",
           "launchParam":"searchString"
       }
   },
