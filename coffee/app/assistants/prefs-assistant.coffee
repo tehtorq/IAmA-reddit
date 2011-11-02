@@ -63,6 +63,7 @@ class PrefsAssistant extends BaseAssistant
     @controller.setupWidget("articles_per_page_radio_button",
       { 
         label: $L('Articles per page'),
+        labelPlacement: Mojo.Widget.labelPlacementLeft,
         choices : [
                     { label : "10", value : "10" },
                     { label : "25", value : "25" },
@@ -75,7 +76,8 @@ class PrefsAssistant extends BaseAssistant
     theme_choices = _.map Preferences.themes, (theme) -> { label : theme, value : theme }
                                                         
     @controller.setupWidget("theme_radio_button", {
-      label: $L('Theme'), 
+      label: $L('Theme'),
+      labelPlacement: Mojo.Widget.labelPlacementLeft,
       choices: theme_choices
       }
       {value: value7}
@@ -91,7 +93,8 @@ class PrefsAssistant extends BaseAssistant
     reddits.unshift({label: 'frontpage', value: 'frontpage'})
     
     @controller.setupWidget("frontpage_button",
-      label: $L('Default Frontpage'), 
+      label: $L('Default Frontpage'),
+      labelPlacement: Mojo.Widget.labelPlacementLeft,
       { choices : reddits },
       {value: value8}
     )
@@ -99,7 +102,7 @@ class PrefsAssistant extends BaseAssistant
     @controller.setupWidget("notification_interval",
       {
         label: 'Minutes Interval',
-        labelPlacement: Mojo.Widget.labelPlacementRight,
+        labelPlacement: Mojo.Widget.labelPlacementLeft,
         modelProperty: 'value',
         min: 1,
         max: 59,
