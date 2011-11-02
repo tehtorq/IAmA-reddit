@@ -8,14 +8,14 @@
   "noWindow": true,
   "dockMode": true,
   "touchstoneMode": "enabled",
-	"title": "IAmA reddit",
+	"title": "IAmA reddit Homebrew",
 	"icon": "icon.png",
   "splashicon": "images/splash-small.png",
 	"splashBackground": "images/splash.png",
   "noDeprecatedStyles":true,
   "universalSearch":{
       "search" :  {
-          "displayName": "IAmA reddit",
+          "displayName": "IAmA reddit Homebrew",
           "url":"com.tehtorq.reddit-hb",
           "launchParam":"searchString"
       }
