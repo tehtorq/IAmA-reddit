@@ -17,6 +17,7 @@ class GifAssistant extends BaseAssistant
     command_menu_items = null
     
     @controller.setupWidget('sub-menu', null, {items: [
+      {label:$L("copy"), command:$L("copy-cmd")},
       {label:$L("email"), command:$L("email-cmd")},
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
@@ -104,6 +105,8 @@ class GifAssistant extends BaseAssistant
     return if event.type isnt Mojo.Event.command
     
     switch event.command
+      when 'copy-cmd'
+        @setClipboard(@urlForIndex(@current_index))
       when 'save'
         @download(@urlForIndex(@current_index))
       when 'email-cmd'

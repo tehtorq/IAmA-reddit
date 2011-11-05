@@ -31,11 +31,12 @@ class ImageAssistant extends BaseAssistant
     command_menu_items = null
     
     @controller.setupWidget('sub-menu', null, {items: [
+      {label:$L("copy"), command:$L("copy-cmd")},
       {label:$L("email"), command:$L("email-cmd")},
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
+      {label: $L('wallpaper'), command:'wallpaper-cmd'}
       ]})
-    
     
     if not @showBackNavigation()
       if @article_array.length > 0
@@ -116,6 +117,10 @@ class ImageAssistant extends BaseAssistant
     return if event.type isnt Mojo.Event.command
     
     switch event.command
+      when 'copy-cmd'
+        @setClipboard(@urlForIndex(@current_index))
+      when 'wallpaper-cmd'
+        @download(@urlForIndex(@current_index), {wallpaper: true})
       when 'save'
         @download(@urlForIndex(@current_index))
       when 'email-cmd'
@@ -200,8 +205,10 @@ class ImageAssistant extends BaseAssistant
     else
       @controller.get('image_title').hide()
 
-  download: (filename) ->
-    name = filename.substring(filename.lastIndexOf('/') + 1)
+  download: (filename, options={}) ->
+    @spinSpinner(true)
+    targetDir = "/media/internal/reddit_downloads/"
+    target = filename.substring(filename.lastIndexOf('/') + 1)
 
     try
       @controller.serviceRequest(
@@ -209,11 +216,21 @@ class ImageAssistant extends BaseAssistant
         method: 'download'
         parameters:
           target: filename
-          targetDir : "/media/internal/reddit_downloads/"
+          targetDir : targetDir
           keepFilenameOnRedirect: false
           subscribe: true
         onSuccess: (response) =>
-          Banner.send("Saved image " + name) if response.completed is true
+          if response.completed is true 
+            if response.completionStatusCode is 200
+              return @createWallpaper(response.destFile) if options.wallpaper is true
+              @spinSpinner(false)
+              Banner.send("Saved image " + response.destFile)
+            else
+              @spinSpinner(false)
+              Banner.send("Action not completed")
+        onFailure: =>
+          @spinSpinner(false)
+          Banner.send("Action not completed")
       )
     catch e
   
@@ -247,3 +264,32 @@ class ImageAssistant extends BaseAssistant
             messageText: @currentTitle() + "\n\n" + @urlForIndex(@current_index)
       }
     )
+    
+  setWallpaper: (wallpaper) -> 
+    @controller.serviceRequest('palm://com.palm.systemservice', {
+      method:"setPreferences",
+      parameters:{"wallpaper": wallpaper},
+      onSuccess: (e) =>
+        @spinSpinner(false)
+        Mojo.Log.info("setPreferences success, results="+JSON.stringify(e))
+        Banner.send("Set as wallpaper")
+      onFailure: (e) =>
+        @spinSpinner(false)
+        Mojo.Log.info("setPreferences failure, results="+JSON.stringify(e))
+        Banner.send("Action not completed")
+    })
+   
+  createWallpaper: (target) -> 
+    targetDir = "/media/internal/reddit_downloads/"
+    
+    @controller.serviceRequest('palm://com.palm.systemservice/wallpaper', {
+      method:"importWallpaper",
+      parameters:{ "target": targetDir + target },
+      onSuccess: (e) =>
+        Mojo.Log.info("importWallpaper success, results="+JSON.stringify(e))
+        @setWallpaper(e.wallpaper)
+      onFailure: (e) =>
+        @spinSpinner(false)
+        Mojo.Log.info("importWallpaper failure, results="+JSON.stringify(e))
+        Banner.send("Action not completed")
+    })

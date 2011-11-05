@@ -56,3 +56,7 @@ class BaseAssistant
        ff.mojo.close()
     else
        ff.mojo.open()
+
+  setClipboard: (text) ->
+    Banner.send("Sent to Clipboard")
+    @controller.stageController.setClipboard(text, true)  
