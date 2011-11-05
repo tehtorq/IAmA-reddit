@@ -166,13 +166,7 @@ class RecentCommentAssistant extends PowerScrollBase
       if linky.type is 'image'
         AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
       else if (linky.type is 'youtube_video') or (linky.type is 'web')
-        @controller.serviceRequest("palm://com.palm.applicationManager", {
-          method : "open",
-          parameters:
-            target: linky.url
-            onSuccess: ->
-            onFailure: ->
-        })
+        AppAssistant.open(linky.url)
 
       return
 
@@ -193,14 +187,7 @@ class RecentCommentAssistant extends PowerScrollBase
         index = element_tapped.id.match(/_(\d+)_/g)[0].replace(/_/g,'')
         url = StageAssistant.parseUrls(comment.data.body)[index].url
 
-      @controller.serviceRequest("palm://com.palm.applicationManager", {
-        method : "open",
-        parameters:
-          target: url
-          onSuccess: ->
-          onFailure: ->
-      })
-
+      AppAssistant.open(url)
       return
 
     @controller.popupSubmenu({

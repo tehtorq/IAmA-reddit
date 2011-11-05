@@ -118,3 +118,18 @@ class AppAssistant
   
     StageAssistant.stages.push(cardname)
     Mojo.Controller.getAppController().createStageWithCallback({name: cardname, lightweight: true}, pushCard, "card")
+    
+  @open: (url) ->
+    new Mojo.Service.Request("palm://com.palm.applicationManager", {
+      method: "open",
+      parameters:
+        target: url
+        onSuccess: ->
+        onFailure: ->
+      })
+      
+  @open_donation_link: ->
+    @open("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BNANW6F5RNWD6")
+    
+  @open_purchase_link: ->
+    @open("http://developer.palm.com/appredirect/?packageid=com.tehtorq.reddit")

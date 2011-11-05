@@ -101,31 +101,34 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
-    
-    appMenuModel =
-      visible: true
-      items:
+      
+    menu_items = [
+      {label: "Friends", command: 'friend-scene'}
+      {label: "Gallery", command: 'gallery-cmd'}
+      {label: "Manage User", items:
         [
-          {label: "Friends", command: 'friend-scene'}
-          {label: "Gallery", command: 'gallery-cmd'}
-          {label: "Manage User", items:
-            [
-              {label: "Login", command: 'login-cmd'}
-              {label: "Register", command: 'register-cmd'}
-              #{label: "Logout", command: 'logout-cmd'}
-            ]}
-          {label: "Messages", items:
-            [
-              {label: "Compose", command: 'compose-message-cmd'}
-              {label: "Inbox", command: 'messages-cmd'}
-            ]}
-          {label: "Recent Comments", command: 'recent-comments-cmd'}
-          {label: "Reddits", command: 'reddits-cmd'}
-          {label: "Preferences", command: Mojo.Menu.prefsCmd}
-          {label: "About", command: 'about-scene'}
-        ]
+          {label: "Login", command: 'login-cmd'}
+          {label: "Register", command: 'register-cmd'}
+          #{label: "Logout", command: 'logout-cmd'}
+        ]}
+      {label: "Messages", items:
+        [
+          {label: "Compose", command: 'compose-message-cmd'}
+          {label: "Inbox", command: 'messages-cmd'}
+        ]}
+      {label: "Recent Comments", command: 'recent-comments-cmd'}
+      {label: "Reddits", command: 'reddits-cmd'}
+      {label: "Preferences", command: Mojo.Menu.prefsCmd}
+      {label: "About", command: 'about-scene'}
+    ]
+    
+    if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
+      menu_items = _.union([
+        {label: "Donate", command: 'donation-cmd'}
+        {label: "Purchase", command: 'purchase-cmd'}
+      ], menu_items)
 
-    @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
+    @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, {visible: true, items: menu_items})
 
     @controller.setupWidget('filterfield', {delay: 2000})
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
@@ -445,13 +448,7 @@ class FrontpageAssistant extends PowerScrollBase
         article = @articles.items[parseInt(params[1])]
         
         if article.data.url?
-          @controller.serviceRequest("palm://com.palm.applicationManager", {
-            method: "open",
-            parameters:
-              target: article.data.url
-              onSuccess: ->
-              onFailure: ->
-            })
+          AppAssistant.open(article.data.url)
         else
           @controller.stageController.pushScene({name:"article"}, {article: article})
       when 'domain-cmd'
@@ -530,15 +527,7 @@ class FrontpageAssistant extends PowerScrollBase
       return
   
     if element_tapped.id.indexOf('youtube_') isnt -1 or element_tapped.id.indexOf('web_') isnt -1
-      @controller.serviceRequest "palm://com.palm.applicationManager", {
-        method : "open",
-        parameters: {
-          target: Linky.parse(article.data.url).url
-          onSuccess: ->
-          onFailure: ->
-        }
-      }
-        
+      AppAssistant.open(Linky.parse(article.data.url).url)
       return
     
     if @isLoggedIn()
@@ -610,6 +599,10 @@ class FrontpageAssistant extends PowerScrollBase
         @controller.stageController.pushScene({name:"compose-message"},{})
       when 'about-scene'
         @controller.stageController.pushScene({name:"about"}, {})
+      when 'donation-cmd'
+        AppAssistant.open_donation_link()
+      when 'purchase-cmd'
+        AppAssistant.open_purchase_link()
 
   itemHold: (event) =>
     event.preventDefault()
