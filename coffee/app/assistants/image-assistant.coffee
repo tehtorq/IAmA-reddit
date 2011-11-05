@@ -45,7 +45,7 @@ class ImageAssistant extends BaseAssistant
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
           {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 240}
-          {submenu: "sub-menu", iconPath: 'images/options.png'}
+          {submenu: "sub-menu", icon:'reply'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
         ]

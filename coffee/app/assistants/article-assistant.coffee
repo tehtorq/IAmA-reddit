@@ -30,6 +30,7 @@ class ArticleAssistant extends PowerScrollBase
       {label:$L("show"), items: [{label:$L("top 200 comments"), command:$L("show 200")},
                                 {label:$L("top 500 comments"), command:$L("show 500")}]},
       {label:$L("share"), items: [{label:$L("email"), command:$L("email-cmd")},
+                                {label:$L("link"), command:$L("share-link-cmd")},
                                 {label:$L("sms"), command:$L("sms-cmd")}]},
       {label:$L("related"), command:$L("related")},
       {label:$L("other discussions"), command:$L("duplicates")},
@@ -225,6 +226,8 @@ class ArticleAssistant extends PowerScrollBase
         @saveArticle()
       when 'email-cmd'
         @mailArticle()
+      when 'share-link-cmd'
+        @setClipboard(@url)
       when 'sms-cmd'
         @smsArticle()
       when 'show 200'
