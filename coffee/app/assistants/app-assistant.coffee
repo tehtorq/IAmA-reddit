@@ -77,7 +77,10 @@ class AppAssistant
     else if params.searchString
       AppAssistant.cloneCard(null, {name:"frontpage"}, {search: params.searchString})
     else
-      AppAssistant.cloneCard(null, {name:"frontpage"})
+      if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
+        AppAssistant.cloneCard(null, {name:"about"}, {skip: true})
+      else
+        AppAssistant.cloneCard(null, {name:"frontpage"})
   
   launchDockMode: ->
     dockStage = @controller.getStageController('dock')

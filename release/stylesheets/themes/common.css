@@ -9,6 +9,10 @@
   margin-right: auto;
 }
 
+.about-scene {
+  font-size: 15px;
+}
+
 .dashboard-icon-reddit {
 	background: url(../../icon.png) center center no-repeat;
 	-webkit-background-size: 32px 32px;
