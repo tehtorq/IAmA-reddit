@@ -44,7 +44,7 @@ class AboutAssistant extends BaseAssistant
       @controller.setupWidget(Mojo.Menu.appMenu, {}, {visible: true, items: [{label: "Feedback", command: 'feedback-cmd'}]})
   
   ready: ->
-    expiration = new Date(new Date().getTime() + 24 * 60 * 60000)
+    expiration = new Date(new Date().getTime() + 2 * 24 * 60 * 60000)
     new Mojo.Model.Cookie("show-about-screen").put(expiration, expiration)
     
   handleCommand: (event) ->

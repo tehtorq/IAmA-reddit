@@ -6,6 +6,19 @@ Known bugs:
 
 Changelog:
 
+0.2.5:
+- add slideshow option to gallery
+- set images as wallpaper
+- list top contributors on About scene
+- copy article and image links to clipboard
+- auto-capitalize messages and replies
+- splash screen and app icon overhaul
+- blurbs about supporting the app
+
+0.2.4:
+- launch and search
+- early notifications work
+
 0.2.3:
 - Minor bug fixes
   - fix easy links
