@@ -3,6 +3,7 @@ class ImageAssistant extends BaseAssistant
   constructor: (params) ->
     super
     
+    @start_slideshow = params.slideshow || false
     @image_array = params.images
     @article_array = params.articles
     @current_index = params.index
@@ -30,13 +31,17 @@ class ImageAssistant extends BaseAssistant
       
     command_menu_items = null
     
-    @controller.setupWidget('sub-menu', null, {items: [
+    action_items = [
       {label:$L("copy"), command:$L("copy-cmd")},
       {label:$L("email"), command:$L("email-cmd")},
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
       {label: $L('wallpaper'), command:'wallpaper-cmd'}
-      ]})
+    ]
+      
+    action_items.push({label:$L("slideshow"), command:$L("slideshow-cmd")}) if @image_array.length > 1
+    
+    @controller.setupWidget('sub-menu', null, {items: action_items})
     
     if not @showBackNavigation()
       if @article_array.length > 0
@@ -45,7 +50,7 @@ class ImageAssistant extends BaseAssistant
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
           {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 240}
-          {submenu: "sub-menu", icon:'reply'}
+          {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
         ]
@@ -99,11 +104,16 @@ class ImageAssistant extends BaseAssistant
     
     @controller.get('image_title').hide()
     @updateUrls(0)
+  
+  cleanup: (event) ->
+    super
+    @disableSlideShow({silent: true})
 
   ready: ->
     @controller.get('wrappertest').style.width = "#{@controller.window.innerWidth}px"
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth,@controller.window.innerHeight)
+    @enableSlideShow() if @start_slideshow is true
 
   changedImage: =>
     @spinSpinner(false)
@@ -113,30 +123,54 @@ class ImageAssistant extends BaseAssistant
     @controller.get('wrappertest').style.height = "#{@controller.window.innerHeight}px"
     @controller.get('ImageId').mojo.manualSize(@controller.window.innerWidth, @controller.window.innerHeight)
 
-  handleCommand: (event) ->
-    return if event.type isnt Mojo.Event.command
+  toggleSlideshow: ->
+    if @slideshow is true
+      @disableSlideShow()
+    else
+      @enableSlideShow()
+  
+  enableSlideShow: (options = {}) ->
+    Banner.send('Enabling slideshow') unless options.silent is true or @slideshow is true
+    @slideshow = true
+    @timerID = @controller.window.setInterval(@slideshowTick, 10000)
     
-    switch event.command
-      when 'copy-cmd'
-        @setClipboard(@urlForIndex(@current_index))
-      when 'wallpaper-cmd'
-        @download(@urlForIndex(@current_index), {wallpaper: true})
-      when 'save'
-        @download(@urlForIndex(@current_index))
-      when 'email-cmd'
-        @mail()
-      when 'sms-cmd'
-        @sms()
-      when 'article'
-        AppAssistant.cloneCard(@, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
-      when 'prev'
-        @spinSpinner(true)
-        @updateUrls(-1)
-      when 'forward'
-        @spinSpinner(true)
-        @updateUrls(1)
-      when 'back'
-        @controller.stageController.popScene()
+  disableSlideShow: (options = {}) ->
+    Banner.send('Slideshow disabled') unless options.silent is true or @slideshow is false
+    @slideshow = false
+    @controller.window.clearInterval(@timerID) if @timerID?
+    
+  slideshowTick: =>
+    delta = 1
+    delta = (0 - @current_index) if (@current_index + delta) is @image_array.length
+    @updateUrls(delta)
+   
+  handleCommand: (event) ->
+    if event.type is Mojo.Event.command
+      switch event.command
+        when 'slideshow-cmd'
+          @toggleSlideshow()
+        when 'copy-cmd'
+          @setClipboard(@urlForIndex(@current_index))
+        when 'wallpaper-cmd'
+          @download(@urlForIndex(@current_index), {wallpaper: true})
+        when 'save'
+          @download(@urlForIndex(@current_index))
+        when 'email-cmd'
+          @mail()
+        when 'sms-cmd'
+          @sms()
+        when 'article'
+          AppAssistant.cloneCard(@, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
+        when 'prev'
+          @disableSlideShow()
+          @spinSpinner(true)
+          @updateUrls(-1)
+        when 'forward'
+          @disableSlideShow()
+          @spinSpinner(true)
+          @updateUrls(1)
+        when 'back'
+          @controller.stageController.popScene()
 
   urlForIndex: (index) ->
     if index < 0

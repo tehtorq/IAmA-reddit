@@ -28,14 +28,16 @@ class GalleryAssistant extends BaseAssistant
 
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
     
+    @controller.setupWidget('options-submenu', null, {items: [{label: $L('Slideshow'), command: 'slideshow-cmd'}]})
+    
     if not @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
             {items:[{},
-                    { label: '', command: "", width: 60},
-                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 120},
-                    { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
+                    { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
+                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 121},
+                    { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
                     {}]}
         ]
       }
@@ -44,9 +46,10 @@ class GalleryAssistant extends BaseAssistant
         visible: true,
         items: [
             {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 140},
-                    { label: '', submenu: "subreddit-submenu", icon: "search", width: 60},
+                    {label: $L('Back'), icon:'', command:'back', width:80},
+                    { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
+                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 201},
+                    { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
                     {}]}
         ]
       }
@@ -80,24 +83,29 @@ class GalleryAssistant extends BaseAssistant
 
   orientationChanged: (orientation) ->
     @controller.stageController.setWindowOrientation(orientation)
+    
+  displayImageView: (options = {}) ->
+    starting_index = options.starting_index || 0
+    slideshow = options.slideshow || false
+    image_array = []
+    articles = []
+    
+    _.each @thumbs, (thumb) ->
+      image_array.push(thumb.url.url)
+      articles.push(thumb)
+    
+    scene = if @sr in ['gif','gifs','nsfw_gif','nsfw_gifs']
+      "gif"
+    else
+      "image"
+      
+    AppAssistant.cloneCard(@, {name:scene},{index:starting_index,images:image_array, articles:articles, slideshow: slideshow})
 
   handleTap: (event) =>
     element_tapped = event.target
 
-    if element_tapped? and element_tapped.alt?     
-      image_array = []
-      articles = []
-      
-      _.each @thumbs, (thumb) ->
-        image_array.push(thumb.url.url)
-        articles.push(thumb)
-      
-      scene = if @sr in ['gif','gifs','nsfw_gif','nsfw_gifs']
-        "gif"
-      else
-        "image"
-        
-      AppAssistant.cloneCard(@, {name:scene},{index:parseInt(element_tapped.alt),images:image_array, articles:articles})
+    if element_tapped? and element_tapped.alt?    
+      @displayImageView({starting_index: parseInt(element_tapped.alt)})
 
   storeThumb: (reddit_article) ->
     url = reddit_article.data.url
@@ -194,6 +202,8 @@ class GalleryAssistant extends BaseAssistant
         @controller.stageController.pushScene({name:"prefs"}, {})
       when 'back'
         @controller.stageController.popScene()
+      when 'slideshow-cmd'
+        @displayImageView({starting_index: 0, slideshow: true})
       
     params = event.command.split(' ')
 
