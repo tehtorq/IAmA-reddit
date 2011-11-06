@@ -40,7 +40,13 @@ class AboutAssistant extends BaseAssistant
         }
 
       @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      
+      @controller.setupWidget(Mojo.Menu.appMenu, {}, {visible: true, items: [{label: "Feedback", command: 'feedback-cmd'}]})
   
+  ready: ->
+    expiration = new Date(new Date().getTime() + 24 * 60 * 60000)
+    new Mojo.Model.Cookie("show-about-screen").put(expiration, expiration)
+    
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
 
@@ -51,3 +57,24 @@ class AboutAssistant extends BaseAssistant
         @controller.stageController.popScene()
       when 'continue'
         @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+      when 'feedback-cmd'
+        @mail()
+        
+  mail: ->
+    @controller.serviceRequest(
+      "palm://com.palm.applicationManager",
+      {
+        method: 'open'
+        parameters:
+          id: "com.palm.app.email",
+          params:
+            summary: 'IAmA reddit feedback',
+            text: '',
+            recipients: [{
+              type:"email",
+              role:1,
+              value:"i.am.douglas.anderson@gmail.com",
+              contactDisplay:"IAmA reddit"
+            }]
+      }
+    )

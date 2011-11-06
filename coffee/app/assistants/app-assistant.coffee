@@ -77,11 +77,18 @@ class AppAssistant
     else if params.searchString
       AppAssistant.cloneCard(null, {name:"frontpage"}, {search: params.searchString})
     else
-      if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
+      if @shouldDisplayAboutScene()
         AppAssistant.cloneCard(null, {name:"about"}, {skip: true})
       else
         AppAssistant.cloneCard(null, {name:"frontpage"})
   
+  shouldDisplayAboutScene: ->
+    if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
+      if cookie = new Mojo.Model.Cookie("show-about-screen")
+        value = cookie.get()
+        return true if value is undefined
+    false
+    
   launchDockMode: ->
     dockStage = @controller.getStageController('dock')
     
