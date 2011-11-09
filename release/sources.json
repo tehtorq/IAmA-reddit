@@ -14,6 +14,7 @@
     {"source": "app/models/subreddit.js"},
     {"source": "app/models/user.js"},
     {"source": "app/models/message.js"},
+    {"source": "app/models/comment_list.js"},
     {"source": "app/assistants/app-assistant.js"},
     {"source": "app/assistants/base-assistant.js"},
     {"source": "app/assistants/power-scroll-base.js"},

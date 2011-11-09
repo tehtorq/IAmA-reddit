@@ -1,15 +1,20 @@
 <div id='filterfield' class="searchbar" x-mojo-element='FilterField'></div>
 
-<div style="width:400px;float:left;">
-  Article List
-  <div id="article-list" x-mojo-element="List"></div>
+<div style="width:40%; float:left;">
+  <div id="article-scroller" style="height: 650px;" x-mojo-element="Scroller">
+    <div id="article-list" x-mojo-element="List"></div>
+  </div>
 </div>
 
-<div style="width:400px;float:right;">
-  Comment List
-  <div id="comment-list" x-mojo-element="List"></div>
+<div style="width:60%;float:right;">
+  <div id="comment-scroller" style="height: 650px;" x-mojo-element="Scroller">
+    <div id="comment-list" x-mojo-element="List"></div>
+  </div>
 </div>
 
-<div x-mojo-element="Button" id="loadMoreButton"></div>
+<div style="background-color:red;width:100%;height:30px;float:left;">
+  <div x-mojo-element="Button" id="loadMoreButton"></div>
+  <div x-mojo-element="Button" id="loadingCommentsButton"></div>
+<div>
 
 <div id="loading" class="loading"><div id="spinner" x-mojo-element="Spinner"></div></div>

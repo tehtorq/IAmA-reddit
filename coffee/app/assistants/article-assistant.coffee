@@ -63,21 +63,23 @@ class ArticleAssistant extends PowerScrollBase
     @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     @comments.items.push({kind: 't3', data: @article}) if @article?
+    
+    @comment_list = new CommentList({kind: 't3', data: @article})
 
     @controller.setupWidget("list", {
     itemTemplate : "article/comment"
     #renderLimit: 501 # scroll to top and reveal next OP is perfect - but hiding/showing comments is slow
     formatters:
-      time: @timeFormatter
-      body: @bodyFormatter
-      score: @scoreFormatter
-      vote: @voteFormatter
-      cssclass: @cssclassFormatter
-      tagClass: @tagClassFormatter
-      indent: @indentFormatter
-      thumbnail: @thumbnailFormatter
-      shadowindent: @shadowindentFormatter
-      hidingComments: @hidingCommentsFormatter
+      time: @comment_list.timeFormatter
+      body: @comment_list.bodyFormatter
+      score: @comment_list.scoreFormatter
+      vote: @comment_list.voteFormatter
+      cssclass: @comment_list.cssclassFormatter
+      tagClass: @comment_list.tagClassFormatter
+      indent: @comment_list.indentFormatter
+      thumbnail: @comment_list.thumbnailFormatter
+      shadowindent: @comment_list.shadowindentFormatter
+      hidingComments: @comment_list.hidingCommentsFormatter
     }, @comments)
 
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
@@ -126,93 +128,6 @@ class ArticleAssistant extends PowerScrollBase
     @controller.get('loadMoreButton').mojo.activate()
     @controller.get('loadMoreButton').show()
     @fetchComments(params)
-
-  timeFormatter: (propertyValue, model) =>
-    return if model.kind not in ['t1','t3']
-    StageAssistant.timeFormatter(model.data.created_utc)
-
-  bodyFormatter: (propertyValue, model) =>
-    if model.kind not in ['t1','t3']
-      return "load more comments" if model.kind is 'more'
-      return ""
-    
-    content = ""
-
-    if model.data.selftext_html
-      content = model.data.selftext_html
-    else
-      #content = model.data.body
-      content = model.data.body_html
-
-    return "" unless content
-    
-    content = content.unescapeHTML()
-
-    #ontent = content.replace('<a ', '<a class="linky" ')
-    #content = content.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
-    content
-
-  scoreFormatter: (propertyValue, model) =>
-    return "" if model.kind not in ['t1','t3']
-    (model.data.ups - model.data.downs) + " points"
-
-  voteFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','t3']
-    return '+1' if model.data.likes is true
-    return '-1' if model.data.likes is false
-    ''
-  
-  tagClassFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','t3']
-    if model.data.author is @article.author then 'comment_tag' else 'comment_tag_hidden'
-
-  cssclassFormatter: (propertyValue, model) =>
-    if model.kind not in ['t1','t3']
-      return "load_more_comment" is model.kind is 'more'
-      return ""
-    
-    'reddit_comment'
-
-  indentFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','more']
-    4 + 6 * model.data.indent + ""
-
-  shadowindentFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','more']
-    8 + 6 * model.data.indent + ""
-    
-  hidingCommentsFormatter: (propertyValue, model) =>
-    return "hiding #{model.hiding_comments} comment" if model?.hiding_comments is 1
-    return "hiding #{model.hiding_comments} comments" if model?.hiding_comments > 0
-    ''
-
-  thumbnailFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','t3']
-    
-    image_link = null
-
-    if (model.data.thumbnail?) and (model.data.thumbnail isnt "")
-      image_link = model.data.thumbnail
-
-      if image_link.indexOf('/static/') isnt -1
-        image_link = 'http://reddit.com' + image_link
-
-    if model.data.url?
-      linky = Linky.parse(model.data.url)
-
-      switch linky.type
-        when 'image'
-          image_link = './images/picture.png' unless image_link?
-          return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="image_'+model.data.id+'">'
-        when 'youtube_video'
-          image_link = './images/youtube.png' unless image_link?
-          return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="youtube_'+model.data.id+'">'
-        when 'web'
-          if linky.url.indexOf('http://www.reddit.com/') is -1
-            image_link = './images/web.png' unless image_link?
-            return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="web_'+model.data.id+'">'
-
-    ""
 
   handleCommand: (event) ->
     return unless event.type is Mojo.Event.command

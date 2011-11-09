@@ -146,24 +146,46 @@ class SplitFrontpageAssistant extends PowerScrollBase
         vote: @voteFormatter
       }, @articles)
       
+    @comment_list = new CommentList()
+      
     @controller.setupWidget("comment-list", {
       itemTemplate : "article/comment"
-      #formatters:
-        # time: @timeFormatter
-        # body: @bodyFormatter
-        # score: @scoreFormatter
-        # vote: @voteFormatter
-        # cssclass: @cssclassFormatter
-        # tagClass: @tagClassFormatter
-        # indent: @indentFormatter
-        # thumbnail: @thumbnailFormatter
-        # shadowindent: @shadowindentFormatter
-        # hidingComments: @hidingCommentsFormatter
+      formatters:
+        time: @comment_list.timeFormatter
+        body: @comment_list.bodyFormatter
+        score: @comment_list.scoreFormatter
+        vote: @comment_list.voteFormatter
+        cssclass: @comment_list.cssclassFormatter
+        tagClass: @comment_list.tagClassFormatter
+        indent: @comment_list.indentFormatter
+        thumbnail: @comment_list.thumbnailFormatter
+        shadowindent: @comment_list.shadowindentFormatter
+        hidingComments: @comment_list.hidingCommentsFormatter
       }, @comments)
 
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     @controller.get('loadMoreButton').hide()
+    
+    @loadingCommentsButtonModel = {label : "Loading comments"}
+    @controller.setupWidget("loadingCommentsButton", {type:Mojo.Widget.activityButton}, @loadingCommentsButtonModel)
+    @controller.get('loadingCommentsButton').hide()
+    
+    this.controller.setupWidget("article-scroller",
+      this.attributes = {
+          mode: 'vertical'
+      },
+      this.model = {
+      }
+    );
+    
+    this.controller.setupWidget("comment-scroller",
+      this.attributes = {
+          mode: 'vertical'
+      },
+      this.model = {
+      }
+    );
   
   activate: (event) ->
     super
@@ -354,6 +376,15 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @activityButtonModel.label = "Loading"
     @activityButtonModel.disabled = true
     @controller.modelChanged(@activityButtonModel)
+    
+  displayLoadingCommentsButton: (bool) ->
+    if bool
+      @controller.get('loadingCommentsButton').mojo.activate()
+      @activityButtonModel.disabled = true
+      @controller.modelChanged(@activityButtonModel)
+      @controller.get('loadingCommentsButton').show()
+    else
+      @controller.get('loadingCommentsButton').hide()
   
   loadArticles: ->
     parameters = {}
@@ -535,6 +566,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @modhash and (@modhash isnt "")
     
   loadArticleComments: (article) ->
+    @displayLoadingCommentsButton(true)
+    @comment_list.setArticle(article)
     @comments.items.clear()
     @comments.items.push({kind: 't3', data: article.data})
     @controller.modelChanged(@comments)
@@ -543,6 +576,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     new Article(@).comments(params)
     
   handlefetchCommentsResponse: (response) ->
+    @displayLoadingCommentsButton(false)
     return unless response? and response.responseJSON?
 
     json = response.responseJSON

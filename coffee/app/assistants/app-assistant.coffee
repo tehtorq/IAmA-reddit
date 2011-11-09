@@ -81,7 +81,7 @@ class AppAssistant
         AppAssistant.cloneCard(null, {name:"about"}, {skip: true})
       else
         #AppAssistant.cloneCard(null, {name:"frontpage"})
-        AppAssistant.cloneCard(null, {name:"split-frontpage"})
+        AppAssistant.cloneCard(null, {name:"split-frontpage",disableSceneScroller: true})
   
   shouldDisplayAboutScene: ->
     if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
