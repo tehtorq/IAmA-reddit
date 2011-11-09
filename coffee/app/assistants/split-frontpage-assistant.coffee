@@ -4,6 +4,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     super
     
     @articles = { items : [] }
+    @comments = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
     
@@ -133,7 +134,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.setupWidget('filterfield', {delay: 2000})
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
-    @controller.setupWidget("list", {
+    @controller.setupWidget("article-list", {
       itemTemplate: "frontpage/article"
       emptyTemplate: "frontpage/emptylist"
       nullItemTemplate: "list/null_item_template"
@@ -144,6 +145,21 @@ class SplitFrontpageAssistant extends PowerScrollBase
         thumbnail: @thumbnailFormatter
         vote: @voteFormatter
       }, @articles)
+      
+    @controller.setupWidget("comment-list", {
+      itemTemplate : "article/comment"
+      #formatters:
+        # time: @timeFormatter
+        # body: @bodyFormatter
+        # score: @scoreFormatter
+        # vote: @voteFormatter
+        # cssclass: @cssclassFormatter
+        # tagClass: @tagClassFormatter
+        # indent: @indentFormatter
+        # thumbnail: @thumbnailFormatter
+        # shadowindent: @shadowindentFormatter
+        # hidingComments: @hidingCommentsFormatter
+      }, @comments)
 
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
@@ -153,10 +169,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
     super
     
     @addListeners(
-      [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
-      [@controller.get("list"), Mojo.Event.hold, @itemHold]
-      [@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem]
+      [@controller.get("article-list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("article-list"), Mojo.Event.hold, @itemHold]
+      [@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
+      #[@controller.get("comment-list"), Mojo.Event.listTap, @commentItemTapped]
+      #[@controller.get("comment-list"), Mojo.Event.hold, @commentItemHold]
     )
 
     if @articles.items.length is 0
@@ -223,7 +241,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       
           if index > -1
             @articles.items[index].data.saved = false
-            @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+            @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Unsaved!")
       when "article-save"
@@ -232,7 +250,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       
           if index > -1
             @articles.items[index].data.saved = true
-            @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+            @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Saved!")
       when 'load-articles'
@@ -253,7 +271,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
 
           @articles.items[index].data.likes = true
           @articles.items[index].data.ups++
-          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Upvoted!")
       when "comment-downvote"
@@ -265,7 +283,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
 
           @articles.items[index].data.likes = false
           @articles.items[index].data.downs++
-          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Downvoted!")
       when "comment-vote-reset"
@@ -278,9 +296,11 @@ class SplitFrontpageAssistant extends PowerScrollBase
             @articles.items[index].data.downs--
 
           @articles.items[index].data.likes = null     
-          @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
+          @controller.get('article-list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Vote reset!")
+      when "article-comments"
+        @handlefetchCommentsResponse(params.response)
 
   handleDeleteItem: (event) =>
     @unsaveArticle(event.item)
@@ -347,7 +367,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
-      @controller.get('list').mojo.noticeRemovedItems(0, length)
+      @controller.get('article-list').mojo.noticeRemovedItems(0, length)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
       @updateHeading(@reddit_api.category)    
@@ -381,7 +401,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       item.can_unsave = if item.data.saved then false else true
       @articles.items.push(item)
     
-    @controller.get('list').mojo.noticeAddedItems(length, items)
+    @controller.get('article-list').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
     @controller.get('loadMoreButton').mojo.deactivate()
@@ -394,7 +414,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     else
       @controller.get('loadMoreButton').hide()
     
-    @controller.get('list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
+    @controller.get('article-list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
   
   handleRandomSubredditResponse:(response) ->
     headers = response.getAllHeaders()
@@ -513,9 +533,49 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
+    
+  loadArticleComments: (article) ->
+    @comments.items.clear()
+    @comments.items.push({kind: 't3', data: article.data})
+    @controller.modelChanged(@comments)
+    
+    params = {url: 'http://reddit.com' + article.data.permalink + '.json'}
+    new Article(@).comments(params)
+    
+  handlefetchCommentsResponse: (response) ->
+    return unless response? and response.responseJSON?
+
+    json = response.responseJSON
+    @modhash = json[0].data.modhash if json[0].data? and json[0].data.modhash?
+
+    @populateComments(json)
+
+    #@controller.get('loadMoreButton').hide()
+    
+  populateComments: (object) ->
+    @populateCommentReplies(object[1].data.children, 0, @comments)
+    @controller.modelChanged(@comments)
+    
+  populateCommentReplies: (replies, indent, array) ->
+    _.each replies, (child) =>
+      if child.kind isnt 'more'
+
+        child.data.indent = indent
+        child.easyLinksHTML = StageAssistant.easylinksFormatter(child)
+
+        array.items.push(child)
+
+        data = child.data
+
+        if data.replies?.data?.children?
+          unless child?.hiding_comments > 0 
+            @populateCommentReplies(data.replies.data.children, indent + 1, array)
   
   itemTapped: (event) =>
     article = event.item
+    
+    return @loadArticleComments(article)
+    
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
