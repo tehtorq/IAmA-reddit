@@ -1,6 +1,6 @@
 {
   "uiRevision": "2",
-	"id": "com.tehtorq.reddit-hb",
+	"id": "com.tehtorq.reddit",
 	"version": "0.2.5",
 	"vendor": "tehtorq",
 	"type": "web",
@@ -8,15 +8,15 @@
   "noWindow": true,
   "dockMode": true,
   "touchstoneMode": "enabled",
-	"title": "IAmA reddit Homebrew",
+	"title": "IAmA reddit",
 	"icon": "icon.png",
   "splashicon": "images/splash-small.png",
 	"splashBackground": "images/splash.png",
   "noDeprecatedStyles":true,
   "universalSearch":{
       "search" :  {
-          "displayName": "IAmA reddit Homebrew",
-          "url":"com.tehtorq.reddit-hb",
+          "displayName": "IAmA reddit",
+          "url":"com.tehtorq.reddit",
           "launchParam":"searchString"
       }
   },
