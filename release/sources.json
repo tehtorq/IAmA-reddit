@@ -27,6 +27,10 @@
         "source": "app/assistants/frontpage-assistant.js"
     },
     {
+        "scenes": "split-frontpage",
+        "source": "app/assistants/split-frontpage-assistant.js"
+    },
+    {
         "scenes": "reddits",
         "source": "app/assistants/reddits-assistant.js"
     },
