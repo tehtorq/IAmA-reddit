@@ -4,7 +4,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     super
     
     @articles = { items : [] }
-    @comments = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
     
@@ -146,22 +145,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
         vote: @voteFormatter
       }, @articles)
       
-    @comment_list = new CommentList()
-      
-    @controller.setupWidget("comment-list", {
-      itemTemplate : "article/comment"
-      formatters:
-        time: @comment_list.timeFormatter
-        body: @comment_list.bodyFormatter
-        score: @comment_list.scoreFormatter
-        vote: @comment_list.voteFormatter
-        cssclass: @comment_list.cssclassFormatter
-        tagClass: @comment_list.tagClassFormatter
-        indent: @comment_list.indentFormatter
-        thumbnail: @comment_list.thumbnailFormatter
-        shadowindent: @comment_list.shadowindentFormatter
-        hidingComments: @comment_list.hidingCommentsFormatter
-      }, @comments)
+    @comment_list = new CommentList('', @)
 
     @activityButtonModel = {label : "Load more"}
     @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
@@ -191,12 +175,13 @@ class SplitFrontpageAssistant extends PowerScrollBase
     super
     
     @addListeners(
+      [document, 'orientationchange', @handleOrientationChange]
       [@controller.get("article-list"), Mojo.Event.listTap, @itemTapped]
       [@controller.get("article-list"), Mojo.Event.hold, @itemHold]
       [@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
-      #[@controller.get("comment-list"), Mojo.Event.listTap, @commentItemTapped]
-      #[@controller.get("comment-list"), Mojo.Event.hold, @commentItemHold]
+      [@controller.get("comment-list"), Mojo.Event.listTap, @comment_list.itemTapped]
+      [@controller.get("comment-list"), Mojo.Event.hold, @comment_list.itemHold]
     )
 
     if @articles.items.length is 0
@@ -231,6 +216,30 @@ class SplitFrontpageAssistant extends PowerScrollBase
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
     ''
+
+  getModHash: ->
+    @modhash
+  
+  startTimer: ->
+    return
+    timerBar = @controller.get('timer-bar')
+    timerBar.removeClassName('counting-down')
+    timerBar.removeClassName('full')
+    timerBar.addClassName('full')
+    
+    setTimeout ->
+      timerBar.addClassName('counting-down')
+    , 0
+  
+  ready: ->
+    @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('divider').style.height = "#{@controller.window.innerHeight - 50}px"
+    
+  handleOrientationChange: (orientation) =>
+    Banner.send('waka')
+    @controller.get('article-scroller').style.width = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
@@ -380,10 +389,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
   displayLoadingCommentsButton: (bool) ->
     if bool
       @controller.get('loadingCommentsButton').mojo.activate()
-      @activityButtonModel.disabled = true
-      @controller.modelChanged(@activityButtonModel)
       @controller.get('loadingCommentsButton').show()
     else
+      @controller.get('loadingCommentsButton').mojo.deactivate()
       @controller.get('loadingCommentsButton').hide()
   
   loadArticles: ->
@@ -394,6 +402,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
       parameters.after = @articles.items[@articles.items.length - 1].data.name
       @displayLoadingButton()
     else
+      @comment_list.comments.items.clear()
+      @controller.modelChanged(@comment_list.comments)
+      
       length = @articles.items.length
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
@@ -566,11 +577,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @modhash and (@modhash isnt "")
     
   loadArticleComments: (article) ->
+    @startTimer()
     @displayLoadingCommentsButton(true)
     @comment_list.setArticle(article)
-    @comments.items.clear()
-    @comments.items.push({kind: 't3', data: article.data})
-    @controller.modelChanged(@comments)
+    @comment_list.comments.items.clear()
+    @comment_list.comments.items.push({kind: 't3', data: article.data})
+    @controller.modelChanged(@comment_list.comments)
     
     params = {url: 'http://reddit.com' + article.data.permalink + '.json'}
     new Article(@).comments(params)
@@ -587,8 +599,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     #@controller.get('loadMoreButton').hide()
     
   populateComments: (object) ->
-    @populateCommentReplies(object[1].data.children, 0, @comments)
-    @controller.modelChanged(@comments)
+    @populateCommentReplies(object[1].data.children, 0, @comment_list.comments)
+    @controller.modelChanged(@comment_list.comments)
     
   populateCommentReplies: (replies, indent, array) ->
     _.each replies, (child) =>
@@ -607,13 +619,11 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
   itemTapped: (event) =>
     article = event.item
-    
-    return @loadArticleComments(article)
-    
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
-      AppAssistant.cloneCard(@, {name:"article"}, {article: article})
+      @loadArticleComments(article)
+      #AppAssistant.cloneCard(@, {name:"article"}, {article: article})
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
@@ -634,7 +644,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       #placeNear:element_tapped,
+       placeNear:element_tapped,
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
          {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
@@ -646,7 +656,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     else
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       #placeNear:element_tapped,
+       placeNear:element_tapped,
        items: [
          {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}

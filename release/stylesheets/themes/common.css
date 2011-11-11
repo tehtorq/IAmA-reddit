@@ -1,3 +1,31 @@
+
+#timer-bar.full {
+  -webkit-transition-property: translate;
+  -webkit-transition-duration: 2s;
+}
+ 
+#timer-bar.full.counting-down {
+  -webkit-transform: translate(-3em,0);
+}
+
+#left-pane {
+  
+}
+
+#right-pane {
+  
+}
+
+#divider {
+  background: url(../../images/left-shadow.png) center center repeat;
+  -webkit-background-size: 10px 100%;
+  padding: 0px;
+  margin: 0px;
+  width: 10px;
+  /*background-color: red;*/
+  float: left;
+}
+
 .palm-scrim {
   opacity: 0;
   -webkit-background-size: 0% 0%;
