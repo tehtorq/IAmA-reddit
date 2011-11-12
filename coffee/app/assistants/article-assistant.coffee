@@ -137,6 +137,7 @@ class ArticleAssistant extends PowerScrollBase
   populateComments: (object) ->
     unless @article?
       @article = object[0].data.children[0].data
+      @comment_list.setArticle({kind: 't3', data: @article})
       @updateHeading(@article.title)
       @comment_list.comments.items.push({kind: 't3', data: @article})
       @controller.modelChanged(@comment_list.comments)

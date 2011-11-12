@@ -347,7 +347,7 @@ class FrontpageAssistant extends PowerScrollBase
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
-      @controller.get('list').mojo.noticeRemovedItems(0, length)
+      @controller.modelChanged(@articles)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
       @updateHeading(@reddit_api.category)    

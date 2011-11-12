@@ -1,14 +1,6 @@
 <div id='filterfield' class="searchbar" x-mojo-element='FilterField'></div>
 
-<div class="palm-page-header">
-		<div class="palm-page-header-wrapper">
-			<div class="title">
-				My First webOS App!
-			</div>
-		</div>		
-	</div>
-
-<div style="width:40%; float:left;" id="left-pane">
+<div id="left-pane">
   <div id="article-scroller" x-mojo-element="Scroller">
     <div>
       <div id="article-list" x-mojo-element="List"></div>
@@ -17,11 +9,18 @@
   </div>
 </div>
 
-<div id="divider"></div>
+<!-- <div id="divider"></div> -->
 
-<div style="width:580px;float:right;" id="right-pane">
+<div id="right-pane" class="take-it-away">
   <div id="comment-scroller" x-mojo-element="Scroller">
     <div>
+      <div class="palm-page-header multi-line">
+        <div class="palm-page-header-wrapper">
+          <div class="title">
+            Comments
+          </div>
+        </div>    
+      </div>
       <div id="comment-list" x-mojo-element="List"></div>
       <div x-mojo-element="Button" id="loadingCommentsButton"></div>
     </div>
@@ -29,8 +28,5 @@
 </div>
 
 <br style="clear:both;"/>
-
-<!-- <div style="background-color:red;width:100%;height:30px;float:left;">
-<div> -->
 
 <div id="loading" class="loading"><div id="spinner" x-mojo-element="Spinner"></div></div>

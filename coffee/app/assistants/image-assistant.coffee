@@ -3,6 +3,7 @@ class ImageAssistant extends BaseAssistant
   constructor: (params) ->
     super
     
+    @slideshow = false
     @start_slideshow = params.slideshow || false
     @image_array = params.images
     @article_array = params.articles
@@ -130,11 +131,13 @@ class ImageAssistant extends BaseAssistant
       @enableSlideShow()
   
   enableSlideShow: (options = {}) ->
+    return unless @slideshow is false
     Banner.send('Enabling slideshow') unless options.silent is true or @slideshow is true
     @slideshow = true
     @timerID = @controller.window.setInterval(@slideshowTick, 10000)
     
   disableSlideShow: (options = {}) ->
+    return unless @slideshow is true
     Banner.send('Slideshow disabled') unless options.silent is true or @slideshow is false
     @slideshow = false
     @controller.window.clearInterval(@timerID) if @timerID?

@@ -98,7 +98,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
           ]
         ]    
     
-    #@controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
       
@@ -175,7 +175,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     super
     
     @addListeners(
-      [document, 'orientationchange', @handleOrientationChange]
+      [@controller.window, 'resize', @handleOrientationChange, false]
+      # [document, 'orientationchange', @handleOrientationChange]
       [@controller.get("article-list"), Mojo.Event.listTap, @itemTapped]
       [@controller.get("article-list"), Mojo.Event.hold, @itemHold]
       [@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem]
@@ -183,6 +184,18 @@ class SplitFrontpageAssistant extends PowerScrollBase
       [@controller.get("comment-list"), Mojo.Event.listTap, @comment_list.itemTapped]
       [@controller.get("comment-list"), Mojo.Event.hold, @comment_list.itemHold]
     )
+    
+    if event? and event.replied is true
+      item = @comment_list.comments.items[0]
+      @comment_list.comments.items.clear()
+      @comment_list.comments.items.push(item)
+      @jump_to_comment = event.comment_id
+    
+      if @comment_list.comments.items.length < 2
+        #@controller.get('loadMoreButton').mojo.activate()
+        @loadArticleComments({kind: 't3', data: @comment_list.article}, true)
+      
+      return
 
     if @articles.items.length is 0
       if @search?
@@ -220,25 +233,13 @@ class SplitFrontpageAssistant extends PowerScrollBase
   getModHash: ->
     @modhash
   
-  startTimer: ->
-    return
-    timerBar = @controller.get('timer-bar')
-    timerBar.removeClassName('counting-down')
-    timerBar.removeClassName('full')
-    timerBar.addClassName('full')
-    
-    setTimeout ->
-      timerBar.addClassName('counting-down')
-    , 0
-  
   ready: ->
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('divider').style.height = "#{@controller.window.innerHeight - 50}px"
     
   handleOrientationChange: (orientation) =>
-    Banner.send('waka')
-    @controller.get('article-scroller').style.width = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     
   filter: (filterEvent) =>
@@ -409,7 +410,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       @articles.items.clear()
       @controller.get('loadMoreButton').hide()
       @spinSpinner(true)
-      @controller.get('article-list').mojo.noticeRemovedItems(0, length)
+      @controller.modelChanged(@articles)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
       @updateHeading(@reddit_api.category)    
@@ -575,19 +576,31 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
+
+  startTimer: (article) ->
+    @controller.get('right-pane').addClassName('take-it-away')
     
-  loadArticleComments: (article) ->
-    @startTimer()
-    @displayLoadingCommentsButton(true)
-    @comment_list.setArticle(article)
-    @comment_list.comments.items.clear()
-    @comment_list.comments.items.push({kind: 't3', data: article.data})
-    @controller.modelChanged(@comment_list.comments)
+    setTimeout =>
+      @loadArticleComments(article)
+    , 1
+          
+  loadArticleComments: (article, reload = false) ->
+    #@controller.get('right-pane').addClassName('take-it-away')
+    
+    unless reload is true
+      #@startTimer()
+      @displayLoadingCommentsButton(true)
+      @comment_list.setArticle(article)
+      @comment_list.comments.items.clear()
+      @comment_list.comments.items.push({kind: 't3', data: article.data})
+      @controller.modelChanged(@comment_list.comments)
     
     params = {url: 'http://reddit.com' + article.data.permalink + '.json'}
     new Article(@).comments(params)
     
   handlefetchCommentsResponse: (response) ->
+    @controller.get('right-pane').removeClassName('take-it-away')
+    @controller.get('right-pane').addClassName('bring-it-in')
     @displayLoadingCommentsButton(false)
     return unless response? and response.responseJSON?
 
@@ -622,7 +635,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
-      @loadArticleComments(article)
+      @startTimer(article)
+      #@loadArticleComments(article)
       #AppAssistant.cloneCard(@, {name:"article"}, {article: article})
       return
   
@@ -644,7 +658,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       placeNear:element_tapped,
+       #placeNear:element_tapped,
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
          {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
@@ -656,7 +670,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     else
       @controller.popupSubmenu {
        onChoose: @handleActionSelection,
-       placeNear:element_tapped,
+       #placeNear:element_tapped,
        items: [
          {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
