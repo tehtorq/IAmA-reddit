@@ -98,7 +98,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
           ]
         ]    
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    #@controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
       
