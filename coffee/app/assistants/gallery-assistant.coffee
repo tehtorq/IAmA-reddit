@@ -99,7 +99,7 @@ class GalleryAssistant extends BaseAssistant
     else
       "image"
       
-    AppAssistant.cloneCard(@, {name:scene},{index:starting_index,images:image_array, articles:articles, slideshow: slideshow})
+    AppAssistant.cloneCard(@controller, {name:scene},{index:starting_index,images:image_array, articles:articles, slideshow: slideshow})
 
   handleTap: (event) =>
     element_tapped = event.target
@@ -197,7 +197,7 @@ class GalleryAssistant extends BaseAssistant
 
     switch event.command
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage"})
+        @controller.stageController.popScene({name:AppAssistant.frontpageSceneName()})
       when 'manage-cmd'
         @controller.stageController.pushScene({name:"prefs"}, {})
       when 'back'

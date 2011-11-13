@@ -25,6 +25,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     Preferences.updateNotifications()
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
+    @controller.setupWidget "comment-spinner", @attributes = {}, @model = {spinning: false}
     
     new_items = [{label:$L("what's new"), command:$L("category new")},{label:$L("new"), command:$L("category new sort new")},{label:$L("rising"), command:$L("category new sort rising")}]
     controversial_items = [{label:$L("today"), command:$L("category controversial t day")},{label:$L("this hour"), command:$L("category controversial t hour")},{label:$L("this week"), command:$L("category controversial t week")},{label:$L("this month"), command:$L("category controversial t month")},{label:$L("this year"), command:$L("category controversial t year")},{label:$L("all time"), command:$L("category controversial t all")}]
@@ -185,6 +186,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
       [@controller.get("comment-list"), Mojo.Event.hold, @comment_list.itemHold]
     )
     
+    @spinCommentSpinner(false)
+    
     if event? and event.replied is true
       item = @comment_list.comments.items[0]
       @comment_list.comments.items.clear()
@@ -236,7 +239,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
   ready: ->
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
-    @controller.get('divider').style.height = "#{@controller.window.innerHeight - 50}px"
     
   handleOrientationChange: (orientation) =>
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
@@ -576,15 +578,23 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
   isLoggedIn: ->
     @modhash and (@modhash isnt "")
+    
+  spinCommentSpinner: (bool) ->
+    if bool
+      @controller.get('comment-spinner').mojo.start()
+      @controller.get('right-pane-loading').show()
+    else
+      @controller.get('right-pane-loading').hide()
+      @controller.get('comment-spinner').mojo.stop()
 
   startTimer: (article) ->
+    @spinCommentSpinner(true)
+    @controller.get('comment-scroller').mojo.revealTop()
     @controller.get('right-pane').addClassName('take-it-away')
     
-    setTimeout =>
-      @loadArticleComments(article)
-    , 1
+    setTimeout(@loadArticleComments, 500, article)
           
-  loadArticleComments: (article, reload = false) ->
+  loadArticleComments: (article, reload = false) =>
     #@controller.get('right-pane').addClassName('take-it-away')
     
     unless reload is true
@@ -601,6 +611,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   handlefetchCommentsResponse: (response) ->
     @controller.get('right-pane').removeClassName('take-it-away')
     @controller.get('right-pane').addClassName('bring-it-in')
+    @spinCommentSpinner(false)
     @displayLoadingCommentsButton(false)
     return unless response? and response.responseJSON?
 
@@ -636,8 +647,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
       @startTimer(article)
-      #@loadArticleComments(article)
-      #AppAssistant.cloneCard(@, {name:"article"}, {article: article})
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
@@ -686,7 +695,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     switch params[0]
       when 'new-card'
-        AppAssistant.cloneCard()
+        AppAssistant.openFrontpage("clone", {})
       when 'subreddit'
         @switchSubreddit(params[1])
       when 'search'

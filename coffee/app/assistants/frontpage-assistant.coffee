@@ -519,7 +519,7 @@ class FrontpageAssistant extends PowerScrollBase
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
-      AppAssistant.cloneCard(@, {name:"article"}, {article: article})
+      AppAssistant.cloneCard(@controller, {name:"article"}, {article: article})
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
@@ -568,7 +568,7 @@ class FrontpageAssistant extends PowerScrollBase
   
     switch params[0]
       when 'new-card'
-        AppAssistant.cloneCard()
+        AppAssistant.openFrontpage("clone", {})
       when 'subreddit'
         @switchSubreddit(params[1])
       when 'search'

@@ -75,13 +75,12 @@ class AppAssistant
     else if params.dockMode or params.touchstoneMode
       @launchDockMode()
     else if params.searchString
-      AppAssistant.cloneCard(null, {name:"frontpage"}, {search: params.searchString})
+      AppAssistant.openFrontpage("clone", {search: params.searchString})
     else
       if @shouldDisplayAboutScene()
         AppAssistant.cloneCard(null, {name:"about"}, {skip: true})
       else
-        #AppAssistant.cloneCard(null, {name:"frontpage"})
-        AppAssistant.cloneCard(null, {name:"split-frontpage",disableSceneScroller: true})
+        AppAssistant.openFrontpage("clone", {})
   
   shouldDisplayAboutScene: ->
     if Mojo.appInfo.id is 'com.tehtorq.reddit-hb'
@@ -101,12 +100,12 @@ class AppAssistant
         
       @controller.createStageWithCallback({name: 'dock', lightweight: true}, f, "dockMode")
 
-  @cloneCard = (assistant, sceneArguments, sceneParameters) ->
+  @cloneCard = (controller, sceneArguments, sceneParameters) ->
     sceneParameters or= {}
     samecard = StageAssistant.cookieValue("prefs-samecard", "off")
   
-    if assistant? and (samecard is "on") and (StageAssistant.stages.length > 0)
-      assistant.controller.stageController.pushScene(sceneArguments, sceneParameters)
+    if controller? and (samecard is "on") and (StageAssistant.stages.length > 0)
+      controller.stageController.pushScene(sceneArguments, sceneParameters)
       return
   
     # only allow one card for prefs and about scenes
@@ -144,3 +143,25 @@ class AppAssistant
     
   @open_purchase_link: ->
     @open("http://developer.palm.com/appredirect/?packageid=com.tehtorq.reddit")
+  
+  @frontpageSceneName: ->
+    if @deviceIsTouchPad() then 'split-frontpage' else 'frontpage'
+
+  @deviceIsTouchPad: ->
+    return true if Mojo.Environment.DeviceInfo.modelNameAscii.indexOf("ouch") > -1
+    return true if Mojo.Environment.DeviceInfo.screenWidth is 1024
+    return true if Mojo.Environment.DeviceInfo.screenHeight is 1024
+    false
+    
+  @openFrontpage: (type, params = {}, controller) ->
+    Mojo.Log.info("frontpage ====> #{AppAssistant.frontpageSceneName()}")
+    if type is "clone"
+      if AppAssistant.frontpageSceneName() is "split-frontpage"
+        AppAssistant.cloneCard(controller, {name:"split-frontpage",disableSceneScroller: true}, params)
+      else
+        AppAssistant.cloneCard(controller, {name:"frontpage"}, params)
+    else if type is "swap"
+      if AppAssistant.frontpageSceneName() is "split-frontpage"
+        controller.stageController.swapScene({name: "split-frontpage", disableSceneScroller: true, transition: Mojo.Transition.crossFade}, params)
+      else
+        controller.stageController.swapScene({name: "frontpage", transition: Mojo.Transition.crossFade}, params)

@@ -4,10 +4,16 @@ class Subreddit
     @callback = callback
 
   subscribe: (params) ->
-    new Request(@callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-subscribe ' + params.sr)
+    display_name = params.display_name
+    delete params.display_name
+    
+    new Request(@callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-subscribe ' + params.sr + ' ' + display_name)
 
   unsubscribe: (params) ->
-    new Request(@callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-unsubscribe ' + params.sr)
+    display_name = params.display_name
+    delete params.display_name
+    
+    new Request(@callback).post('http://www.reddit.com/api/subscribe', params, 'subreddit-unsubscribe ' + params.sr + ' ' + display_name)
 
   fetch: (params) ->
     url = params.url

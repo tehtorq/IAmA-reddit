@@ -101,7 +101,7 @@ class FriendAssistant extends BaseAssistant
 
   itemTapped: (event) =>
     item = event.item
-    AppAssistant.cloneCard(@, {name:"user"}, {user:item.name})
+    AppAssistant.cloneCard(@controller, {name:"user"}, {user:item.name})
     
   itemHold: (event) =>
     event.preventDefault()

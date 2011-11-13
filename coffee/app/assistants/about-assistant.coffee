@@ -56,7 +56,7 @@ class AboutAssistant extends BaseAssistant
       when 'back'
         @controller.stageController.popScene()
       when 'continue'
-        @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+        AppAssistant.openFrontpage("swap", {}, @controller)
       when 'feedback-cmd'
         @mail()
         

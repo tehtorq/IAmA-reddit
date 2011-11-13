@@ -164,7 +164,7 @@ class RecentCommentAssistant extends PowerScrollBase
       linky = Linky.parse(element_tapped.href)
 
       if linky.type is 'image'
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+        AppAssistant.cloneCard(@controller, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
       else if (linky.type is 'youtube_video') or (linky.type is 'web')
         AppAssistant.open(linky.url)
 
@@ -172,11 +172,11 @@ class RecentCommentAssistant extends PowerScrollBase
 
     if element_tapped.id.indexOf('image_') isnt -1
       if element_tapped.className is 'reddit_thumbnail'
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[Linky.parse(comment.data.url).url]})
+        AppAssistant.cloneCard(@controller, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[Linky.parse(comment.data.url).url]})
       else
         index = element_tapped.id.match(/_(\d+)_/g)[0].replace(/_/g,'')
         index = parseInt(index)
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
+        AppAssistant.cloneCard(@controller, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
       
       return
 

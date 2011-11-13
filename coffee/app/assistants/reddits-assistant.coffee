@@ -117,7 +117,7 @@ class RedditsAssistant extends BaseAssistant
       when 'top'
         @scrollToTop()
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:"frontpage"})
+        @controller.stageController.popScene({name:AppAssistant.frontpageSceneName()})
       when 'popular-cmd'
         @handleCategorySwitch('popular')
       when 'new-cmd'
@@ -147,37 +147,38 @@ class RedditsAssistant extends BaseAssistant
 
     if params.type[0] is "subreddit-subscribe"
       if params.type[1]?
-        _.each Subreddit.cached_list, (item) ->
-          item.subscribed = true if item.name is params.type[1]
+        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.name isnt params.type[1]
+        Subreddit.cached_list.push({label: params.type[2], command: 'subreddit ' + params.type[2], subscribed: true})
       
       Banner.send("Subscribed!")
     else if params.type[0] is "subreddit-unsubscribe"
       if params.type[1]?
-        _.each Subreddit.cached_list, (item) ->
-          item.subscribed = false if item.name is params.type[1]
+        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.name isnt params.type[1]
       
       Banner.send("Unsubscribed!")
     else if params.type[0] is "subreddit-load"
       @handleLoadRedditsResponse(params.response)
 
-  subscribe: (subreddit_name) ->
+  subscribe: (subreddit_name, display_name) ->
     params =
       action: 'sub'
       sr: subreddit_name
       uh: @modhash
+      display_name: display_name
 
     new Subreddit(@).subscribe(params)
 
-  unsubscribe: (subreddit_name) ->
+  unsubscribe: (subreddit_name, display_name) ->
     params =
       action: 'unsub'
       sr: subreddit_name
       uh: @modhash
+      display_name: display_name
 
     new Subreddit(@).unsubscribe(params)
 
   handleDeleteItem: (event) =>
-    @unsubscribe(event.item.name)
+    @unsubscribe(event.item.name, event.item.display_name)
 
   loadMoreReddits: =>
     @loadReddits()
@@ -258,7 +259,7 @@ class RedditsAssistant extends BaseAssistant
       linky = Linky.parse(element_tapped.href)
 
       if linky.subtype is 'reddit'
-        @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade},{reddit:linky.reddit})
+        AppAssistant.openFrontpage("swap", {reddit:linky.reddit}, @controller)
         return
 
       return
@@ -278,14 +279,12 @@ class RedditsAssistant extends BaseAssistant
       
       @controller.popupSubmenu({
                onChoose: @handleActionCommand,
-               #placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name},
-                         {label: $L(edit_option), command: edit_action + ' ' + item.name}]
+                         {label: $L(edit_option), command: edit_action + ' ' + item.name + ' ' + item.display_name}]
       })
     else
       @controller.popupSubmenu({
                onChoose: @handleActionCommand,
-               #placeNear:element_tapped,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name}]
       })
   
@@ -298,8 +297,8 @@ class RedditsAssistant extends BaseAssistant
     params = command.split(' ')
 
     if params[0] is 'view-cmd'
-      @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade},{reddit:params[1]})
+      AppAssistant.openFrontpage("swap", {reddit:params[1]}, @controller)
     else if params[0] is 'frontpage-add-cmd'
-      @subscribe(params[1])
+      @subscribe(params[1], params[2])
     else if params[0] is 'frontpage-remove-cmd'
-      @unsubscribe(params[1])
+      @unsubscribe(params[1], params[2])

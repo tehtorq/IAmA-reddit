@@ -118,4 +118,4 @@ class LoginAssistant extends BaseAssistant
     Banner.send(response.errors[0][1])
 
   menu: ->
-    @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+    AppAssistant.openFrontpage("swap", {}, @controller)

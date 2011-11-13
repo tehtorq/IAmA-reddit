@@ -163,7 +163,7 @@ class ImageAssistant extends BaseAssistant
         when 'sms-cmd'
           @sms()
         when 'article'
-          AppAssistant.cloneCard(@, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
+          AppAssistant.cloneCard(@controller, {name:"article"}, {article: {kind: 't3', data: @article_array[@current_index].data}})
         when 'prev'
           @disableSlideShow()
           @spinSpinner(true)

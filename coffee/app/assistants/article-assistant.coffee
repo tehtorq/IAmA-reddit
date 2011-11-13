@@ -114,8 +114,8 @@ class ArticleAssistant extends PowerScrollBase
       when 'show 500'
         @loadComments({limit: 500})
       when 'related','duplicates'
-        url = @url.replace(/\/comments\//, '/'+event.command+'/').replace('http://www.reddit.com/', '').replace('http://reddit.com/', '')          
-        AppAssistant.cloneCard(@, {name:"frontpage"},{permalink:url})          
+        url = @url.replace(/\/comments\//, '/'+event.command+'/').replace('http://www.reddit.com/', '').replace('http://reddit.com/', '')
+        AppAssistant.openFrontpage("clone", {permalink:url}, @controller)
       when 'sort hot','sort new','sort controversial','sort top','sort old','sort confidence'
         params = event.command.split(' ')
         @loadComments({sort: params[1]})

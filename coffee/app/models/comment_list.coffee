@@ -234,7 +234,7 @@ class CommentList
       else
         index = element_tapped.id.match(/_(\d+)_/g)[0].replace(/_/g,'')
         index = parseInt(index)
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
+        AppAssistant.cloneCard(@controller, {name:"image",transition: Mojo.Transition.crossFade},{index: index,images: StageAssistant.parseImageUrls(comment.data.body)})
 
       return
 
@@ -299,20 +299,20 @@ class CommentList
 
     if element.href.indexOf('http://www.reddit.com/') is 0
       if element.href.indexOf('/comments/') isnt -1
-        return AppAssistant.cloneCard(@, {name:"article",transition: Mojo.Transition.crossFade},{url:element.href,title: "Link"})
+        return AppAssistant.cloneCard(@controller, {name:"article",transition: Mojo.Transition.crossFade},{url:element.href,title: "Link"})
       else if element.href.indexOf('/user/') isnt -1
         user = element.href.replace('http://www.reddit.com/user/', '')
-        return AppAssistant.cloneCard(@, {name:"user",transition: Mojo.Transition.crossFade},{user:user})
+        return AppAssistant.cloneCard(@controller, {name:"user",transition: Mojo.Transition.crossFade},{user:user})
       else
-        return AppAssistant.cloneCard(@, {name:"frontpage",transition: Mojo.Transition.crossFade},{url:element.href})
+        return AppAssistant.openFrontpage("clone", {url:element.href}, @controller)
 
     linky = Linky.parse(element.href)
 
     if linky.type is 'image'
       if linky.url.endsWith('.gif')
-        AppAssistant.cloneCard(@, {name:"gif",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+        AppAssistant.cloneCard(@controller, {name:"gif",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
       else
-        AppAssistant.cloneCard(@, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
+        AppAssistant.cloneCard(@controller, {name:"image",transition: Mojo.Transition.crossFade},{index: 0,images:[linky.url]})
     else if (linky.type is 'youtube_video') or (linky.type is 'web')
       AppAssistant.open(linky.url)
       

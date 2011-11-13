@@ -142,4 +142,4 @@ class RegisterAssistant extends BaseAssistant
     @controller.get('image_id').src = url
 
   menu: ->
-    @controller.stageController.swapScene({name:"frontpage",transition: Mojo.Transition.crossFade})
+    AppAssistant.openFrontpage("swap", {}, @controller)
