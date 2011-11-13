@@ -25,16 +25,11 @@ class AppAssistant
     #data.link_karma = Math.floor(Math.random()*11)
     #data.comment_karma = Math.floor(Math.random()*11)
     
-    Mojo.Log.info('response data')
-    Mojo.Log.info(JSON.stringify(data))
-    
     comment_karma_delta = 0
     link_karma_delta = 0
     new_messages = data.has_mail
     
     cached_data = JSON.parse(StageAssistant.cookieValue("reddit-tracking", JSON.stringify(data)))
-    Mojo.Log.info("cached data:")
-    Mojo.Log.info(cached_data)
     
     if data.name is cached_data['name']
       comment_karma_delta = data.comment_karma - cached_data['comment_karma']
@@ -154,7 +149,6 @@ class AppAssistant
     false
     
   @openFrontpage: (type, params = {}, controller) ->
-    Mojo.Log.info("frontpage ====> #{AppAssistant.frontpageSceneName()}")
     if type is "clone"
       if AppAssistant.frontpageSceneName() is "split-frontpage"
         AppAssistant.cloneCard(controller, {name:"split-frontpage",disableSceneScroller: true}, params)
