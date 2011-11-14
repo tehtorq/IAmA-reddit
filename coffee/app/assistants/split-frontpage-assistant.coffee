@@ -592,16 +592,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
 
   startTimer: (article) ->
     @spinCommentSpinner(true)
-    #@controller.get('comment-scroller').mojo.revealTop()
     @controller.get('right-pane').addClassName('take-it-away')
     
     setTimeout(@loadArticleComments, 250, article)
           
   loadArticleComments: (article, reload = false) =>
-    #@controller.get('right-pane').addClassName('take-it-away')
-    
     unless reload is true
-      #@startTimer()
       @displayLoadingCommentsButton(true)
       @comment_list.setArticle(article)
       @comment_list.comments.items.clear()
@@ -622,8 +618,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @modhash = json[0].data.modhash if json[0].data? and json[0].data.modhash?
 
     @populateComments(json)
-
-    #@controller.get('loadMoreButton').hide()
     
   populateComments: (object) ->
     @populateCommentReplies(object[1].data.children, 0, @comment_list.comments)
@@ -716,7 +710,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     switch params[0]
       when 'new-card'
         @toggleSplitPanes()
-        #AppAssistant.openFrontpage("clone", {})
       when 'subreddit'
         @switchSubreddit(params[1])
       when 'search'
