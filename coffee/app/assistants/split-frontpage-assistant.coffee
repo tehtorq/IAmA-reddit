@@ -6,6 +6,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @articles = { items : [] }
     @reddit_api = new RedditAPI()
     @params = params
+    @split = true
     
     default_frontpage = StageAssistant.cookieValue("prefs-frontpage", "frontpage")
         
@@ -239,10 +240,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
   ready: ->
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
     
   handleOrientationChange: (orientation) =>
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
     
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
@@ -589,10 +592,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
 
   startTimer: (article) ->
     @spinCommentSpinner(true)
-    @controller.get('comment-scroller').mojo.revealTop()
+    #@controller.get('comment-scroller').mojo.revealTop()
     @controller.get('right-pane').addClassName('take-it-away')
     
-    setTimeout(@loadArticleComments, 500, article)
+    setTimeout(@loadArticleComments, 250, article)
           
   loadArticleComments: (article, reload = false) =>
     #@controller.get('right-pane').addClassName('take-it-away')
@@ -646,7 +649,11 @@ class SplitFrontpageAssistant extends PowerScrollBase
     element_tapped = event.originalEvent.target
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
-      @startTimer(article)
+      if @split is true
+        @startTimer(article)
+      else
+        AppAssistant.cloneCard(@controller, {name:"article"}, {article: article})
+      
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
@@ -685,6 +692,19 @@ class SplitFrontpageAssistant extends PowerScrollBase
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
        }
+       
+  toggleSplitPanes: ->
+    @controller.get('left-pane').addClassName('make-it-fat')
+    
+    if @split
+      @controller.get('right-pane').addClassName('take-it-away')
+      @controller.get('left-pane').style.width = "#{@controller.window.innerWidth}px"
+    else
+      @controller.get('right-pane').removeClassName('take-it-away')
+      @controller.get('right-pane').addClassName('bring-it-in')
+      @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
+    
+    @split = not @split
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -695,7 +715,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     switch params[0]
       when 'new-card'
-        AppAssistant.openFrontpage("clone", {})
+        @toggleSplitPanes()
+        #AppAssistant.openFrontpage("clone", {})
       when 'subreddit'
         @switchSubreddit(params[1])
       when 'search'
