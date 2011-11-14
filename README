@@ -6,6 +6,10 @@ Known bugs:
 
 Changelog:
 
+0.2.6:
+- split frontpage into two panes for Touchpad
+- tap heading to switch between single pane and split panes
+
 0.2.5:
 - add slideshow option to gallery
 - set images as wallpaper
