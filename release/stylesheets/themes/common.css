@@ -9,42 +9,12 @@
 }
 
 .reddit_thumbnail {
- float:left; 
- margin:0px 5px; 
- overflow:hidden;
- border: none;
-}
-.nsfw {
-  width:70px;
-  height:70px;
-  background-image:url(http://redditstatic.s3.amazonaws.com/sprite-main.pZL22qP4ous.png);background-position: -0px -227px;
-}
-.self {
-  width:70px; 
-  height:50px;
-  background-image:url(http://redditstatic.s3.amazonaws.com/sprite-main.pZL22qP4ous.png);background-position: -0px -349px;
-}
-.default {
-  width:70px; 
-  height:50px;
-  background-image:url(http://redditstatic.s3.amazonaws.com/sprite-main.pZL22qP4ous.png);background-position: -0px -298px;
-}
-
-/*.reddit_thumbnail {
   float:left;
   margin: 0px 0px 0px 0px;
   padding: 0px 10px 5px 0px;
 }
-*/
-div.palm-page-header {
-  margin-left: 4px;
-}
-
-div.palm-page-header-wrapper {
-}
 
 .make-it-fat {
-  /*-webkit-transform: translate(0em,0);*/
   -webkit-transition-property: width;
   -webkit-transition-duration: 1s;
   -webkit-transition-timing-function: 'ease-out';
@@ -71,20 +41,6 @@ div.palm-page-header-wrapper {
   -webkit-transition-timing-function: 'ease-in';
 }
 
-/*.bring-it-in {
-  -webkit-transform: translate(0em,0);
-  -webkit-transition-property: translate;
-  -webkit-transition-duration: 1s;
-  -webkit-transition-timing-function: 'ease-out';
-}
-
-.take-it-away {
-  -webkit-transform: translate(35em,0);
-  -webkit-transition-property: translate;
-  -webkit-transition-duration: 0.5s;
-  -webkit-transition-timing-function: 'ease-in';
-}*/
-
 #left-pane {
   width: 40%;
   float: left;
@@ -93,16 +49,6 @@ div.palm-page-header-wrapper {
 #right-pane {
   width: 60%;
   float: right;
-}
-
-#divider {
-  background: url(../../images/left-shadow.png) center center repeat;
-  -webkit-background-size: 10px 100%;
-  padding: 0px;
-  margin: 0px;
-  width: 10px;
-  /*background-color: red;*/
-  float: left;
 }
 
 .palm-scrim {

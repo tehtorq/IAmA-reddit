@@ -60,7 +60,7 @@ class Article
       image_link = article.data.thumbnail
 
       if image_link in ['self','nsfw','default']
-        return "<img class='reddit_thumbnail #{image_link}' id='image_#{article.data.id}'>"
+        return "<img class='reddit_thumbnail' src='./images/#{image_link}-thumbnail.png' id='image_#{article.data.id}'>"
         
       if image_link.indexOf('/static/') isnt -1
         image_link = 'http://reddit.com' + image_link
