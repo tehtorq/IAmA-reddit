@@ -102,6 +102,9 @@ class CommentList
 
       if image_link.indexOf('/static/') isnt -1
         image_link = 'http://reddit.com' + image_link
+        
+      if image_link in ['self','nsfw','default']
+        image_link = "./images/#{image_link}-thumbnail.png"
 
     if model.data.url?
       linky = Linky.parse(model.data.url)
@@ -109,14 +112,14 @@ class CommentList
       switch linky.type
         when 'image'
           image_link = './images/picture.png' unless image_link?
-          return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="image_'+model.data.id+'">'
+          return '<img class="reddit_thumbnail" src="'+image_link+'" id="image_'+model.data.id+'">'
         when 'youtube_video'
           image_link = './images/youtube.png' unless image_link?
-          return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="youtube_'+model.data.id+'">'
+          return '<img class="reddit_thumbnail" src="'+image_link+'" id="youtube_'+model.data.id+'">'
         when 'web'
           if linky.url.indexOf('http://www.reddit.com/') is -1
             image_link = './images/web.png' unless image_link?
-            return '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="web_'+model.data.id+'">'
+            return '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+model.data.id+'">'
 
     ""
     

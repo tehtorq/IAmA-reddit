@@ -58,26 +58,26 @@ class Article
 
     if Article.hasThumbnail(article)
       image_link = article.data.thumbnail
-
-      if image_link in ['self','nsfw','default']
-        return "<img class='reddit_thumbnail' src='./images/#{image_link}-thumbnail.png' id='image_#{article.data.id}'>"
         
       if image_link.indexOf('/static/') isnt -1
         image_link = 'http://reddit.com' + image_link
+        
+      if image_link in ['self','nsfw','default']
+        image_link = "./images/#{image_link}-thumbnail.png"
 
     if article.data.url?
       parsed_url = Linky.parse(article.data.url)
 
       if parsed_url.type is 'image'
         image_link = './images/picture.png' unless image_link?
-        thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="image_'+article.data.id+'">'
+        thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="image_'+article.data.id+'">'
       else if parsed_url.type is 'youtube_video'
         image_link = './images/youtube.png' unless image_link?
-        thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="youtube_'+article.data.id+'">'
+        thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="youtube_'+article.data.id+'">'
       else if parsed_url.type is 'web'
         if parsed_url.url.indexOf('http://www.reddit.com/') isnt -1
           image_link = './images/web.png' unless image_link?
-          thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" alt="Loading" id="web_'+article.data.id+'">'    
+          thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+article.data.id+'">'    
 
     thumbnail_url
 
