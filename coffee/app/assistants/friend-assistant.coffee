@@ -82,7 +82,8 @@ class FriendAssistant extends BaseAssistant
     return if response.readyState isnt 4
     @spinSpinner(false)
     
-    friends = response.responseText.match(/http:\/\/www\.reddit\.com\/user\/([^\/]+)/g)
+    friends = response.responseText.match(/\.reddit\.com\/user\/([^\/]+)/g)
+    Mojo.Log.info(JSON.stringify(friends))
     return unless friends? and friends.length > 0
     
     # work out uh
@@ -95,7 +96,7 @@ class FriendAssistant extends BaseAssistant
     @modhash = response.responseText.substr(startx, endx - startx - 1)
     
     _.each friends, (friend) =>
-      @listModel.items.push({'name': friend.replace(/http:\/\/www\.reddit\.com\/user\//, '').replace(/\//, '')})
+      @listModel.items.push({'name': friend.replace(/\.reddit\.com\/user\//, '').replace(/\//, '')})
 
     @controller.modelChanged(@listModel)
 

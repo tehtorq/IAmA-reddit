@@ -10,7 +10,8 @@ class Friend
     new Request(@callback).post('http://www.reddit.com/api/unfriend', params, 'remove-friend')
   
   list: (params) ->
-    new Request(@callback).get('http://www.reddit.com/prefs/friends/', params, 'list-friends')
+    url = 'https://ssl.reddit.com/prefs/friends/'
+    new Request(@callback).get(url, params, 'list-friends')
     
   submissions: (params) ->
     new Request(@callback).get('http://www.reddit.com/r/friends', params, 'list-friends-submissions')
