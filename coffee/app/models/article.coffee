@@ -75,9 +75,8 @@ class Article
         image_link = './images/youtube.png' unless image_link?
         thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="youtube_'+article.data.id+'">'
       else if parsed_url.type is 'web'
-        if parsed_url.url.indexOf('http://www.reddit.com/') isnt -1
-          image_link = './images/web.png' unless image_link?
-          thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+article.data.id+'">'    
+        image_link = './images/web.png' unless image_link?
+        thumbnail_url = '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+article.data.id+'">'    
 
     thumbnail_url
 

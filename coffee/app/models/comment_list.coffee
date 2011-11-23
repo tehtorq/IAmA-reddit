@@ -108,7 +108,7 @@ class CommentList
 
     if model.data.url?
       linky = Linky.parse(model.data.url)
-
+      
       switch linky.type
         when 'image'
           image_link = './images/picture.png' unless image_link?
@@ -117,9 +117,8 @@ class CommentList
           image_link = './images/youtube.png' unless image_link?
           return '<img class="reddit_thumbnail" src="'+image_link+'" id="youtube_'+model.data.id+'">'
         when 'web'
-          if linky.url.indexOf('http://www.reddit.com/') is -1
-            image_link = './images/web.png' unless image_link?
-            return '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+model.data.id+'">'
+          image_link = './images/web.png' unless image_link?
+          return '<img class="reddit_thumbnail" src="'+image_link+'" id="web_'+model.data.id+'">'
 
     ""
     
