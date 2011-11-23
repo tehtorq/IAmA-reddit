@@ -1,7 +1,7 @@
 {
   "uiRevision": "2",
 	"id": "com.tehtorq.reddit-hb",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"vendor": "tehtorq",
 	"type": "web",
 	"main": "index.html",

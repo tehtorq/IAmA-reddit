@@ -36,3 +36,8 @@ class DashboardAssistant
 
     renderedInfo = Mojo.View.render({object: info, template: 'dashboard/item-info'})
     @controller.get('dashboardinfo').innerHTML = renderedInfo
+
+  # launchMain: ->
+  #   appController = Mojo.Controller.getAppController()
+  #   appController.assistant.handleLaunch({source:"notification"})
+  #   @controller.window.close()
