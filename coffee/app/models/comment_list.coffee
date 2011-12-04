@@ -22,7 +22,6 @@ class CommentList
       tagClass: @tagClassFormatter
       indent: @indentFormatter
       thumbnail: @thumbnailFormatter
-      shadowindent: @shadowindentFormatter
       hidingComments: @hidingCommentsFormatter
     }, @comments)
 
@@ -82,10 +81,6 @@ class CommentList
   indentFormatter: (propertyValue, model) =>
     return '' if model.kind not in ['t1','more']
     4 + 6 * model.data.indent + ""
-
-  shadowindentFormatter: (propertyValue, model) =>
-    return '' if model.kind not in ['t1','more']
-    8 + 6 * model.data.indent + ""
     
   hidingCommentsFormatter: (propertyValue, model) =>
     return "hiding #{model.hiding_comments} comment" if model?.hiding_comments is 1

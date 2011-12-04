@@ -15,7 +15,6 @@ class RecentCommentAssistant extends PowerScrollBase
     formatters:
       body: @bodyFormatter
       indent: @indentFormatter
-      shadowindent: @shadowindentFormatter
     }, @commentModel)
     
     if not @showBackNavigation()
@@ -90,10 +89,6 @@ class RecentCommentAssistant extends PowerScrollBase
   indentFormatter: (propertyValue, model) =>
     return "" if (model.kind isnt 't1') and (model.kind isnt 'more')
     6 + 10 * model.data.indent + ""
-
-  shadowindentFormatter: (propertyValue, model) =>
-    return "" if (model.kind isnt 't1') and (model.kind isnt 'more')
-    return 12 + 10 * model.data.indent + ""
 
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

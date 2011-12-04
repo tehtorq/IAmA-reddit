@@ -13,7 +13,7 @@ class FriendAssistant extends BaseAssistant
     
     @controller.setupWidget("contentarea", {
       itemTemplate: "friend/list-item"
-      emptyTemplate: "friend/emptylist"
+      emptyTemplate: "list/empty_template"
       nullItemTemplate: "list/null_item_template"
       # swipeToDelete: true
       #addItemLabel: '+ Add'

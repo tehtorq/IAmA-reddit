@@ -37,31 +37,15 @@ body.palm-default {
 }
 
 .subreddit_info {
-  background: url(../../images/squared5.png) center center repeat;
-  /*visibility: hidden;*/
+  background: url(../../images/textures/2.png) center center repeat;
   z-index: -100;
   width: 80%;  
   font-size: 15px;
-  background-color: white;
-  color: white;
+  color: silver;
   padding: 18px;
   margin: -12px 6px 6px 12px;
   -webkit-border-radius: 6px;
   position:relative; /* for comment counter */
-}
-
-.comment_shadow {
-  background: url(../../images/bottom-shadow.png) center center repeat;
-  padding: 0px;
-  margin: -3px 0px -5px 8px;
-  height: 10px;
-}
-
-.shadow_footer {
-  background: url(../../images/bottom-shadow.png) center center repeat;
-  padding: 0px;
-  margin: -3px 12px -5px 12px;
-  height: 10px;
 }
 
 .comment_counter {
@@ -90,4 +74,18 @@ body.palm-default {
   margin-top: 6px;
   float: left;
   clear: both;
+}
+
+.comment_tag {
+  text-align : left;
+  font-size: 15px;
+  line-height: 40px;
+  width: 50px;
+  height: 40px;
+  color: red;  
+  padding: 0px;
+  margin: 0px -18px 5px 5px;  
+  background: url(../../images/comment_tag.png) no-repeat;
+  background-size: 100%;
+  float:right;
 }

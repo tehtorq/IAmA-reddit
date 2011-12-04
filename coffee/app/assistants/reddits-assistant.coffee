@@ -51,7 +51,7 @@ class RedditsAssistant extends BaseAssistant
     
     @controller.setupWidget("reddit-list", {
       itemTemplate : "reddits/reddit",
-      emptyTemplate : "reddits/emptylist",
+      emptyTemplate : "list/empty_template",
       nullItemTemplate: "list/null_item_template",
       swipeToDelete: true,
       preventDeleteProperty: 'prevent_delete',

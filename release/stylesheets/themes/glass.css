@@ -1,15 +1,14 @@
 
 body.palm-default {
-  background: url(../../images/gradient-background-light.png) center center repeat;
-  background-attachment:fixed;
-  -webkit-background-size: 100% 100%;
+ background: url(../../images/gradient-background.png) center center repeat;
+ background-attachment:fixed;
+ -webkit-background-size: 100% 100%;
 }
 
 .thing {
+  -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   font-size: 15px;
-  background-color: white;
-  color: black;
-  padding: 18px;
+  color: silver;
   margin: 3px 6px 3px 6px;
   overflow: auto;
 }
@@ -21,24 +20,23 @@ body.palm-default {
 
 .reddit_comment {
   padding: 10px 18px 10px 18px;
-  /*margin: 3px 0px 3px 4px;*/
-  margin: 0px 0px 3px 4px;
+  margin: 0px -5px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
 }
 
 .reddit_op_comment {
   padding: 10px 18px 10px 18px;
-  /*margin: 3px 0px 3px 4px;*/
-  margin: 0px 0px 3px 4px;
+  margin: 0px -5px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
 }
 
 .subreddit_info {
-  background-color: white;
-  color: black;
+  -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
+  /*visibility: hidden;*/
   z-index: -100;
   width: 80%;  
   font-size: 15px;
+  color: silver;
   padding: 18px;
   margin: -12px 6px 6px 12px;
   -webkit-border-radius: 6px;
@@ -46,16 +44,15 @@ body.palm-default {
 }
 
 .comment_counter {
+  -webkit-border-image: url(../../images/glass/indent.png) 38 38 36 34 stretch stretch;
   text-align : center;
   font-size: 15px;
   line-height: 40px;
   width: 40px;
   height: 40px;
-  color: black;  
+  color: silver;  
   padding: 0px 4px;
-  margin-top:0px;  
-  background: url(../../images/comment-light.png) no-repeat;
-  -webkit-background-size: 100% 100%;
+  margin-top:0px;
 }
 
 .comment_desc {
@@ -74,16 +71,15 @@ body.palm-default {
 }
 
 .comment_tag {
-  text-align : left;
+  -webkit-border-image: url(../../images/glass/indent.png) 38 38 36 34 stretch stretch;
+  text-align : center;
   font-size: 15px;
   line-height: 40px;
-  width: 50px;
+  width: 40px;
   height: 40px;
   color: red;  
   padding: 0px;
   margin: 0px -18px 5px 5px;  
-  background: url(../../images/comment_tag.png) no-repeat;
   background-size: 100%;
   float:right;
 }
-

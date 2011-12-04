@@ -135,7 +135,7 @@ class FrontpageAssistant extends PowerScrollBase
 
     @controller.setupWidget("list", {
       itemTemplate: "frontpage/article"
-      emptyTemplate: "frontpage/emptylist"
+      emptyTemplate: "list/empty_template"
       nullItemTemplate: "list/null_item_template"
       swipeToDelete: true
       preventDeleteProperty: 'can_unsave'
@@ -151,6 +151,8 @@ class FrontpageAssistant extends PowerScrollBase
   
   activate: (event) ->
     super
+    
+    @getWallpaper()
     
     @addListeners(
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
@@ -610,3 +612,20 @@ class FrontpageAssistant extends PowerScrollBase
     article = @findArticleByName(thing.id)
     
     @controller.stageController.pushScene({name:"article"}, {article: article})
+    
+  getWallpaper: ->
+    @controller.serviceRequest('palm://com.palm.systemservice', {
+      method:"getPreferences",
+      parameters:
+        "keys":["wallpaper"],
+        "subscribe":false
+      onSuccess: @wallpaperSuccess
+      #onFailure: @wallpaperFailure.bind(this)
+    })
+    
+  wallpaperSuccess: (responseData) =>
+    Mojo.Log.info(JSON.stringify(responseData))
+    @currentWallpaper = "file://" + responseData.wallpaper.wallpaperFile
+    
+    #@controller.document.getElementsByTagName("body")[0].setStyle("background: url(#{@currentWallpaper}) center center repeat;")
+    

@@ -40,20 +40,6 @@ body.palm-default {
   position:relative; /* for comment counter */
 }
 
-.comment_shadow {
-  width: 100%;
-  height: 1px;
-  background-color: grey;
-  opacity: 50%;
-}
-
-.shadow_footer {
-  width: 100%;
-  height: 1px;
-  background-color: grey;
-  opacity: 50%;
-}
-
 .comment_counter {
   text-align : center;
   font-size: 15px;
@@ -80,4 +66,18 @@ body.palm-default {
   margin-top: 6px;
   float: left;
   clear: both;
+}
+
+.comment_tag {
+  text-align : left;
+  font-size: 15px;
+  line-height: 40px;
+  width: 50px;
+  height: 40px;
+  color: red;  
+  padding: 0px;
+  margin: 0px -18px 5px 5px;  
+  background: url(../../images/comment_tag.png) no-repeat;
+  background-size: 100%;
+  float:right;
 }

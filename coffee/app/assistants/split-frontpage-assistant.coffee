@@ -137,7 +137,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
 
     @controller.setupWidget("article-list", {
       itemTemplate: "frontpage/article"
-      emptyTemplate: "frontpage/emptylist"
+      emptyTemplate: "list/empty_template"
       nullItemTemplate: "list/null_item_template"
       swipeToDelete: true
       preventDeleteProperty: 'can_unsave'
@@ -157,21 +157,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.setupWidget("loadingCommentsButton", {type:Mojo.Widget.activityButton}, @loadingCommentsButtonModel)
     @controller.get('loadingCommentsButton').hide()
     
-    this.controller.setupWidget("article-scroller",
-      this.attributes = {
-          mode: 'vertical'
-      },
-      this.model = {
-      }
-    );
+    @controller.setupWidget("article-scroller",{mode: 'vertical'},{})
+    @controller.setupWidget("comment-scroller",{mode: 'vertical'},{})
     
-    this.controller.setupWidget("comment-scroller",
-      this.attributes = {
-          mode: 'vertical'
-      },
-      this.model = {
-      }
-    );
+    @controller.setupWidget("WebId", {url: 'http://www.google.com',minFontSize: 18},{})
   
   activate: (event) ->
     super
@@ -644,6 +633,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
       if @split is true
+        @controller.get('WebId').mojo.openURL(article.data.url)
         @startTimer(article)
       else
         AppAssistant.cloneCard(@controller, {name:"article"}, {article: article})

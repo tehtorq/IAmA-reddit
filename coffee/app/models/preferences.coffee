@@ -1,6 +1,6 @@
 class Preferences
   
-  @themes = ['dark','kuler','light','wood','custom']
+  @themes = ['dark','kuler','light','wood','custom','glass','glass-indent']
   
   @setTheme: (theme) ->
     old_theme_path = @getThemePath()

@@ -20,13 +20,6 @@
   -webkit-transition-timing-function: 'ease-out';
 }
 
-.make-it-thin {
-  -webkit-transform: translate(35em,0);
-  -webkit-transition-property: translate;
-  -webkit-transition-duration: 0.5s;
-  -webkit-transition-timing-function: 'ease-in';
-}
-
 .bring-it-in {
   opacity: 1;
   -webkit-transition-property: opacity;
@@ -134,20 +127,6 @@
   padding: 0px;
 }
 
-.comment_tag {
-  text-align : left;
-  font-size: 15px;
-  line-height: 40px;
-  width: 50px;
-  height: 40px;
-  color: red;  
-  padding: 0px;
-  margin: 0px -18px 5px 5px;  
-  background: url(../../images/comment_tag.png) no-repeat;
-  background-size: 100%;
-  float:right;
-}
-
 .comment_tag_hidden {
   display: none;
 }
@@ -182,10 +161,6 @@ blockquote {
   font-size: 0.8em;
   color: red;
   margin: 4px 0px;
-}
-
-#canvas {
-  background-color : black;
 }
 
 .searchbar .filter-field-container {

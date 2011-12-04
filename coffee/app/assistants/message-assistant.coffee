@@ -44,7 +44,8 @@ class MessageAssistant extends BaseAssistant
     
     @controller.setupWidget("contentarea", {
       itemTemplate: "message/list-item",
-      emptyTemplate: "message/emptylist",
+      emptyTemplate: "list/empty_template",
+      nullItemTemplate: "list/null_item_template"
       formatters: 
         time: @timeFormatter
         description: @descriptionFormatter
@@ -107,6 +108,8 @@ class MessageAssistant extends BaseAssistant
       @listModel.items.push(child)
 
     @controller.modelChanged(@listModel)
+    
+    @controller.get('contentarea').mojo.noticeAddedItems(0, [null]) if @listModel.items.length is 0
 
   itemTapped: (event) =>
     item = event.item
