@@ -64,6 +64,8 @@ class AppAssistant
   handleLaunch: (params) ->    
     Mojo.Log.info("app #{Mojo.appInfo.id} launched with:")
     Mojo.Log.info JSON.stringify(params)
+    
+    RedditAPI.checkIfLoggedIn()
     		
     if params.action is "checkMessages"
       @checkMessages()

@@ -54,7 +54,7 @@ class ComposeMessageAssistant extends BaseAssistant
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -102,7 +102,7 @@ class ComposeMessageAssistant extends BaseAssistant
       text: body
       captcha: captcha
       iden: @iden
-      uh: @modhash
+      uh: @getModHash()
       
     new Message(@).compose(params)
 
@@ -127,20 +127,9 @@ class ComposeMessageAssistant extends BaseAssistant
           
           @iden = responseText.substr(start, end - start)
           
-          #Mojo.Log.info("iden #{iden}")
-
-          # work out uh
-                    
-          startx = responseText.lastIndexOf("modhash: '") + 10
-          endx = responseText.indexOf(',', startx)
-          
-          if (startx is -1) or (endx is -1)
+          unless @isLoggedIn()
             Banner.send("Are you logged in?")
             return false
-
-          @modhash = responseText.substr(startx, endx - startx - 1)
-          
-          #Mojo.Log.info("modhash #{@modhash}")
 
           url = 'http://www.reddit.com/captcha/' + @iden + '.png'
           

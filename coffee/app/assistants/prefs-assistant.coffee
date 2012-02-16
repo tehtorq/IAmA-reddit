@@ -131,7 +131,7 @@ class PrefsAssistant extends BaseAssistant
         ]
       }
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super

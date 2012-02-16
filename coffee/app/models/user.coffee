@@ -7,13 +7,10 @@ class User
     new Request(@callback).request('http://www.reddit.com/api/register/' + params.user, 'post', params, 'user-create')
 
   login: (params) ->
-    new Request(@callback).request('http://www.reddit.com/api/login', 'post', params, 'user-login')
+    new Request(@callback).request('https://ssl.reddit.com/api/login', 'post', params, 'user-login')
   
   logout: (params) ->
-    cookie = new Mojo.Model.Cookie("reddit_session")
-    cookie.remove()
-
-    Banner.send("Logged out")
+    new Request(@callback).request('http://www.reddit.com/logout', 'post', params, 'user-logout')
 
   comments: (params) ->
     new Request(@callback).get('http://reddit.com/user/' + params.user + '.json', {}, 'user-comments')

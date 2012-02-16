@@ -3,7 +3,7 @@
   width:1030px;
   height: 15px;
   margin: -7px;
-  background: url(../../images/glassbar.png) center center repeat;
+  background: url(../../images/glass/topbar.png) center center repeat;
   background-attachment:fixed;
   -webkit-background-size: 100% 100%;
 }
@@ -161,15 +161,6 @@ blockquote {
   font-size: 0.8em;
   color: red;
   margin: 4px 0px;
-}
-
-.searchbar .filter-field-container {
-  top: 0px;
-  left: 0px;
-  position: fixed;
-  width: 100%;
-  height: 95px;
-  z-index: 999;
 }
 
 .loading {

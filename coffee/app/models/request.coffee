@@ -29,6 +29,8 @@ class Request
     unless params.uh?
       Banner.send("Not logged in.")
       return
+      
+    Mojo.Log.info(JSON.stringify(params))
     
     @request(url, 'post', params, token)
 

@@ -98,7 +98,7 @@ class FrontpageAssistant extends PowerScrollBase
           ]
         ]    
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
       
@@ -108,6 +108,7 @@ class FrontpageAssistant extends PowerScrollBase
       {label: "Manage User", items:
         [
           {label: "Login", command: 'login-cmd'}
+          {label: "Manage", command: 'manage-users-cmd'}
           {label: "Register", command: 'register-cmd'}
           #{label: "Logout", command: 'logout-cmd'}
         ]}
@@ -210,7 +211,7 @@ class FrontpageAssistant extends PowerScrollBase
     
     @loadArticles()
   
-  handleCallback: (params) ->
+  handleCallback: (params) ->    
     return params unless params? and params.success
     
     index = -1
@@ -375,8 +376,6 @@ class FrontpageAssistant extends PowerScrollBase
     return unless response.responseJSON?
     
     data = if json.length > 0 then json[1].data else json.data
-    
-    @modhash = data.modhash
     items = data.children
     
     _.each items, (item) =>
@@ -414,8 +413,10 @@ class FrontpageAssistant extends PowerScrollBase
     array = []
     i = 0
     
+    is_logged_in = @isLoggedIn()
+    
     _.each children, (child) ->
-      Subreddit.cached_list.push {label: child.data.display_name, subscribed: (data.modhash? and (data.modhash isnt "")), name: child.data.name}
+      Subreddit.cached_list.push {label: child.data.display_name, subscribed: is_logged_in, name: child.data.name}
     
     _.each Subreddit.cached_list, (item) ->
       if item.subscribed is true
@@ -487,7 +488,7 @@ class FrontpageAssistant extends PowerScrollBase
     params =
       executed: 'saved'
       id: article.data.name
-      uh: @modhash
+      uh: @getModHash()
   
     new Article(@).save(params)
   
@@ -495,7 +496,7 @@ class FrontpageAssistant extends PowerScrollBase
     params =
       executed: 'unsaved'
       id: article.data.name
-      uh: @modhash
+      uh: @getModHash()
   
     new Article(@).unsave(params)
   
@@ -503,7 +504,7 @@ class FrontpageAssistant extends PowerScrollBase
     params =
       dir: dir
       id: comment_name
-      uh: @modhash
+      uh: @getModHash()
       r: subreddit
   
     if dir is '1'
@@ -512,9 +513,6 @@ class FrontpageAssistant extends PowerScrollBase
       new Comment(@).downvote(params)
     else
       new Comment(@).reset_vote(params)
-  
-  isLoggedIn: ->
-    @modhash and (@modhash isnt "")
   
   itemTapped: (event) =>
     article = event.item
@@ -583,8 +581,10 @@ class FrontpageAssistant extends PowerScrollBase
         @controller.stageController.pushScene({name:"prefs"}, {})
       when 'login-cmd'
         @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
-      when 'logout-cmd'
-        new User(@).logout({})        
+      when 'manage-users-cmd'
+        @controller.stageController.pushScene({name:"users",transition: Mojo.Transition.crossFade}, {})
+      # when 'logout-cmd'
+      #   new User(@).logout({})        
       when 'register-cmd'
         @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
       when 'reddits-cmd'

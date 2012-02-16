@@ -11,9 +11,8 @@ body.palm-default {
   background-color: black;
   color: silver;
   padding: 18px;
-  margin: 3px 6px 3px 6px;
-  /*margin: 6px;*/
-  -webkit-border-radius: 6px;
+  margin: 3px 0px 3px 4px;
+  -webkit-border-radius: 6px 0px 0px 6px;
   overflow: auto;
 }
 

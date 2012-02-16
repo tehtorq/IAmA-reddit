@@ -49,7 +49,7 @@ class RegisterAssistant extends BaseAssistant
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -120,8 +120,9 @@ class RegisterAssistant extends BaseAssistant
   registerSuccess: (response) ->
     cookie = response.data.cookie
     modhash = response.data.modhash
+    
+    RedditAPI.setUser(@usernameModel.value, modhash, cookie)
 
-    new Mojo.Model.Cookie("reddit_session").put(cookie)
     Banner.send("Created " + @usernameModel.value)
     @menu()
 

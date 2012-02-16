@@ -40,9 +40,9 @@ class MessageAssistant extends BaseAssistant
                     {}]}
         ]    
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
-    @controller.setupWidget("contentarea", {
+    @controller.setupWidget("message-list", {
       itemTemplate: "message/list-item",
       emptyTemplate: "list/empty_template",
       nullItemTemplate: "list/null_item_template"
@@ -55,7 +55,7 @@ class MessageAssistant extends BaseAssistant
     super
     
     @addListeners(
-      [@controller.get("contentarea"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("message-list"), Mojo.Event.listTap, @itemTapped]
     )
     
     @loadMessages('inbox')
@@ -109,11 +109,32 @@ class MessageAssistant extends BaseAssistant
 
     @controller.modelChanged(@listModel)
     
-    @controller.get('contentarea').mojo.noticeAddedItems(0, [null]) if @listModel.items.length is 0
+    @controller.get('message-list').mojo.noticeAddedItems(0, [null]) if @listModel.items.length is 0
 
   itemTapped: (event) =>
     item = event.item
-    #@controller.stageController.pushScene({name:"user"},{user:item.item["author"]})
+    
+    @controller.popupSubmenu({
+      onChoose: @handleTapSelection,
+      items: [
+        {label: $L(item.data.author), command: 'view-user-cmd ' + item.data.author}
+        {label: $L('Reply'), command: 'reply-cmd ' + item.data.name + ' ' + item.data.author + ' ' + item.data.subreddit}
+      ]
+    })
+     
+  handleTapSelection: (command) =>
+    return unless command?
+
+    params = command.split(' ')
+
+    switch params[0]
+      when 'view-user-cmd'
+        @controller.stageController.pushScene({name:"user"}, {user:params[1]})
+      when 'reply-cmd'
+        @controller.stageController.pushScene(
+          {name: "reply",transition: Mojo.Transition.crossFade}
+          {thing_id:params[1], user: params[2], modhash: @getModHash(), subreddit: params[3]}
+        )      
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command

@@ -40,6 +40,10 @@
         "source": "app/assistants/user-assistant.js"
     },
     {
+        "scenes": "users",
+        "source": "app/assistants/users-assistant.js"
+    },
+    {
         "scenes": "login",
         "source": "app/assistants/login-assistant.js"
     },

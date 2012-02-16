@@ -17,7 +17,7 @@ class AboutAssistant extends BaseAssistant
         ]
       }
       
-      @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     else
       if not @showBackNavigation()
         @viewMenuModel = {
@@ -39,7 +39,7 @@ class AboutAssistant extends BaseAssistant
           ]
         }
 
-      @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
       
       @controller.setupWidget(Mojo.Menu.appMenu, {}, {visible: true, items: [{label: "Feedback", command: 'feedback-cmd'}]})
   

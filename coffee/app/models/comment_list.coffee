@@ -259,7 +259,7 @@ class CommentList
                  items: [                         
                    {label: $L('Upvote'), command: upvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: upvote_icon},
                    {label: $L('Downvote'), command: downvote_action + ' ' + comment.data.name + ' ' + comment.data.subreddit, secondaryIcon: downvote_icon},
-                   {label: $L('Reply'), command: 'reply-cmd ' + comment.data.name + ' ' + comment.data.author + ' ' + @url + ' ' + comment.data.subreddit},
+                   {label: $L('Reply'), command: 'reply-cmd ' + comment.data.name + ' ' + comment.data.author + ' ' + comment.data.subreddit},
                    {label: $L(comment.data.author), command: 'view-cmd ' + comment.data.author}
                    {label: $L("Message"), command: 'message-cmd ' + comment.data.author}]
                  })
@@ -322,7 +322,7 @@ class CommentList
       when 'reply-cmd'
         @controller.stageController.pushScene(
           {name: "reply",transition: Mojo.Transition.crossFade}
-          {thing_id:params[1], user: params[2], modhash: @assistant.getModHash(), subreddit: params[4]}
+          {thing_id:params[1], user: params[2], modhash: @assistant.getModHash(), subreddit: params[3]}
         )
       when 'view-cmd'
         @controller.stageController.pushScene({name:"user"}, {user:params[1]})

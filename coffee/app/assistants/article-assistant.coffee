@@ -57,7 +57,7 @@ class ArticleAssistant extends PowerScrollBase
         ]
       }
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     @comment_list = new CommentList({kind: 't3', data: @article}, @)
 
@@ -131,9 +131,6 @@ class ArticleAssistant extends PowerScrollBase
       
     @controller.modelChanged(@viewMenuModel)
 
-  getModHash: ->
-    @modhash
-
   populateComments: (object) ->
     unless @article?
       @article = object[0].data.children[0].data
@@ -156,7 +153,6 @@ class ArticleAssistant extends PowerScrollBase
     return unless response? and response.responseJSON?
     
     json = response.responseJSON
-    @modhash = json[0].data.modhash if json[0].data? and json[0].data.modhash?
 
     @populateComments(json)
     
@@ -214,11 +210,7 @@ class ArticleAssistant extends PowerScrollBase
     params =
       executed: 'saved'
       id: @article.name
-      uh: @modhash
+      uh: @getModHash()
       renderstyle: 'html'
 
     new Article(@).save(params)
-  
-  isLoggedIn: ->
-    @modhash and (@modhash isnt "")
-  

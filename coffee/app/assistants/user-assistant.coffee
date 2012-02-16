@@ -36,7 +36,7 @@ class UserAssistant extends BaseAssistant
               ]
         ]
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @controller.setupWidget("list", {
       itemTemplate : "user/list-item",
@@ -45,12 +45,15 @@ class UserAssistant extends BaseAssistant
         content: @contentFormatter
         description: @descriptionFormatter
       }, @listModel)
+    
+    @controller.setupWidget("messageButton", {}, {label : "Send Message"})
 
   activate: (event) ->
     super
     
     @addListeners(
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("messageButton"), Mojo.Event.tap, @sendMessageTapped]
     )
 
     if @listModel.items.length is 0
@@ -117,6 +120,9 @@ class UserAssistant extends BaseAssistant
     @controller.get('created_field').update(StageAssistant.timeFormatter(userinfo.data.created_utc))
     @controller.get('comment_karma_field').update(userinfo.data.comment_karma)
     @controller.get('link_karma_field').update(userinfo.data.link_karma)
+    
+  sendMessageTapped: (event) =>
+    @controller.stageController.pushScene({name:"compose-message"}, {to: @user})
 
   itemTapped: (event) =>
     article = event.item;

@@ -100,7 +100,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
           ]
         ]    
     
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
     @helpMenuDisabled = false
       
@@ -222,9 +222,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     return '+1' if model.data.likes is true
     return '-1' if model.data.likes is false
     ''
-
-  getModHash: ->
-    @modhash
   
   ready: ->
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
@@ -430,8 +427,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     return unless response.responseJSON?
     
     data = if json.length > 0 then json[1].data else json.data
-    
-    @modhash = data.modhash
     items = data.children
     
     _.each items, (item) =>
@@ -469,8 +464,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
     array = []
     i = 0
     
+    is_logged_in = @isLoggedIn()
+    
     _.each children, (child) ->
-      Subreddit.cached_list.push {label: child.data.display_name, subscribed: (data.modhash? and (data.modhash isnt "")), name: child.data.name}
+      Subreddit.cached_list.push {label: child.data.display_name, subscribed: is_logged_in, name: child.data.name}
     
     _.each Subreddit.cached_list, (item) ->
       if item.subscribed is true
@@ -542,7 +539,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     params =
       executed: 'saved'
       id: article.data.name
-      uh: @modhash
+      uh: @getModHash()
   
     new Article(@).save(params)
   
@@ -550,7 +547,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     params =
       executed: 'unsaved'
       id: article.data.name
-      uh: @modhash
+      uh: @getModHash()
   
     new Article(@).unsave(params)
   
@@ -558,7 +555,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     params =
       dir: dir
       id: comment_name
-      uh: @modhash
+      uh: @getModHash()
       r: subreddit
   
     if dir is '1'
@@ -567,9 +564,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
       new Comment(@).downvote(params)
     else
       new Comment(@).reset_vote(params)
-  
-  isLoggedIn: ->
-    @modhash and (@modhash isnt "")
     
   spinCommentSpinner: (bool) ->
     if bool
@@ -604,8 +598,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     return unless response? and response.responseJSON?
 
     json = response.responseJSON
-    @modhash = json[0].data.modhash if json[0].data? and json[0].data.modhash?
-
     @populateComments(json)
     
   populateComments: (object) ->

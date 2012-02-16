@@ -39,7 +39,7 @@ class FriendAssistant extends BaseAssistant
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -68,7 +68,7 @@ class FriendAssistant extends BaseAssistant
     new Friend(@).remove
       executed: 'removed'
       id: friend.name #???
-      uh: @modhash
+      uh: @getModHash()
       type: 'friend'
   
   loadFriends: ->
@@ -85,15 +85,6 @@ class FriendAssistant extends BaseAssistant
     friends = response.responseText.match(/\.reddit\.com\/user\/([^\/]+)/g)
     Mojo.Log.info(JSON.stringify(friends))
     return unless friends? and friends.length > 0
-    
-    # work out uh
-              
-    startx = response.responseText.lastIndexOf("modhash: '") + 10
-    endx = response.responseText.indexOf(',', startx)
-    
-    return false if (startx is -1) or (endx is -1)
-
-    @modhash = response.responseText.substr(startx, endx - startx - 1)
     
     _.each friends, (friend) =>
       @listModel.items.push({'name': friend.replace(/\.reddit\.com\/user\//, '').replace(/\//, '')})

@@ -43,7 +43,7 @@ class ReplyAssistant extends BaseAssistant
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -77,7 +77,7 @@ class ReplyAssistant extends BaseAssistant
     params =
       thing_id: @reply_data.thing_id
       text: @bodyModel.value
-      uh: @reply_data.modhash
+      uh: @getModHash()
       id: '#commentreply_' + @reply_data.thing_id
       r: @reply_data.subreddit
 
@@ -89,7 +89,7 @@ class ReplyAssistant extends BaseAssistant
     params =
       thing_id: @reply_data.thing_id
       text: @bodyModel.value
-      uh: @reply_data.modhash
+      uh: @getModHash()
       r: @reply_data.subreddit
 
     new Comment(@).edit(params)

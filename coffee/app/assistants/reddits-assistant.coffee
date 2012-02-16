@@ -93,7 +93,7 @@ class RedditsAssistant extends BaseAssistant
               ]
         ]
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -163,7 +163,7 @@ class RedditsAssistant extends BaseAssistant
     params =
       action: 'sub'
       sr: subreddit_name
-      uh: @modhash
+      uh: @getModHash()
       display_name: display_name
 
     new Subreddit(@).subscribe(params)
@@ -172,7 +172,7 @@ class RedditsAssistant extends BaseAssistant
     params =
       action: 'unsub'
       sr: subreddit_name
-      uh: @modhash
+      uh: @getModHash()
       display_name: display_name
 
     new Subreddit(@).unsubscribe(params)
@@ -206,8 +206,6 @@ class RedditsAssistant extends BaseAssistant
 
   handleLoadRedditsResponse: (response) ->
     return unless response? and response.responseJSON? and response.responseJSON.data?
-    
-    @modhash = response.responseJSON.data.modhash
     items = response.responseJSON.data.children
     
     new_items = []
@@ -287,9 +285,6 @@ class RedditsAssistant extends BaseAssistant
                onChoose: @handleActionCommand,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name}]
       })
-  
-  isLoggedIn: ->
-    (@modhash?) and (@modhash isnt "")
 
   handleActionCommand: (command) =>
     return unless command?

@@ -1,5 +1,38 @@
 class RedditAPI
   
+  @setUser: (username, modhash, reddit_session) ->
+    Mojo.Log.info("#{username},#{modhash},#{reddit_session}")
+    
+    new Mojo.Model.Cookie("reddit_session").put(reddit_session)
+    
+    users = @getUsers()
+    @user = _.first _.select users, (user) -> user.username is username
+    
+    if @user?
+      @user.modhash = modhash
+      @user.reddit_session = reddit_session
+    else
+      @user = {username: username, modhash: modhash, reddit_session: reddit_session}
+      users.push(@user)
+    
+    new Mojo.Model.Cookie("iama-reddit-users").put(JSON.stringify(users))
+    
+  @getUser: ->
+    @user
+    
+  @getUsers: ->
+    users = JSON.parse(StageAssistant.cookieValue("iama-reddit-users", JSON.stringify([])))
+    
+  @findUserByRedditSession: (reddit_session) ->
+    users = @getUsers()
+    _.first _.select users, (user) -> user.reddit_session is reddit_session
+    
+  @checkIfLoggedIn: ->
+    reddit_session = StageAssistant.cookieValue("reddit_session", '')
+    
+    if reddit_session isnt ''
+      @user = @findUserByRedditSession(reddit_session)
+
   constructor: ->
     @base_url = 'http://www.reddit.com/'
     @reset_options()

@@ -60,3 +60,10 @@ class BaseAssistant
   setClipboard: (text) ->
     Banner.send("Sent to Clipboard")
     @controller.stageController.setClipboard(text, true)  
+    
+  getModHash: ->
+    RedditAPI.getUser()?.modhash
+    
+  isLoggedIn: ->
+    @getModHash()? and @getModHash() isnt ""
+    

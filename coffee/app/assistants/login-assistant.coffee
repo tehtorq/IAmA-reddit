@@ -43,7 +43,7 @@ class LoginAssistant extends BaseAssistant
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.viewMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
@@ -69,6 +69,7 @@ class LoginAssistant extends BaseAssistant
 
     if params.type is 'user-login'
       if params.success
+        Mojo.Log.info(JSON.stringify(params.response))
         @handleLoginResponse(params.response)
       else
         @displayButtonLogin()
@@ -109,8 +110,9 @@ class LoginAssistant extends BaseAssistant
   loginSuccess: (response) ->
     cookie = response.data.cookie
     modhash = response.data.modhash
+    
+    RedditAPI.setUser(@usernameModel.value, modhash, cookie)
 
-    new Mojo.Model.Cookie("reddit_session").put(cookie)
     Banner.send("Logged in as " + @usernameModel.value)
     @menu()
 
