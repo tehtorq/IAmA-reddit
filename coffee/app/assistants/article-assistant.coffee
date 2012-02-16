@@ -39,21 +39,17 @@ class ArticleAssistant extends PowerScrollBase
       @viewMenuModel = {
         visible: true,
         items: [
-            {items:[{},
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @getViewMenuWidth() - 60},
-                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
-                    {}]}
+            {items:[{submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}]}
         ]
       }
     else
       @viewMenuModel = {
         visible: true,
         items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: @params.title.substr(0, 40), command: 'top', icon: "", width: @getViewMenuWidth() - 140},
-                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'},
-                    {}]}
+            {items:[
+                    {label: $L('Back'), icon:'', command:'back', width:80},
+                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
+                    ]}
         ]
       }
     
@@ -119,23 +115,11 @@ class ArticleAssistant extends PowerScrollBase
       when 'sort hot','sort new','sort controversial','sort top','sort old','sort confidence'
         params = event.command.split(' ')
         @loadComments({sort: params[1]})
-    
-  updateHeading: (text) ->
-    text = '' unless text?
-    text = text.substr(0, 40)
-
-    if not @showBackNavigation()
-      @viewMenuModel.items[0].items[1].label = text
-    else
-      @viewMenuModel.items[0].items[2].label = text
-      
-    @controller.modelChanged(@viewMenuModel)
 
   populateComments: (object) ->
     unless @article?
       @article = object[0].data.children[0].data
       @comment_list.setArticle({kind: 't3', data: @article})
-      @updateHeading(@article.title)
       @comment_list.comments.items.push({kind: 't3', data: @article})
       @controller.modelChanged(@comment_list.comments)
     

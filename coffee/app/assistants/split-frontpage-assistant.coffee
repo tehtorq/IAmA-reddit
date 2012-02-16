@@ -79,7 +79,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
           items: [
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
-            { label: heading, command: 'new-card', icon: "", width: @getViewMenuWidth() - 181}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
@@ -93,12 +92,14 @@ class SplitFrontpageAssistant extends PowerScrollBase
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: heading, command: 'new-card', icon: "", width: @getViewMenuWidth() - 261}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
             {}
           ]
-        ]    
+        ]
+        
+    heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
+    @updateHeading(heading)
     
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
@@ -360,13 +361,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
   updateHeading: (text) ->
     text = '' unless text?
-  
-    if not @showBackNavigation()
-      @viewMenuModel.items[0].items[2].label = text
-    else
-      @viewMenuModel.items[0].items[3].label = text
-    
-    @controller.modelChanged(@viewMenuModel)
+    @controller.get('reddit-heading').update(text)
   
   loadMoreArticles: =>
     @reddit_api.load_next = true
