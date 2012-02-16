@@ -11,21 +11,41 @@ class RedditsAssistant extends BaseAssistant
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
-    @controller.setupWidget(Mojo.Menu.commandMenu,
-      { menuClass:'no-fade' },
-      items:
-        [
-          toggleCmd : "popular-cmd",
-          items: 
-            [
-              {}
-              { label : "Popular", command : "popular-cmd" }
-              { label : "New", command : "new-cmd" }
-              { label : "Mine", command : "mine-cmd" }
-              {}
-            ]
-        ]
-    )
+    if not @showBackNavigation()
+      @controller.setupWidget(Mojo.Menu.commandMenu,
+        { menuClass:'no-fade' },
+        items:
+          [
+            toggleCmd : "popular-cmd",
+            items: 
+              [
+                {}
+                { label : "Popular", command : "popular-cmd" }
+                { label : "New", command : "new-cmd" }
+                { label : "Mine", command : "mine-cmd" }
+                {label: $L('Search'), icon:'search', command:'search'}
+                {}
+              ]
+          ]
+      )
+    else
+      @controller.setupWidget(Mojo.Menu.commandMenu,
+        { menuClass:'no-fade' },
+        items:
+          [
+            toggleCmd : "popular-cmd",
+            items: 
+              [
+                {}
+                {label: $L('Back'), icon:'', command:'back', width:80}
+                { label : "Popular", command : "popular-cmd" }
+                { label : "New", command : "new-cmd" }
+                { label : "Mine", command : "mine-cmd" }
+                {label: $L('Search'), icon:'search', command:'search'}
+                {}
+              ]
+          ]
+      )
     
     @spinnerModel = {spinning: false}
     
@@ -66,34 +86,6 @@ class RedditsAssistant extends BaseAssistant
     @controller.setupWidget('filterfield', {delay: 2000})
 
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
-    
-    if not @showBackNavigation()
-      @viewMenuModel =
-        visible: true
-        items: 
-          [
-            items:
-              [{},
-              { label: $L('Reddits'), command: 'top', icon: "", width: @getViewMenuWidth() - 60},
-              {label: $L('Search'), icon:'search', command:'search'}
-              {}
-              ]
-        ]
-    else
-      @viewMenuModel =
-        visible: true
-        items: 
-          [
-            items:
-              [{},
-               {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: $L('Reddits'), command: 'top', icon: "", width: @getViewMenuWidth() - 140},
-              {label: $L('Search'), icon:'search', command:'search'}
-              {}
-              ]
-        ]
-
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super

@@ -111,27 +111,14 @@ class PrefsAssistant extends BaseAssistant
       { value: value12}
     )
     
-    @viewMenuModel = if not @showBackNavigation()
-      {
-        visible: true,
-        items: [
-            {items:[{},
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @getViewMenuWidth()},
-                    {}]}
-        ]
-      }
-    else
-      {
-        visible: true,
-        items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Preferences'), command: 'prefs', icon: "", width: @getViewMenuWidth() - 80},
-                    {}]}
-        ]
-      }
+    if @showBackNavigation()
+      @viewMenuModel =
+        {
+          visible: true,
+          items: [{items:[{label: $L('Back'), icon:'', command:'back', width:80}]}]
+        }
     
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super

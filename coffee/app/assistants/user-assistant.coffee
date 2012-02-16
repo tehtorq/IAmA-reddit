@@ -12,31 +12,18 @@ class UserAssistant extends BaseAssistant
   setup: ->
     super
     
-    if not @showBackNavigation()
+    if @showBackNavigation()
       @viewMenuModel =
         visible: true
         items: 
           [
             items:
-              [{},
-              { label: "overview for " + @user, command: 'top', icon: "", width: @getViewMenuWidth()},
-              {}
-              ]
-        ]
-    else
-      @viewMenuModel =
-        visible: true
-        items: 
-          [
-            items:
-              [{},
-               {label: $L('Back'), icon:'', command:'back', width:80}
-              { label: "overview for " + @user, command: 'top', icon: "", width: @getViewMenuWidth() - 80},
-              {}
-              ]
+              [{label: $L('Back'), icon:'', command:'back', width:80}]
         ]
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    
+    @updateHeading("overview for " + @user)
 
     @controller.setupWidget("list", {
       itemTemplate : "user/list-item",
@@ -60,6 +47,10 @@ class UserAssistant extends BaseAssistant
       @about()
       @fetchComments()
 
+  updateHeading: (text) ->
+    text = '' unless text?
+    @controller.get('reddit-heading').update(text)
+    
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'
     return model.data.title if model.kind is 't3'

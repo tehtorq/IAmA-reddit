@@ -23,27 +23,15 @@ class LoginAssistant extends BaseAssistant
     @activityButtonModel = {label : "Login"}
     @controller.setupWidget("loginButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
-    if not @showBackNavigation()
+    if @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
-            {items:[{},
-                    { label: $L('Login'), command: 'top', icon: "", width: @getViewMenuWidth()},
-                    {}]}
-        ]
-      }
-    else
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Login'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
-                    {}]}
+          {items:[{label: $L('Back'), icon:'', command:'back', width:80}]}
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super

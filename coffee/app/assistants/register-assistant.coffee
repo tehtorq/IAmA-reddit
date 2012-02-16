@@ -29,27 +29,15 @@ class RegisterAssistant extends BaseAssistant
     @activityButtonModel = {label : "create account"}
     @controller.setupWidget("registerButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
-    if not @showBackNavigation()
+    if @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
-            {items:[{},
-                    { label: $L('Register'), command: 'top', icon: "", width: @getViewMenuWidth()},
-                    {}]}
-        ]
-      }
-    else
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Register'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
-                    {}]}
+          {items:[{label: $L('Back'), icon:'', command:'back', width:80}]}
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super

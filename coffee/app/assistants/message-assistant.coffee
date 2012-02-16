@@ -23,21 +23,15 @@ class MessageAssistant extends BaseAssistant
     if not @showBackNavigation()
       @viewMenuModel =
         visible: true,
-        items: [
-            {items:[{},
-                    { label: 'inbox', command: 'top', icon: "", width: @getViewMenuWidth() - 60},
-                    {icon:'search', submenu: "sub-menu", width: 60},
-                    {}]}
-        ]
+        items: [{items:[{icon:'search', submenu: "sub-menu", width: 60}]}]
     else
       @viewMenuModel =
         visible: true,
         items: [
-            {items:[{},
+            {items:[
                     {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: 'inbox', command: 'top', icon: "", width: @getViewMenuWidth() - 140},
-                    {icon:'search', submenu: "sub-menu", width: 60},
-                    {}]}
+                    {icon:'search', submenu: "sub-menu", width: 60}
+                    ]}
         ]    
     
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
