@@ -26,7 +26,7 @@ class Request
     @request(url, 'get', params, token)
 
   post: (url, params, token) ->
-    unless params.uh?
+    unless params.uh? or params.require_login is false
       Banner.send("Not logged in.")
       return
       

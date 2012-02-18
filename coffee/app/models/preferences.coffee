@@ -49,4 +49,3 @@ class Preferences
         method: "clear",
         parameters: {"key" : "reddit_check_messages"}
     })
-    

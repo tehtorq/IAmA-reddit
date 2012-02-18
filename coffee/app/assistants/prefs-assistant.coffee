@@ -18,6 +18,11 @@ class PrefsAssistant extends BaseAssistant
     value11 = @cookieValue("prefs-karma-notifications", "off")
     value12 = @cookieValue("prefs-notification-interval", "30")
     
+    value13 = @cookieValue("prefs-readitlater-enabled", "off")
+    value14 = @cookieValue("prefs-readitlater-username", "")
+    value15 = @cookieValue("prefs-readitlater-password", "")
+    value16 = @cookieValue("prefs-readitlater-apikey", "c25d9l36T62f6bf58fA47fvD3cg0Pr91")
+    
     @galleriesModel = { value : value9 }
 
     @controller.setupWidget("galleriesTextFieldId", { 
@@ -111,6 +116,29 @@ class PrefsAssistant extends BaseAssistant
       { value: value12}
     )
     
+    @controller.setupWidget("readitlater_toggle_button",
+      { trueValue : "on", falseValue : "off"}
+      {value: value13, disabled: false}
+    )
+    
+    @controller.setupWidget "readitlaterUsernameTextFieldId", { 
+      focusMode: Mojo.Widget.focusSelectMode
+      textCase: Mojo.Widget.steModeLowerCase, maxLength : 30
+      }
+      {value: value14}
+
+    @controller.setupWidget "readitlaterPasswordTextFieldId", {
+      focusMode : Mojo.Widget.focusSelectMode
+      textCase : Mojo.Widget.steModeLowerCase, maxLength : 30
+      },
+      {value: value15}
+      
+    @controller.setupWidget "readitlaterAPIkeyTextFieldId", {
+      focusMode: Mojo.Widget.focusSelectMode
+      textCase: Mojo.Widget.steModeLowerCase, maxLength : 30
+      }
+      {value: value16}
+    
     if @showBackNavigation()
       @viewMenuModel =
         {
@@ -135,6 +163,10 @@ class PrefsAssistant extends BaseAssistant
       [@controller.get("message_notifications_toggle_button"), Mojo.Event.propertyChange, @handleUpdate10]
       [@controller.get("karma_notifications_toggle_button"), Mojo.Event.propertyChange, @handleUpdate11]
       [@controller.get("notification_interval"), Mojo.Event.propertyChange, @handleUpdate12]
+      [@controller.get("readitlater_toggle_button"), Mojo.Event.propertyChange, @handleUpdate13]
+      [@controller.get("readitlaterUsernameTextFieldId"), Mojo.Event.propertyChange, @handleUpdate14]
+      [@controller.get("readitlaterPasswordTextFieldId"), Mojo.Event.propertyChange, @handleUpdate15]
+      [@controller.get("readitlaterAPIkeyTextFieldId"), Mojo.Event.propertyChange, @handleUpdate16]
     )
   
   ready: ->
@@ -182,6 +214,22 @@ class PrefsAssistant extends BaseAssistant
   handleUpdate12: (event) =>
     new Mojo.Model.Cookie("prefs-notification-interval").put(event.value)
     Preferences.updateNotifications()
+
+  handleUpdate13: (event) =>
+    cookie = new Mojo.Model.Cookie("prefs-readitlater-enabled")
+    cookie.put(event.value)
+
+  handleUpdate14: (event) =>
+    cookie = new Mojo.Model.Cookie("prefs-readitlater-username")
+    cookie.put(event.value)
+
+  handleUpdate15: (event) =>
+    cookie = new Mojo.Model.Cookie("prefs-readitlater-password")
+    cookie.put(event.value)
+
+  handleUpdate16: (event) =>
+    cookie = new Mojo.Model.Cookie("prefs-readitlater-apikey")
+    cookie.put(event.value)
 
   cookieValue: (cookieName, default_value) ->
     cookie = new Mojo.Model.Cookie(cookieName)

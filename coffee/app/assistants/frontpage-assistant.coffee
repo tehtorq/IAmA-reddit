@@ -283,6 +283,8 @@ class FrontpageAssistant extends PowerScrollBase
           @controller.get('list').mojo.noticeUpdatedItems(index, [@articles.items[index]])
     
         Banner.send("Vote reset!")
+      when 'article-readitlater'
+        Banner.send("Sent to Read It Later")
 
   handleDeleteItem: (event) =>
     @unsaveArticle(event.item)
@@ -447,6 +449,8 @@ class FrontpageAssistant extends PowerScrollBase
           AppAssistant.open(article.data.url)
         else
           @controller.stageController.pushScene({name:"article"}, {article: article})
+      when 'readitlater-cmd'
+        @readitlater(@findArticleByName(params[1]))
       when 'domain-cmd'
         @reddit_api.setDomain(params[1])
         @loadArticles()
@@ -476,6 +480,15 @@ class FrontpageAssistant extends PowerScrollBase
     
   findArticleByName: (name) ->
     _.first _.select @articles.items, (article) -> article.data.name is name
+    
+  readitlater: (article) ->
+    params = 
+      username: StageAssistant.cookieValue("prefs-readitlater-username", "")
+      password: StageAssistant.cookieValue("prefs-readitlater-password", "")
+      apikey: StageAssistant.cookieValue("prefs-readitlater-apikey", "")
+      url: article.data.url
+
+    new Article(@).readitlater(params)
   
   saveArticle: (article) ->
     params =
@@ -522,6 +535,8 @@ class FrontpageAssistant extends PowerScrollBase
     if element_tapped.id.indexOf('youtube_') isnt -1 or element_tapped.id.indexOf('web_') isnt -1
       AppAssistant.open(Linky.parse(article.data.url).url)
       return
+      
+    items = []
     
     if @isLoggedIn()
       upvote_icon = if article.data.likes is true then 'selected_upvote_icon' else 'upvote_icon'
@@ -531,26 +546,25 @@ class FrontpageAssistant extends PowerScrollBase
       save_action = if article.data.saved is true then 'unsave-cmd' else 'save-cmd'
       save_label = if article.data.saved is true then 'Unsave' else 'Save'
   
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       #placeNear:element_tapped,
-       items: [                         
-         {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
-         {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
-         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
-         {label: $L(save_label), command: save_action + ' ' + article.data.name}
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
-         ]
-      }
+      items = [
+        {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
+        {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
+        {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
+        {label: $L(save_label), command: save_action + ' ' + article.data.name}
+        {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+      ]
     else
-      @controller.popupSubmenu {
-       onChoose: @handleActionSelection,
-       #placeNear:element_tapped,
-       items: [
-         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
-         {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
-         ]
-       }
+      items = [
+        {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
+        {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
+      ]
+       
+    if StageAssistant.cookieValue("prefs-readitlater-enabled", "off") is "on"
+      items.push {label: $L("Read It Later"), command: 'readitlater-cmd ' + article.data.name}
+      
+    @controller.popupSubmenu
+     onChoose: @handleActionSelection
+     items: items
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
