@@ -30,6 +30,9 @@ class Article
   unsave: (params) ->
     new Request(@callback).post('http://www.reddit.com/api/unsave', params, 'article-unsave ' + params.id)
     
+  submit: (params) ->
+    new Request(@callback).post('http://www.reddit.com/api/submit', params, 'article-submit')
+    
   readitlater: (params) ->
     params.require_login = false
     new Request(@callback).post('https://readitlaterlist.com/v2/add', params, 'article-readitlater')

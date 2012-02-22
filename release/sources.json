@@ -98,5 +98,9 @@
     {
         "scenes": "dashboard",
         "source": "app/assistants/dashboard-assistant.js"
+    },
+    {
+        "scenes": "submit",
+        "source": "app/assistants/submit-assistant.js"
     }
 ]

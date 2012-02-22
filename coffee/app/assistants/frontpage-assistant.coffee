@@ -76,7 +76,8 @@ class FrontpageAssistant extends PowerScrollBase
             {}
             { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Search'), icon:'search', command:'search'}
-            { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
+            { label: '', submenu: "category-submenu", iconPath: 'images/options.png'}
+            {label: $L('Submit'), icon:'new', command:'submit'}
             {}
           ]
         ]
@@ -86,10 +87,11 @@ class FrontpageAssistant extends PowerScrollBase
         items: [
           items: [
             {}
-            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Back'), icon:'', command:'back', width:80}
+            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
             {label: $L('Search'), icon:'search', command:'search'}
             { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
+            {label: $L('Submit'), icon:'new', command:'submit'}
             {}
           ]
         ]    
@@ -580,6 +582,11 @@ class FrontpageAssistant extends PowerScrollBase
         @switchSubreddit(params[1])
       when 'search'
         @toggleSearch()
+      when 'submit'
+        if @reddit_api.subreddit?
+          @controller.stageController.pushScene({name:"submit"}, {sr: @reddit_api.subreddit})
+        else
+          @controller.stageController.pushScene({name:"submit"}, {})
       when 'back'
         @controller.stageController.popScene()
     
