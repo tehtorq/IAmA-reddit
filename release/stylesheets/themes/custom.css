@@ -8,14 +8,13 @@ body.palm-default {
 .thing {
   font-size: 15px;
   color: black;
-  padding: 18px;
+  padding: 10px 18px 6px 0px;
   margin: 3px 6px 3px 6px;
   overflow: auto;
 }
 
 .reddit_article {
   position:relative; /* for comment counter */
-  padding: 10px 18px 6px 0px;
 }
 
 .reddit_comment {

@@ -10,8 +10,9 @@
 
 .reddit_thumbnail {
   float:left;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 10px 5px 0px;
+  margin: 0px 10px 0px 0px;
+  padding: 0px;
+  -webkit-border-radius: 4px;
 }
 
 .make-it-fat {

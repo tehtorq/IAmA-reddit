@@ -10,7 +10,7 @@ body.palm-default {
   font-size: 15px;
   background-color: black;
   color: silver;
-  padding: 18px;
+  padding: 10px 12px 6px 12px;
   margin: 3px 0px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
   overflow: auto;
@@ -18,19 +18,16 @@ body.palm-default {
 
 .reddit_article {
   position:relative; /* for comment counter */
-  padding: 10px 18px 6px 18px;
 }
 
 .reddit_comment {
-  padding: 10px 18px 10px 18px;
-  /*margin: 3px 0px 3px 4px;*/
+  padding: 10px 12px 10px 12px;
   margin: 0px 0px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
 }
 
 .reddit_op_comment {
-  padding: 10px 18px 10px 18px;
-  /*margin: 3px 0px 3px 4px;*/
+  padding: 10px 12px 10px 12px;
   margin: 0px 0px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
 }
