@@ -36,7 +36,6 @@ class GalleryAssistant extends BaseAssistant
         items: [
             {items:[{},
                     { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
-                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 121},
                     { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
                     {}]}
         ]
@@ -48,13 +47,13 @@ class GalleryAssistant extends BaseAssistant
             {items:[{},
                     {label: $L('Back'), icon:'', command:'back', width:80},
                     { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
-                    { label: "Reddit", command: 'new-card', icon: "", width: @getViewMenuWidth() - 201},
                     { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
                     {}]}
         ]
       }
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
+    @updateHeading('Gallery')
     
     appMenuModel =
       visible: true
@@ -176,10 +175,7 @@ class GalleryAssistant extends BaseAssistant
     new Article(@).list(parameters)
     
   updateHeading: (text) ->
-    text = 'Gallery' unless text?
-
-    @viewMenuModel.items[0].items[2].label = text
-    @controller.modelChanged(@viewMenuModel)
+    @controller.get('reddit-heading').update(text || 'Gallery')
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?
