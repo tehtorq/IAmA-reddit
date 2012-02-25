@@ -67,35 +67,27 @@ class FrontpageAssistant extends PowerScrollBase
     @subredditSubmenuModel = {items: array}
 
     @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
-
-    if not @showBackNavigation()
-      @viewMenuModel =
-        visible: true
-        items: [
-          items: [
-            {}
-            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
-            {label: $L('Search'), icon:'search', command:'search'}
-            { label: '', submenu: "category-submenu", iconPath: 'images/options.png'}
-            {label: $L('Submit'), icon:'new', command:'submit'}
-            {}
-          ]
-        ]
-    else
-      @viewMenuModel =
-        visible: true
-        items: [
-          items: [
-            {}
-            {label: $L('Back'), icon:'', command:'back', width:80}
-            { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
-            {label: $L('Search'), icon:'search', command:'search'}
-            { label: '', submenu: "category-submenu", width: 60, iconPath: 'images/options.png'}
-            {label: $L('Submit'), icon:'new', command:'submit'}
-            {}
-          ]
-        ]    
     
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
+    else
+      {}
+  
+    @viewMenuModel =
+      visible: true
+      items: [
+        back_button
+        items: [
+          {}
+          { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
+          {label: $L('Search'), icon:'search', command:'search'}
+          { label: '', submenu: "category-submenu", iconPath: 'images/options.png'}
+          {label: $L('Submit'), icon:'new', command:'submit'}
+          {}
+        ]
+        {}
+      ]
+        
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'

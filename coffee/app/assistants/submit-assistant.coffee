@@ -43,32 +43,25 @@ class SubmitAssistant extends BaseAssistant
     @activityButtonModel = {label : "Submit"}
     @controller.setupWidget("submitButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
-    if not @showBackNavigation()
-      @viewMenuModel =
-        visible: true
-        items: [
-          toggleCmd: 'link-cmd'
-          items: [
-            {}
-            {label: $L('Link'), icon:'', command:'link-cmd'}
-            {label: $L('Text'), icon:'', command:'text-cmd'}
-            {}
-          ]
-        ]
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      @viewMenuModel =
-        visible: true
-        items: [
-          toggleCmd: 'link-cmd'
-          items: [
-            {}
-            {label: $L('Back'), icon:'', command:'back', width:80}
-            {label: $L('Link'), icon:'', command:'link-cmd'}
-            {label: $L('Text'), icon:'', command:'text-cmd'}
-            {}
-          ]
-        ]    
+      {}
     
+    @viewMenuModel =
+      visible: true
+      items: [
+        back_button
+        toggleCmd: 'link-cmd'
+        items: [
+          {}
+          {label: $L('Link'), icon:'', command:'link-cmd'}
+          {label: $L('Text'), icon:'', command:'text-cmd'}
+          {}
+        ]
+        {}
+      ]    
+  
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
@@ -135,6 +128,8 @@ class SubmitAssistant extends BaseAssistant
         @selectLink()
       when 'text-cmd'
         @selectText()
+      when 'back'
+        @controller.stageController.popScene()
   
   handleSubmitSuccess: (response) ->
     json_string = JSON.stringify(response.responseText)

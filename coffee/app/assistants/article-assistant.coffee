@@ -35,23 +35,17 @@ class ArticleAssistant extends PowerScrollBase
       {label:$L("save"), command:$L("save-cmd")},
       ]})
     
-    if not @showBackNavigation()
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}]}
-        ]
-      }
+    optional_back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[
-                    {label: $L('Back'), icon:'', command:'back', width:80},
-                    {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
-                    ]}
-        ]
-      }
+      {}
+    
+    @viewMenuModel =
+      visible: true,
+      items: [
+        optional_back_button
+        {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
+      ]
     
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     

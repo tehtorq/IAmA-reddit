@@ -33,7 +33,7 @@ class RegisterAssistant extends BaseAssistant
       @viewMenuModel = {
         visible: true,
         items: [
-          {items:[{label: $L('Back'), icon:'', command:'back', width:80}]}
+          {label: $L('Back'), icon:'', command:'back', width:80}
         ]
       }
 

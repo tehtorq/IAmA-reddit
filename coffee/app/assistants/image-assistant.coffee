@@ -50,7 +50,7 @@ class ImageAssistant extends BaseAssistant
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 240}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: ""}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -59,7 +59,7 @@ class ImageAssistant extends BaseAssistant
         command_menu_items = [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 180}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: ""}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -71,7 +71,7 @@ class ImageAssistant extends BaseAssistant
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 320}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: ""}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
@@ -81,7 +81,7 @@ class ImageAssistant extends BaseAssistant
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Back'), icon:'', command:'back', width:80}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 260}
+          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: ""}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}

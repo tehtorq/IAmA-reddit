@@ -30,27 +30,23 @@ class GalleryAssistant extends BaseAssistant
     
     @controller.setupWidget('options-submenu', null, {items: [{label: $L('Slideshow'), command: 'slideshow-cmd'}]})
     
-    if not @showBackNavigation()
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{},
-                    { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
-                    { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
-                    {}]}
-        ]
-      }
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80},
-                    { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61},
-                    { label: '', submenu: "options-submenu", iconPath: 'images/options.png', width: 60},
-                    {}]}
-        ]
-      }
+      {}
+    
+    @viewMenuModel =
+      visible: true
+      items: [
+        back_button
+        {items:[
+          {}
+          { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
+          { label: '', submenu: "options-submenu", iconPath: 'images/options.png'}
+          {}
+        ]}
+        {}
+      ]
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
     @updateHeading('Gallery')

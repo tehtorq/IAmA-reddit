@@ -15,10 +15,8 @@ class UserAssistant extends BaseAssistant
     if @showBackNavigation()
       @viewMenuModel =
         visible: true
-        items: 
-          [
-            items:
-              [{label: $L('Back'), icon:'', command:'back', width:80}]
+        items: [
+          {label: $L('Back'), icon:'', command:'back', width:80}
         ]
 
       @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)

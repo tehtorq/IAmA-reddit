@@ -20,20 +20,18 @@ class MessageAssistant extends BaseAssistant
       {label:$L("sent"), command:$L("message sent")}
     ]}
     
-    if not @showBackNavigation()
-      @viewMenuModel =
-        visible: true,
-        items: [{items:[{icon:'search', submenu: "sub-menu", width: 60}]}]
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      @viewMenuModel =
-        visible: true,
-        items: [
-            {items:[
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    {icon:'search', submenu: "sub-menu", width: 60}
-                    ]}
-        ]    
+      {}
     
+    @viewMenuModel =
+      visible: true,
+      items: [
+        back_button
+        {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
+      ]
+  
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     @controller.setupWidget("message-list", {

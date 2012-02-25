@@ -23,27 +23,15 @@ class ReplyAssistant extends BaseAssistant
     @sendButtonModel = {label : "Send"}
     @controller.setupWidget("sendButton", {type:Mojo.Widget.activityButton}, @sendButtonModel)
     
-    if not @showBackNavigation()
+    if @showBackNavigation()
       @viewMenuModel = {
         visible: true,
         items: [
-            {items:[{},
-                    { label: $L('Reply'), command: 'top', icon: "", width: @getViewMenuWidth()},
-                    {}]}
-        ]
-      }
-    else
-      @viewMenuModel = {
-        visible: true,
-        items: [
-            {items:[{},
-                    {label: $L('Back'), icon:'', command:'back', width:80}
-                    { label: $L('Reply'), command: 'top', icon: "", width: @getViewMenuWidth() - 80},
-                    {}]}
+          {label: $L('Back'), icon:'', command:'back', width:80}
         ]
       }
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+      @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
 
   activate: (event) ->
     super
