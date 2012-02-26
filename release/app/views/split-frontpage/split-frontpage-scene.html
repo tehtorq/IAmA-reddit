@@ -11,26 +11,36 @@
 <div id='filterfield' x-mojo-element='FilterField'></div>
 
 <div id="left-pane">
+  
   <div id="article-scroller" x-mojo-element="Scroller">
     <div>
       <div id="article-list" x-mojo-element="List"></div>
       <div x-mojo-element="Button" id="loadMoreButton"></div>
     </div>
   </div>
+  
 </div>
 
 <div id="right-pane" class="take-it-away">
-  <div id="comment-scroller" x-mojo-element="Scroller">
-    <div>
-      <div x-mojo-element="WebView" id="WebId" style=""></div>
-    </div>
+  
+  <div style="height:30px; width:100%;background-color: black;">
+    <div id="weblink" style="height:30px; width:50%; background-color: red; float: left;text-align: center;">URL</div>
+    <div id="commentlink" style="height:30px; width:50%; background-color: green; float: left;text-align: center;">Comments</div>
   </div>
+  
+  <div id="webview-scroller" x-mojo-element="Scroller">
+    <!-- <div> -->
+      <div x-mojo-element="WebView" id="webview" style="border:red 5px solid;"></div>
+    <!-- </div> -->
+  </div>
+  
   <div id="comment-scroller" x-mojo-element="Scroller">
     <div>
       <div id="comment-list" x-mojo-element="List"></div>
       <div x-mojo-element="Button" id="loadingCommentsButton"></div>
     </div>
   </div>
+  
 </div>
 
 <div id="loading" class="loading"><div id="spinner" x-mojo-element="Spinner"></div></div>

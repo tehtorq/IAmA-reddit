@@ -154,21 +154,23 @@ class SplitFrontpageAssistant extends PowerScrollBase
     
     @controller.setupWidget("article-scroller",{mode: 'vertical'},{})
     @controller.setupWidget("comment-scroller",{mode: 'vertical'},{})
+    @controller.setupWidget("webview-scroller",{mode: 'free'},{})
     
-    @controller.setupWidget("WebId", {url: 'http://www.google.com',minFontSize: 18},{})
+    @controller.setupWidget("webview", {url: 'http://www.google.com'},{})
   
   activate: (event) ->
     super
     
     @addListeners(
       [@controller.window, 'resize', @handleOrientationChange, false]
-      # [document, 'orientationchange', @handleOrientationChange]
       [@controller.get("article-list"), Mojo.Event.listTap, @itemTapped]
       [@controller.get("article-list"), Mojo.Event.hold, @itemHold]
       [@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
       [@controller.get("comment-list"), Mojo.Event.listTap, @comment_list.itemTapped]
       [@controller.get("comment-list"), Mojo.Event.hold, @comment_list.itemHold]
+      [@controller.get("weblink"), Mojo.Event.tap, @showWebpage]
+      [@controller.get("commentlink"), Mojo.Event.tap, @showComments]
     )
     
     @spinCommentSpinner(false)
@@ -180,7 +182,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
       @jump_to_comment = event.comment_id
     
       if @comment_list.comments.items.length < 2
-        #@controller.get('loadMoreButton').mojo.activate()
         @loadArticleComments({kind: 't3', data: @comment_list.article}, true)
       
       return
@@ -219,11 +220,15 @@ class SplitFrontpageAssistant extends PowerScrollBase
     ''
   
   ready: ->
+    @controller.get('webview').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('webview-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
     
   handleOrientationChange: (orientation) =>
+    @controller.get('webview').style.height = "#{@controller.window.innerHeight - 50}px"
+    @controller.get('webview-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('article-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
@@ -561,12 +566,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     else
       @controller.get('right-pane-loading').hide()
       @controller.get('comment-spinner').mojo.stop()
-
-  startTimer: (article) ->
-    @spinCommentSpinner(true)
-    @controller.get('right-pane').addClassName('take-it-away')
-    
-    setTimeout(@loadArticleComments, 250, article)
           
   loadArticleComments: (article, reload = false) =>
     unless reload is true
@@ -607,6 +606,24 @@ class SplitFrontpageAssistant extends PowerScrollBase
         if data.replies?.data?.children?
           unless child?.hiding_comments > 0 
             @populateCommentReplies(data.replies.data.children, indent + 1, array)
+            
+  showWebpage: =>
+    @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
+    @controller.get('comment-scroller').hide()
+    @controller.get('webview-scroller').show()
+    
+  showComments: =>
+    @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
+    @controller.get('webview-scroller').hide()
+    @controller.get('comment-scroller').show()
+    
+  selectArticle: (article) ->
+    @article = article
+    @spinCommentSpinner(true)
+    @showWebpage()
+    @controller.get('right-pane').addClassName('take-it-away')
+    @controller.get('webview').mojo.openURL(@article.data.url)
+    setTimeout(@loadArticleComments, 250, @article)
   
   itemTapped: (event) =>
     article = event.item
@@ -614,8 +631,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
       if @split is true
-        @controller.get('WebId').mojo.openURL(article.data.url)
-        @startTimer(article)
+        @selectArticle(article)
       else
         AppAssistant.cloneCard(@controller, {name:"article"}, {article: article})
       
