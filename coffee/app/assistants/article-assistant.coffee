@@ -51,7 +51,7 @@ class ArticleAssistant extends PowerScrollBase
     
     @comment_list = new CommentList({kind: 't3', data: @article}, @)
 
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading replies", disabled: true})
+    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading comments", disabled: true})
 
   activate: (event) ->
     super

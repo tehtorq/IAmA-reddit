@@ -44,7 +44,12 @@ class SubmitAssistant extends BaseAssistant
     @controller.setupWidget("submitButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
     
     back_button = if @showBackNavigation()
-      {label: $L('Back'), icon:'', command:'back', width:80}
+      {label: $L('Back'), icon:'', command:'back', width: 80}
+    else
+      {}
+      
+    last_button = if @showBackNavigation()
+      {width: 80}
     else
       {}
     
@@ -52,14 +57,16 @@ class SubmitAssistant extends BaseAssistant
       visible: true
       items: [
         back_button
-        toggleCmd: 'link-cmd'
-        items: [
-          {}
-          {label: $L('Link'), icon:'', command:'link-cmd'}
-          {label: $L('Text'), icon:'', command:'text-cmd'}
-          {}
-        ]
         {}
+        {
+          toggleCmd: 'link-cmd'
+          items: [
+            {label: $L('Link'), icon:'', command:'link-cmd'}
+            {label: $L('Text'), icon:'', command:'text-cmd'}
+          ]
+        }
+        {}
+        last_button
       ]    
   
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)

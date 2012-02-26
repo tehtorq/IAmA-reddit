@@ -11,41 +11,26 @@ class RedditsAssistant extends BaseAssistant
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
-    if not @showBackNavigation()
-      @controller.setupWidget(Mojo.Menu.commandMenu,
-        { menuClass:'no-fade' },
-        items:
-          [
-            toggleCmd : "popular-cmd",
-            items: 
-              [
-                {}
-                { label : "Popular", command : "popular-cmd" }
-                { label : "New", command : "new-cmd" }
-                { label : "Mine", command : "mine-cmd" }
-                {label: $L('Search'), icon:'search', command:'search'}
-                {}
-              ]
-          ]
-      )
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      @controller.setupWidget(Mojo.Menu.commandMenu,
-        { menuClass:'no-fade' },
-        items:
-          [
-            toggleCmd : "popular-cmd",
-            items: 
-              [
-                {}
-                {label: $L('Back'), icon:'', command:'back', width:80}
-                { label : "Popular", command : "popular-cmd" }
-                { label : "New", command : "new-cmd" }
-                { label : "Mine", command : "mine-cmd" }
-                {label: $L('Search'), icon:'search', command:'search'}
-                {}
-              ]
-          ]
-      )
+      {}
+    
+    @controller.setupWidget(Mojo.Menu.commandMenu,
+      { menuClass:'no-fade' },
+      items: [
+        back_button
+        {}
+        toggleCmd : "popular-cmd"
+        items: [
+          { label : "Popular", command : "popular-cmd" }
+          { label : "New", command : "new-cmd" }
+          { label : "Mine", command : "mine-cmd" }
+        ]
+        {}
+        {label: $L('Search'), icon:'search', command:'search'}
+      ]
+    )
     
     @spinnerModel = {spinning: false}
     

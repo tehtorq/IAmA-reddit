@@ -22,54 +22,43 @@ class GifAssistant extends BaseAssistant
       {label:$L("sms"), command:$L("sms-cmd")},
       {label: $L('save'), icon:'save', command:'save'}
       ]})
-    
-    if not @showBackNavigation()
-      if @article_array.length > 0
-        command_menu_items = [
-          {}
-          {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: $L('Article'), icon:'info', command:'article'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 240}
-          {submenu: "sub-menu", iconPath: 'images/options.png'}
-          {label: $L('Forward'), icon:'forward', command:'forward'}
-          {}
-        ]
-      else
-        command_menu_items = [
-          {}
-          {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 180}
-          {submenu: "sub-menu", iconPath: 'images/options.png'}
-          {label: $L('Forward'), icon:'forward', command:'forward'}
-          {}
-        ]
+      
+    back_button = if @showBackNavigation()
+      {label: $L('Back'), icon:'', command:'back', width:80}
     else
-      if @article_array.length > 0
-        command_menu_items = [
+      {}
+    
+    if @article_array.length > 0
+      command_menu_items = [
+        back_button
+        items: [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
           {label: $L('Article'), icon:'info', command:'article'}
-          {label: $L('Back'), icon:'', command:'back', width:80}
           {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 260}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
         ]
-      else
-        command_menu_items = [
+        {}
+      ]
+    else
+      command_menu_items = [
+        back_button
+        items: [
           {}
           {label: $L('Prev'), icon:'back', command:'prev'}
-          {label: $L('Back'), icon:'', command:'back', width:80}
           {label: (@current_index + 1) + "/" + @image_array.length, command: 'top', icon: "", width: @getViewMenuWidth() - 200}
           {submenu: "sub-menu", iconPath: 'images/options.png'}
           {label: $L('Forward'), icon:'forward', command:'forward'}
           {}
         ]
+        {}
+      ]
     
-    @cmdMenuModel = {
-      visible: false,
-      items: [{items: command_menu_items}]
-    }
+    @cmdMenuModel =
+      visible: false
+      items: command_menu_items
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
     
@@ -135,24 +124,14 @@ class GifAssistant extends BaseAssistant
     @image_array[index]
     
   updateCommandMenu: ->
-    if not @showBackNavigation()
-      if @article_array.length > 0
-        @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
-        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-        @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))
-      else
-        @cmdMenuModel.items[0].items[2].label = (@current_index + 1) + "/" + @image_array.length
-        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-        @cmdMenuModel.items[0].items[4].disabled = (@current_index == (@image_array.length - 1))
+    if @article_array.length > 0
+      @cmdMenuModel.items[1].items[3].label = (@current_index + 1) + "/" + @image_array.length
+      @cmdMenuModel.items[1].items[1].disabled = (@current_index == 0)
+      @cmdMenuModel.items[1].items[5].disabled = (@current_index == (@image_array.length - 1))
     else
-      if @article_array.length > 0
-        @cmdMenuModel.items[0].items[4].label = (@current_index + 1) + "/" + @image_array.length
-        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-        @cmdMenuModel.items[0].items[6].disabled = (@current_index == (@image_array.length - 1))
-      else
-        @cmdMenuModel.items[0].items[3].label = (@current_index + 1) + "/" + @image_array.length
-        @cmdMenuModel.items[0].items[1].disabled = (@current_index == 0)
-        @cmdMenuModel.items[0].items[5].disabled = (@current_index == (@image_array.length - 1))    
+      @cmdMenuModel.items[1].items[2].label = (@current_index + 1) + "/" + @image_array.length
+      @cmdMenuModel.items[1].items[1].disabled = (@current_index == 0)
+      @cmdMenuModel.items[1].items[4].disabled = (@current_index == (@image_array.length - 1))    
 
     @controller.modelChanged(@cmdMenuModel)
       

@@ -687,6 +687,11 @@ class SplitFrontpageAssistant extends PowerScrollBase
         @toggleSearch()
       when 'back'
         @controller.stageController.popScene()
+      when 'submit'
+        if @reddit_api.subreddit?
+          @controller.stageController.pushScene({name:"submit"}, {sr: @reddit_api.subreddit})
+        else
+          @controller.stageController.pushScene({name:"submit"}, {})
     
     switch event.command
       when Mojo.Menu.prefsCmd
