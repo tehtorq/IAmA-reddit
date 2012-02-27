@@ -1,18 +1,17 @@
 
 body.palm-default {
- background: url(../../images/subtlepatterns/brushed_alu_dark.png) center center repeat;
+ background: url(../../images/subtlepatterns/classy_fabric.png) center center repeat;
 }
 
 .thing {
+  border: 1px solid black;
+  background: url(../../images/subtlepatterns/brushed_alu_dark.png) center center repeat;
   font-size: 15px;
-  background-color: white;
   color: black;
   padding: 10px 12px 6px 12px;
   margin: 3px 0px 3px 4px;
-  -webkit-border-radius: 6px 0px 0px 6px;
   overflow: auto;
 }
-
 .reddit_article {
   position:relative; /* for comment counter */
 }
@@ -20,24 +19,21 @@ body.palm-default {
 .reddit_comment {
   padding: 10px 12px 10px 12px;
   margin: 0px 0px 3px 4px;
-  -webkit-border-radius: 6px 0px 0px 6px;
 }
 
 .reddit_op_comment {
   padding: 10px 12px 10px 12px;
   margin: 0px 0px 3px 4px;
-  -webkit-border-radius: 6px 0px 0px 6px;
 }
 
 .subreddit_info {
-  background-color: white;
-  color: black;
+  background-color: black;
+  color: silver;
   z-index: -100;
   width: 80%;  
   font-size: 15px;
   padding: 18px;
   margin: -12px 6px 6px 12px;
-  -webkit-border-radius: 6px;
   position:relative; /* for comment counter */
 }
 
@@ -47,10 +43,10 @@ body.palm-default {
   line-height: 40px;
   width: 40px;
   height: 40px;
-  color: black;  
+  color: silver;  
   padding: 0px 4px;
   margin-top:0px;  
-  background: url(../../images/comment-light.png) no-repeat;
+  background: url(../../images/comment.png) no-repeat;
   -webkit-background-size: 100% 100%;
 }
 
@@ -82,4 +78,3 @@ body.palm-default {
   background-size: 100%;
   float:right;
 }
-
