@@ -29,7 +29,10 @@ class MessageAssistant extends BaseAssistant
       visible: true,
       items: [
         back_button
-        {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
+        items: [
+          {label: $L('Compose'), icon:'new', command:'compose-message-cmd'}
+          {submenu: "sub-menu", width: 60, iconPath: 'images/options.png'}
+        ]
       ]
   
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
@@ -140,3 +143,5 @@ class MessageAssistant extends BaseAssistant
         @loadMessages(params[1])
       when 'back'
         @controller.stageController.popScene()
+      when 'compose-message-cmd'
+        @controller.stageController.pushScene({name:"compose-message"},{})

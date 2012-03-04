@@ -108,11 +108,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
           {label: "Register", command: 'register-cmd'}
           #{label: "Logout", command: 'logout-cmd'}
         ]}
-      {label: "Messages", items:
-        [
-          {label: "Compose", command: 'compose-message-cmd'}
-          {label: "Inbox", command: 'messages-cmd'}
-        ]}
+      {label: "Messages", command: 'messages-cmd'}
       {label: "Recent Comments", command: 'recent-comments-cmd'}
       {label: "Reddits", command: 'reddits-cmd'}
       {label: "Preferences", command: Mojo.Menu.prefsCmd}

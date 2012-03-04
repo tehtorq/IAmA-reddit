@@ -105,11 +105,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Register", command: 'register-cmd'}
           #{label: "Logout", command: 'logout-cmd'}
         ]}
-      {label: "Messages", items:
-        [
-          {label: "Compose", command: 'compose-message-cmd'}
-          {label: "Inbox", command: 'messages-cmd'}
-        ]}
+      {label: "Messages", command: 'messages-cmd'}
       {label: "Recent Comments", command: 'recent-comments-cmd'}
       {label: "Reddits", command: 'reddits-cmd'}
       {label: "Preferences", command: Mojo.Menu.prefsCmd}
@@ -603,8 +599,6 @@ class FrontpageAssistant extends PowerScrollBase
         @controller.stageController.pushScene({name:"friend"}, {})
       when 'messages-cmd'
         @controller.stageController.pushScene({name:"message"}, {})
-      when 'compose-message-cmd'
-        @controller.stageController.pushScene({name:"compose-message"},{})
       when 'about-scene'
         @controller.stageController.pushScene({name:"about"}, {})
       when 'donation-cmd'

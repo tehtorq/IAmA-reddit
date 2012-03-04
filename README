@@ -3,6 +3,8 @@ Known bugs:
 - reddits scene urls don't work & drawers look messy
 - need fix for no captcha required when composing message
 - +frontpage doesn't change to -frontpage
+- 'submitting' doesn't reset when clicked on while not logged in
+- starting a search by typing causes list to display empty undrawn area
 
 Changelog:
 
