@@ -152,7 +152,11 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.setupWidget("comment-scroller",{mode: 'vertical'},{})
     @controller.setupWidget("webview-scroller",{mode: 'free'},{})
     
-    @controller.setupWidget("webview", {url: 'http://www.google.com'},{})
+    @controller.setupWidget("webview", {
+      url: 'http://www.google.com'
+      # virtualpagewidth: 20
+      # virtualpageheight: 10
+    },{})
   
   activate: (event) ->
     super
@@ -613,10 +617,23 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('webview-scroller').hide()
     @controller.get('comment-scroller').show()
     
-  selectArticle: (article) ->
+  selectArticle: (article, comments_or_webpage) ->
+    if @article? and @article.data.name == article.data.name
+      if comments_or_webpage == 'web'
+        @showWebpage()
+      else
+        @showComments()
+        
+      return
+    
     @article = article
     @spinCommentSpinner(true)
-    @showWebpage()
+    
+    if comments_or_webpage == 'web'
+      @showWebpage()
+    else
+      @showComments()
+    
     @controller.get('right-pane').addClassName('take-it-away')
     @controller.get('webview').mojo.openURL(@article.data.url)
     setTimeout(@loadArticleComments, 250, @article)
@@ -627,18 +644,26 @@ class SplitFrontpageAssistant extends PowerScrollBase
   
     if element_tapped.className.indexOf('comment_counter') isnt -1
       if @split is true
-        @selectArticle(article)
+        @selectArticle(article, 'comments')
       else
         AppAssistant.cloneCard(@controller, {name:"article"}, {article: article})
       
       return
   
     if element_tapped.id.indexOf('image_') isnt -1
-      StageAssistant.cloneImageCard(@, article)
+      if @split is true
+        @selectArticle(article, 'web')
+      else
+        StageAssistant.cloneImageCard(@, article)
+        
       return
   
     if element_tapped.id.indexOf('youtube_') isnt -1 or element_tapped.id.indexOf('web_') isnt -1
-      AppAssistant.open(Linky.parse(article.data.url).url)
+      if @split is true
+        @selectArticle(article, 'web')
+      else
+        AppAssistant.open(Linky.parse(article.data.url).url)
+      
       return
     
     if @isLoggedIn()
