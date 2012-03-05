@@ -1,11 +1,8 @@
 
 body.palm-default {
- background: url(../../images/subtlepatterns/irongrip.png) center center repeat;
-}
-/*
-body.palm-default {
  background: url(../../images/gradient-background.png) center center repeat;
-}*/
+ -webkit-background-size: 101% 101%;
+}
 
 .thing {
   font-size: 15px;

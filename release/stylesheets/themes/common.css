@@ -67,7 +67,7 @@
 
 .wrappertest {
   background-color : black;
-  -webkit-background-size: 100% 100%;
+  -webkit-background-size: 101% 101%;
 }
 
 .toggle_hidden {
@@ -173,10 +173,9 @@ blockquote {
   font-size:15px;
   z-index:99999;
   padding: 5px;
-  -webkit-border-radius: 0px 6px 6px 0px;
-  border-top: solid 1px silver;
-  border-right: solid 1px silver;
-  border-bottom: solid 1px silver;
+  border-top: solid 1px gray;
+  border-right: solid 1px gray;
+  border-bottom: solid 1px gray;
 }
 
 #right-pane-loading {
@@ -188,10 +187,9 @@ blockquote {
   font-size:15px;
   z-index:99999;
   padding: 5px;
-  -webkit-border-radius: 6px 0px 0px 6px;
-  border-top: solid 1px silver;
-  border-left: solid 1px silver;
-  border-bottom: solid 1px silver;
+  border-top: solid 1px gray;
+  border-left: solid 1px gray;
+  border-bottom: solid 1px gray;
 }
 
 .image_title {
