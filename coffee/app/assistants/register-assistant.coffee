@@ -109,7 +109,7 @@ class RegisterAssistant extends BaseAssistant
     cookie = response.data.cookie
     modhash = response.data.modhash
     
-    RedditAPI.setUser(@usernameModel.value, modhash, cookie)
+    RedditAPI.setUser(@usernameModel.value, modhash, cookie, @passwordModel.value)
 
     Banner.send("Created " + @usernameModel.value)
     @menu()

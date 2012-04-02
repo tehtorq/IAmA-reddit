@@ -103,7 +103,7 @@ class FrontpageAssistant extends PowerScrollBase
           {label: "Login", command: 'login-cmd'}
           {label: "Manage", command: 'manage-users-cmd'}
           {label: "Register", command: 'register-cmd'}
-          #{label: "Logout", command: 'logout-cmd'}
+          {label: "Logout", command: 'logout-cmd'}
         ]}
       {label: "Messages", command: 'messages-cmd'}
       {label: "Recent Comments", command: 'recent-comments-cmd'}
@@ -585,8 +585,14 @@ class FrontpageAssistant extends PowerScrollBase
         @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
       when 'manage-users-cmd'
         @controller.stageController.pushScene({name:"users",transition: Mojo.Transition.crossFade}, {})
-      # when 'logout-cmd'
-      #   new User(@).logout({})        
+      when 'logout-cmd'
+        
+        params =
+          uh: "#{@getModHash()}"
+          
+        @log(params, true)
+        
+        new User(@).logout(params)
       when 'register-cmd'
         @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
       when 'reddits-cmd'

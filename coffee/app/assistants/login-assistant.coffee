@@ -83,7 +83,6 @@ class LoginAssistant extends BaseAssistant
     return if response.readyState isnt 4
     
     @displayButtonLogin()
-    @passwordModel.value = ''
     
     if response.responseJSON?
       json = response.responseJSON.json
@@ -99,7 +98,7 @@ class LoginAssistant extends BaseAssistant
     cookie = response.data.cookie
     modhash = response.data.modhash
     
-    RedditAPI.setUser(@usernameModel.value, modhash, cookie)
+    RedditAPI.setUser(@usernameModel.value, modhash, cookie, @passwordModel.value)
 
     Banner.send("Logged in as " + @usernameModel.value)
     @menu()

@@ -9,7 +9,7 @@ class User
   login: (params) ->
     new Request(@callback).request('https://ssl.reddit.com/api/login', 'post', params, 'user-login')
   
-  logout: (params) ->
+  logout: (params = {}) ->
     new Request(@callback).request('http://www.reddit.com/logout', 'post', params, 'user-logout')
 
   comments: (params) ->

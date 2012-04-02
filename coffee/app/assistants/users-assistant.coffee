@@ -5,6 +5,8 @@ class UsersAssistant extends BaseAssistant
     
     @listModel =
       items: []
+      
+    @selected = -1
 
   setup: ->
     super
@@ -69,15 +71,15 @@ class UsersAssistant extends BaseAssistant
     })
     
   login: (index) ->
+    @selected = index
     user = @users[index]
     
-    RedditAPI.setUser(user.username, user.modhash, user.reddit_session)
-    Banner.send("Logged in as #{user.username}")
-    
-    Mojo.Log.info("modhash: #{@getModHash()}")
-    Mojo.Log.info("reddit_session: #{StageAssistant.cookieValue("reddit_session", '')}")
-    Mojo.Log.info("user: #{JSON.stringify(RedditAPI.getUser())}")
-    @controller.stageController.popScene()
+    params =
+      user: user.username
+      passwd: user.password
+      api_type: 'json'
+
+    new User(@).login(params)
     
   logout: (index) ->
     params = {uh: @getModHash()}
@@ -109,9 +111,38 @@ class UsersAssistant extends BaseAssistant
       when 'back'
         @controller.stageController.popScene()
         
-  handleCallback: (params) ->    
+  handleCallback: (params) ->
     return params unless params? and params.success
     
     if params.type is 'user-logout'
       Mojo.Log.info(JSON.stringify(params))
       Banner.send("Logged out")
+    else if params.type is 'user-login'
+      @handleLoginResponse(params.response)      
+  
+  handleLoginResponse: (response) ->
+    return if response.readyState isnt 4
+
+    if response.responseJSON?
+      json = response.responseJSON.json
+
+      if json.data?
+        @loginSuccess(json)
+      else
+        @loginFailure(json)
+    else
+      Banner.send("Login failure")
+
+  loginSuccess: (response) ->
+    cookie = response.data.cookie
+    modhash = response.data.modhash
+    
+    user = @users[@selected]
+
+    RedditAPI.setUser(user.username, modhash, cookie, user.password)
+
+    Banner.send("Logged in as #{user.username}")
+    @controller.stageController.popScene()
+
+  loginFailure: (response) ->
+    Banner.send(response.errors[0][1])

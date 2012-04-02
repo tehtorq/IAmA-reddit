@@ -57,7 +57,7 @@
 }
 
 .about-scene {
-  font-size: 15px;
+  font-size: large;
 }
 
 .dashboard-icon-reddit {
@@ -141,11 +141,6 @@
   padding: 5px 1px;
 }
 
-.md p, .md h1 {
-    margin: 5px 0;
-    padding: 0;
-}
-
 blockquote {
   border-left: 2px solid #336699;
   margin: 5px 15px 5px 5px;
@@ -153,13 +148,13 @@ blockquote {
 }
 
 .comment_spacer {
-  font-size: 7px;
+  font-size: small;
   padding: 0px 0px 15px;
 }
 
 .vote_desc {
   float: right; 
-  font-size: 0.8em;
+  font-size: small;
   color: red;
   margin: 4px 0px;
 }
@@ -170,7 +165,7 @@ blockquote {
   position:fixed;
   left:0px;
   top: 50%;
-  font-size:15px;
+  font-size: large;
   z-index:99999;
   padding: 5px;
   border-top: solid 1px gray;
@@ -184,7 +179,7 @@ blockquote {
   position:fixed;
   right:0px;
   top: 50%;
-  font-size:15px;
+  font-size: large;
   z-index:99999;
   padding: 5px;
   border-top: solid 1px gray;
@@ -201,7 +196,7 @@ blockquote {
   left:0px;
   z-index:99999;
   position:fixed;
-  font-size:14px;
+  font-size: large;
   text-align: center;
   padding: 5px 0px;
   border-bottom: 1px solid black;

@@ -3,8 +3,14 @@ body.palm-default {
   background-color : #6C8C84;
 }
 
+.md p, .md h1 {
+  margin: 5px 0;
+  padding: 0;
+  font-size: large;
+}
+
 .thing {
-  font-size: 15px;
+  font-size: large;
   background-color: #D1D1BC;
   color: #302C29;
   padding: 10px 12px 6px 12px;
@@ -30,7 +36,7 @@ body.palm-default {
 .subreddit_info {
   z-index: -100;
   width: 80%;  
-  font-size: 15px;
+  font-size: large;
   background-color: #D1D1BC;
   color: #302C29;
   padding: 18px;
@@ -40,7 +46,7 @@ body.palm-default {
 
 .comment_counter {
   text-align : center;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 40px;
   height: 40px;
@@ -51,15 +57,20 @@ body.palm-default {
   -webkit-background-size: 100% 100%;
 }
 
+.article_desc_author {
+  font-weight: bold;
+  color: grey;
+}
+
 .comment_desc {
   float: left;
   margin: 4px 0px;
   color: #466964;
-  font-size: 0.8em;
+  font-size: small;
 }
 
 .article_desc {
-  font-size: 0.8em;
+  font-size: small;
   color: #466964;
   margin-top: 6px;
   float: left;
@@ -68,7 +79,7 @@ body.palm-default {
 
 .comment_tag {
   text-align : left;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 50px;
   height: 40px;

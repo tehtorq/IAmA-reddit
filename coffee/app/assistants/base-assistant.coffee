@@ -67,3 +67,8 @@ class BaseAssistant
   isLoggedIn: ->
     @getModHash()? and @getModHash() isnt ""
     
+  log: (thing, stringify = false) ->
+    if stringify
+      Mojo.Log.info(JSON.stringify(thing))
+    else
+      Mojo.Log.info(thing)

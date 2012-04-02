@@ -5,8 +5,14 @@ body.palm-default {
  -webkit-background-size: 101% 101%;
 }
 
+.md p, .md h1 {
+  margin: 5px 0;
+  padding: 0;
+  font-size: large;
+}
+
 .thing {
-  font-size: 15px;
+  font-size: large;
   color: black;
   padding: 10px 18px 6px 0px;
   margin: 3px 6px 3px 6px;
@@ -31,7 +37,7 @@ body.palm-default {
   /*visibility: hidden;*/
   z-index: -100;
   width: 80%;  
-  font-size: 15px;
+  font-size: large;
   color: black;
   padding: 18px;
   margin: -12px 6px 6px 12px;
@@ -41,7 +47,7 @@ body.palm-default {
 
 .comment_counter {
   text-align : center;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 40px;
   height: 40px;
@@ -52,15 +58,20 @@ body.palm-default {
   -webkit-background-size: 100% 100%;
 }
 
+.article_desc_author {
+  font-weight: bold;
+  color: grey;
+}
+
 .comment_desc {
   float: left;
   margin: 4px 0px;
   color: grey;
-  font-size: 0.8em;
+  font-size: small;
 }
 
 .article_desc {
-  font-size: 0.8em;
+  font-size: small;
   color: grey;
   margin-top: 6px;
   float: left;
@@ -69,7 +80,7 @@ body.palm-default {
 
 .comment_tag {
   text-align : left;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 50px;
   height: 40px;

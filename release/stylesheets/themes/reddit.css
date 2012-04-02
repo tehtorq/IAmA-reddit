@@ -1,48 +1,48 @@
 
 body.palm-default {
- background: url(../../images/gradient-background.png) center center repeat;
+  background-color: white;
+/* background: url(../../images/gradient-background-custom.png) center center repeat;
  background-attachment:fixed;
  -webkit-background-size: 101% 101%;
-}
+*/}
 
 .md p, .md h1 {
   margin: 5px 0;
   padding: 0;
-  font-size: large;
+  font-size: medium;
 }
 
 .thing {
-  -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   font-size: large;
-  color: silver;
+  color: blue;
+  padding: 10px 18px 6px 0px;
   margin: 3px 6px 3px 6px;
   overflow: auto;
 }
 
 .reddit_article {
   position:relative; /* for comment counter */
-  padding: 10px 18px 6px 18px;
 }
 
 .reddit_comment {
-  padding: 10px 12px 10px 12px;
-  margin: 0px -5px 3px 4px;
-  -webkit-border-radius: 6px 0px 0px 6px;
+  color: black;
+  padding: 4px 9px 4px 9px;
+  margin: 0px 0px 3px 0px;
+  border-left:1px dotted blue;
 }
 
 .reddit_op_comment {
-  padding: 10px 12px 10px 12px;
-  margin: 0px -5px 3px 4px;
-  -webkit-border-radius: 6px 0px 0px 6px;
+  color: black;
+  padding: 4px 9px 4px 9px;
+  margin: 0px 0px 3px 0px;
 }
 
 .subreddit_info {
-  -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   /*visibility: hidden;*/
   z-index: -100;
   width: 80%;  
-  font-size: large;
-  color: silver;
+  font-size: small;
+  color: black;
   padding: 18px;
   margin: -12px 6px 6px 12px;
   -webkit-border-radius: 6px;
@@ -50,47 +50,49 @@ body.palm-default {
 }
 
 .comment_counter {
-  -webkit-border-image: url(../../images/glass/indent.png) 38 38 36 34 stretch stretch;
   text-align : center;
   font-size: large;
   line-height: 40px;
   width: 40px;
   height: 40px;
-  color: silver;  
+  color: black;  
   padding: 0px 4px;
-  margin-top:0px;
-}
-
-.article_desc_author {
-  font-weight: bold;
-  color: grey;
+  margin-top:0px;  
+  background: url(../../images/comment-light.png) no-repeat;
+  -webkit-background-size: 100% 100%;
 }
 
 .comment_desc {
   float: left;
   margin: 4px 0px;
-  color: grey;
+  color: #888;
   font-size: small;
+}
+
+.article_desc_author {
+  font-weight: bold;
+  font-size: medium;
+  color: #336699;
 }
 
 .article_desc {
   font-size: small;
-  color: grey;
+  color: #888;
   margin-top: 6px;
   float: left;
   clear: both;
 }
 
 .comment_tag {
-  -webkit-border-image: url(../../images/glass/indent.png) 38 38 36 34 stretch stretch;
-  text-align : center;
+  text-align : left;
   font-size: large;
   line-height: 40px;
-  width: 40px;
+  width: 50px;
   height: 40px;
   color: red;  
   padding: 0px;
   margin: 0px -18px 5px 5px;  
+  background: url(../../images/comment_tag.png) no-repeat;
   background-size: 100%;
   float:right;
 }

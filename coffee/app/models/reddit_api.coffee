@@ -1,6 +1,6 @@
 class RedditAPI
   
-  @setUser: (username, modhash, reddit_session) ->
+  @setUser: (username, modhash, reddit_session, password) ->
     Mojo.Log.info("#{username},#{modhash},#{reddit_session}")
     
     new Mojo.Model.Cookie("reddit_session").put(reddit_session)
@@ -11,8 +11,9 @@ class RedditAPI
     if @user?
       @user.modhash = modhash
       @user.reddit_session = reddit_session
+      @user.password = password
     else
-      @user = {username: username, modhash: modhash, reddit_session: reddit_session}
+      @user = {username: username, modhash: modhash, reddit_session: reddit_session, password: password}
       users.push(@user)
     
     new Mojo.Model.Cookie("iama-reddit-users").put(JSON.stringify(users))
@@ -32,6 +33,9 @@ class RedditAPI
     
     if reddit_session isnt ''
       @user = @findUserByRedditSession(reddit_session)
+      
+      if @user?
+        Banner.send("Logged in as #{@user.username}")
 
   constructor: ->
     @base_url = 'http://www.reddit.com/'

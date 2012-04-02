@@ -5,9 +5,15 @@ body.palm-default {
  -webkit-background-size: 101% 101%;
 }
 
+.md p, .md h1 {
+  margin: 5px 0;
+  padding: 0;
+  font-size: large;
+}
+
 .thing {
   -webkit-border-image: url(../../images/glass/indent.png) 38 32 32 32 stretch stretch;
-  font-size: 15px;
+  font-size: large;
   color: silver;
   margin: 3px 6px 3px 6px;
   overflow: auto;
@@ -35,7 +41,7 @@ body.palm-default {
   /*visibility: hidden;*/
   z-index: -100;
   width: 80%;  
-  font-size: 15px;
+  font-size: large;
   color: silver;
   padding: 18px;
   margin: -12px 6px 6px 12px;
@@ -46,7 +52,7 @@ body.palm-default {
 .comment_counter {
   -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   text-align : center;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 40px;
   height: 40px;
@@ -55,15 +61,20 @@ body.palm-default {
   margin-top:0px;
 }
 
+.article_desc_author {
+  font-weight: bold;
+  color: grey;
+}
+
 .comment_desc {
   float: left;
   margin: 4px 0px;
   color: grey;
-  font-size: 0.8em;
+  font-size: small;
 }
 
 .article_desc {
-  font-size: 0.8em;
+  font-size: small;
   color: grey;
   margin-top: 6px;
   float: left;
@@ -73,7 +84,7 @@ body.palm-default {
 .comment_tag {
   -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   text-align : center;
-  font-size: 15px;
+  font-size: large;
   line-height: 40px;
   width: 40px;
   height: 40px;
