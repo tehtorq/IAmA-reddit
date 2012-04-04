@@ -8,6 +8,7 @@ class FriendAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('friends')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     

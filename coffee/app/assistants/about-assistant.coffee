@@ -7,6 +7,8 @@ class AboutAssistant extends BaseAssistant
   setup: ->
     super
     
+    @updateHeading('about')
+    
     if @params?.skip is true
       @viewMenuModel = {
         visible: true,

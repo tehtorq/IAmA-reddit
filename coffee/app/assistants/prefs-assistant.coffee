@@ -5,6 +5,7 @@ class PrefsAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('preferences')
     
     value1 = @cookieValue("prefs-hide-thumbnails", "off")
     value3 = @cookieValue("prefs-show-easylinks", "off")

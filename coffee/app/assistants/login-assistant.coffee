@@ -8,6 +8,7 @@ class LoginAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('login')
     
     @controller.setupWidget "textFieldId", { 
       focusMode: Mojo.Widget.focusSelectMode

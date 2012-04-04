@@ -44,10 +44,6 @@ class UserAssistant extends BaseAssistant
     if @listModel.items.length is 0
       @about()
       @fetchComments()
-
-  updateHeading: (text) ->
-    text = '' unless text?
-    @controller.get('reddit-heading').update(text)
     
   titleFormatter: (propertyValue, model) =>
     return model.data.link_title if model.kind is 't1'

@@ -11,6 +11,7 @@ class ComposeMessageAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('compose a message')
 
     @controller.setupWidget("recipientTextFieldId",
       { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },

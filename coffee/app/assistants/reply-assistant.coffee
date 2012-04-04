@@ -7,6 +7,7 @@ class ReplyAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('reply')
     
     @bodyModel = { items : [] }
 

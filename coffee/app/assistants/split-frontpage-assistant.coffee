@@ -358,10 +358,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @reddit_api.setSubreddit(subreddit)
     @loadArticles()
   
-  updateHeading: (text) ->
-    text = '' unless text?
-    @controller.get('reddit-heading').update(text)
-  
   loadMoreArticles: =>
     @reddit_api.load_next = true
     @loadArticles()
@@ -562,9 +558,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
   spinCommentSpinner: (bool) ->
     if bool
       @controller.get('comment-spinner').mojo.start()
-      @controller.get('right-pane-loading').show()
+      @controller.get('right-pane-loading').style.right = '0px'
     else
-      @controller.get('right-pane-loading').hide()
+      @controller.get('right-pane-loading').style.right = '-200px'
       @controller.get('comment-spinner').mojo.stop()
           
   loadArticleComments: (article, reload = false) =>

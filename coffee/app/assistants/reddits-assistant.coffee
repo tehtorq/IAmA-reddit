@@ -8,6 +8,7 @@ class RedditsAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('reddits')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     

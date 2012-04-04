@@ -309,10 +309,6 @@ class FrontpageAssistant extends PowerScrollBase
     @reddit_api.setSubreddit(subreddit)
     @loadArticles()
   
-  updateHeading: (text) ->
-    text = '' unless text?
-    @controller.get('reddit-heading').update(text)
-  
   loadMoreArticles: =>
     @reddit_api.load_next = true
     @loadArticles()
@@ -615,8 +611,12 @@ class FrontpageAssistant extends PowerScrollBase
   itemHold: (event) =>
     event.preventDefault()
     thing = event.srcElement.up('.thing-container')
-    article = @findArticleByName(thing.id)
     
+    #thing.style.webkitTransform = "scale(1.5)"
+    #thing.style.webkitTransform = "rotateX(0deg) rotateY(180deg)"
+    #return
+    
+    article = @findArticleByName(thing.id)
     @controller.stageController.pushScene({name:"article"}, {article: article})
     
   getWallpaper: ->

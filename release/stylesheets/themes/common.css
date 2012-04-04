@@ -8,6 +8,10 @@
   -webkit-background-size: 100% 100%;
 }
 
+#reddit-heading {
+  -webkit-transition: left 0.5s ease-out;
+}
+
 .reddit_thumbnail {
   float:left;
   margin: 0px 10px 0px 0px;
@@ -160,10 +164,11 @@ blockquote {
 }
 
 .loading {
+  -webkit-transition: left 0.5s ease-in-out;
   background-color:black;
   color:white;
   position:fixed;
-  left:0px;
+  left:-200px;
   top: 50%;
   font-size: large;
   z-index:99999;
@@ -174,10 +179,11 @@ blockquote {
 }
 
 #right-pane-loading {
+  -webkit-transition: right 0.5s ease-in-out;
   background-color:black;
   color:white;
   position:fixed;
-  right:0px;
+  right:-200px;
   top: 50%;
   font-size: large;
   z-index:99999;

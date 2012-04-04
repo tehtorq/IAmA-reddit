@@ -17,6 +17,7 @@ class GalleryAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('gallery')
     
     sfw_reddits = StageAssistant.cookieValue("prefs-galleries", '1000words,aviation,battlestations,gifs,itookapicture,photocritique,pics,vertical,wallpaper,wallpapers,windowshots').split(',')
     sfw_reddits_items = []
@@ -49,7 +50,6 @@ class GalleryAssistant extends BaseAssistant
       ]
 
     @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
-    @updateHeading('Gallery')
     
     appMenuModel =
       visible: true
@@ -169,9 +169,6 @@ class GalleryAssistant extends BaseAssistant
     parameters.sr = @sr if @sr?
 
     new Article(@).list(parameters)
-    
-  updateHeading: (text) ->
-    @controller.get('reddit-heading').update(text || 'Gallery')
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?

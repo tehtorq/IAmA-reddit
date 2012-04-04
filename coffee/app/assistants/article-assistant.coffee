@@ -15,6 +15,7 @@ class ArticleAssistant extends PowerScrollBase
 
   setup: ->
     super
+    @updateHeading('comments')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     

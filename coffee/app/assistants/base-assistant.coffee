@@ -32,10 +32,10 @@ class BaseAssistant
   spinSpinner: (bool) ->
     if bool
       @controller.get('spinner').mojo.start()
-      @controller.get('loading').show()
+      @controller.get('loading').style.left = '0px'
     else
-      @controller.get('loading').hide()
-      @controller.get('spinner').mojo.stop()
+      @controller.get('loading').style.left = '-200px'
+      #@controller.get('spinner').mojo.stop()
       
   addListeners: ->
     @listeners = arguments
@@ -66,6 +66,18 @@ class BaseAssistant
     
   isLoggedIn: ->
     @getModHash()? and @getModHash() isnt ""
+    
+  updateHeading: (text) ->
+    text = '' unless text?
+
+    @controller.get('reddit-heading').style.left = '-500px'
+
+    @controller.window.setTimeout(
+      =>
+        @controller.get('reddit-heading').update(text)
+        @controller.get('reddit-heading').style.left = '0px'
+      500
+    )
     
   log: (thing, stringify = false) ->
     if stringify

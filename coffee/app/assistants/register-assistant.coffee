@@ -10,6 +10,7 @@ class RegisterAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('register')
     
     @controller.setupWidget("textFieldId",
       { focusMode : Mojo.Widget.focusSelectMode, textCase : Mojo.Widget.steModeLowerCase, maxLength : 30 },

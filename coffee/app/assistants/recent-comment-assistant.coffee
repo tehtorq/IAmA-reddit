@@ -9,6 +9,7 @@ class RecentCommentAssistant extends PowerScrollBase
 
   setup: ->
     super
+    @updateHeading('recent comments')
     
     @controller.setupWidget("list", {
     itemTemplate : "recent-comment/comment",

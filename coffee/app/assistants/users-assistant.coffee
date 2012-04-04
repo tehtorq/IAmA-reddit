@@ -10,6 +10,7 @@ class UsersAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('manage accounts')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     

@@ -10,6 +10,7 @@ class SubmitAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('submit to reddit')
     
     @controller.setupWidget "submit-title", { 
       focusMode: Mojo.Widget.focusSelectMode

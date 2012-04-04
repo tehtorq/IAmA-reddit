@@ -8,6 +8,7 @@ class MessageAssistant extends BaseAssistant
 
   setup: ->
     super
+    @updateHeading('inbox')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
