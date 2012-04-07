@@ -148,7 +148,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.setupWidget("webview-scroller",{mode: 'free'},{})
     
     @controller.setupWidget("webview", {
-      url: 'http://www.google.com'
+      url: "file://" + Mojo.appPath + "webview.html"
       topMargin: 0
       # virtualpagewidth: 20
       # virtualpageheight: 10
@@ -606,13 +606,19 @@ class SplitFrontpageAssistant extends PowerScrollBase
           unless child?.hiding_comments > 0 
             @populateCommentReplies(data.replies.data.children, indent + 1, array)
             
-  showWebpage: =>
+  showWebpage: (load = false) =>
+    @controller.get('right-pane').removeClassName('take-it-away')
+    @controller.get('right-pane').addClassName('bring-it-in')
+    
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
     @controller.get('comment-scroller').hide()
     @controller.get('webview-scroller').show()
-    @controller.get('webview').mojo.openURL(@article.data.url)
     
-  showComments: =>
+    if load is true
+      @controller.get('webview').mojo.openURL("file://" + Mojo.appPath + "webview.html")
+      @controller.get('webview').mojo.openURL(@article.data.url) if load is true
+    
+  showComments: (reload = true) =>
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
     @controller.get('webview-scroller').hide()
     @controller.get('comment-scroller').show()
@@ -628,15 +634,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
     
     @article = article
     @spinCommentSpinner(true)
+    @controller.get('right-pane').addClassName('take-it-away')
     
     if comments_or_webpage is 'web'
-      @showWebpage()
+      @showWebpage(true)
     else
-      @showComments()
-    
-    @controller.get('right-pane').addClassName('take-it-away')
-    @controller.get('webview').mojo.openURL(@article.data.url) if @controller.get('webview-scroller').visible()
-    #setTimeout(@loadArticleComments, 250, @article)
+      @showComments(true)
     
     @controller.window.setTimeout(
       =>

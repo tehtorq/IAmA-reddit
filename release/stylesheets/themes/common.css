@@ -22,21 +22,22 @@
   background-color: black;
   position: absolute;
   float: top;
-  top: 10px;
+  top: 0px;
   z-index: 999999;
 }
 
+#tabs:first-child {
+  border-left: 1px solid gray;
+}
+
 .tab-button {
-  height:20px; 
+  height:100%;
   width:150px; 
   background-color: black; 
   float: left;
   text-align: center;
-  margin-right: 20px;
-  border-left: 1px solid gray;
-  border-top: 1px solid gray;
   border-right: 1px solid gray;
-  font-size: medium;
+  font-size: large;
   padding-top: 10px;
   padding-bottom: 10px;
 }
