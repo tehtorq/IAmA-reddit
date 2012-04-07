@@ -12,6 +12,21 @@ class UsersAssistant extends BaseAssistant
     super
     @updateHeading('manage accounts')
     
+    @viewMenuModel =
+      visible: true
+      items: [
+        {label: $L('Back'), icon:'', command:'back', width:80}
+        items: [
+          {}
+          {label: $L('Register'), command: 'register-cmd'}
+          {label: $L('New Login'), command:'login-cmd'}
+          {}
+        ]
+        {}
+      ]
+      
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
+    
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
     @controller.setupWidget("users-list", {
@@ -67,7 +82,7 @@ class UsersAssistant extends BaseAssistant
       items: [
         {label: $L('Log in'), command: 'login-cmd ' + index}
         {label: $L('Forget'), command: 'forget-cmd ' + index}
-        {label: $L('Log out'), command: 'logout-cmd ' + index}
+        {label: $L('Log out'), command: 'logout-cmd'}
       ]
     })
     
@@ -97,7 +112,7 @@ class UsersAssistant extends BaseAssistant
       when 'forget-cmd'
         @login(params[1])
       when 'logout-cmd'
-        @logout(params[1])
+        @logout()
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -110,8 +125,20 @@ class UsersAssistant extends BaseAssistant
       when 'message'
         @loadMessages(params[1])
       when 'back'
-        @controller.stageController.popScene()
+        @controller.stageController.swapScene({name:AppAssistant.frontpageSceneName()})
+      when 'login-cmd'
+        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
+      when 'register-cmd'
+        @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
         
+  logout: ->
+    params =
+      uh: "#{@getModHash()}"
+
+    @log(params, true)
+
+    new User(@).logout(params)    
+    
   handleCallback: (params) ->
     return params unless params? and params.success
     
@@ -143,7 +170,7 @@ class UsersAssistant extends BaseAssistant
     RedditAPI.setUser(user.username, modhash, cookie, user.password)
 
     Banner.send("Logged in as #{user.username}")
-    @controller.stageController.popScene()
+    @controller.stageController.swapScene({name:AppAssistant.frontpageSceneName()})
 
   loginFailure: (response) ->
     Banner.send(response.errors[0][1])

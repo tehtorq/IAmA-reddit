@@ -73,12 +73,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     menu_items = [
       {label: "Friends", command: 'friend-scene'}
       {label: "Gallery", command: 'gallery-cmd'}
-      {label: "Manage User", items:
-        [
-          {label: "Login", command: 'login-cmd'}
-          {label: "Register", command: 'register-cmd'}
-          #{label: "Logout", command: 'logout-cmd'}
-        ]}
+      {label: "Logins", command: 'manage-users-cmd'}
       {label: "Messages", command: 'messages-cmd'}
       {label: "Recent Comments", command: 'recent-comments-cmd'}
       {label: "Subreddits", command: 'reddits-cmd'}
@@ -666,7 +661,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
        items: [                         
          {label: $L('Upvote'), command: upvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: upvote_icon}
          {label: $L('Downvote'), command: downvote_action + ' ' + article.data.name + ' ' + article.data.subreddit, secondaryIcon: downvote_icon}
-         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
+         {label: $L('Open in browser'), command: 'open-link-cmd ' + event.index}
          {label: $L(save_label), command: save_action + ' ' + article.data.name}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
@@ -676,7 +671,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
        onChoose: @handleActionSelection,
        #placeNear:element_tapped,
        items: [
-         {label: $L('Open Link'), command: 'open-link-cmd ' + event.index}
+         {label: $L('Open in browser'), command: 'open-link-cmd ' + event.index}
          {label: $L(article.data.domain), command: 'domain-cmd ' + article.data.domain}
          ]
        }
@@ -723,14 +718,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
           @controller.stageController.pushScene({name:"submit"}, {})
     
     switch event.command
+      when 'manage-users-cmd'
+        @controller.stageController.swapScene({name:"users",transition: Mojo.Transition.crossFade}, {})
       when Mojo.Menu.prefsCmd
-        @controller.stageController.pushScene({name:"prefs"}, {})
-      when 'login-cmd'
-        @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
-      when 'logout-cmd'
-        new User(@).logout({})        
-      when 'register-cmd'
-        @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
+        @controller.stageController.pushScene({name:"prefs"}, {})        
       when 'reddits-cmd'
         @controller.stageController.pushScene({name:"reddits"}, {})
       when 'gallery-cmd'
