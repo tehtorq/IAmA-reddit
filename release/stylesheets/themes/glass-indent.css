@@ -52,7 +52,7 @@ body.palm-default {
 .comment_counter {
   -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
   text-align : center;
-  font-size: large;
+  font-size: small;
   line-height: 40px;
   width: 40px;
   height: 40px;

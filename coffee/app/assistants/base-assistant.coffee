@@ -21,7 +21,7 @@ class BaseAssistant
     @controller.stageController.getScenes().length > 0 # only increments after setup finishes
     
   showBackNavigation: ->
-    @can_navigate_back and not Mojo.Environment.DeviceInfo.keyboardAvailable
+    @can_navigate_back and AppAssistant.deviceIsTouchPad() #not Mojo.Environment.DeviceInfo.keyboardAvailable
     
   getViewMenuWidth: ->
     @viewmenu_width
@@ -78,6 +78,15 @@ class BaseAssistant
         @controller.get('reddit-heading').style.left = '0px'
       500
     )
+    
+  handleScrollUpdate: =>
+    if @controller.get('puller').visible()
+      offset = @controller.get('puller').viewportOffset()[1] - @controller.getSceneScroller().mojo.scrollerSize()['height']
+      @log "#{@controller.get('puller').viewportOffset()[1]} - #{@controller.getSceneScroller().mojo.scrollerSize()['height']} = #{offset}"
+
+      if offset < 0
+        if @is_loading_content is false
+          @loadMore()
     
   log: (thing, stringify = false) ->
     if stringify

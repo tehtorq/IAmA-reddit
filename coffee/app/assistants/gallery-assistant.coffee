@@ -4,7 +4,7 @@ class GalleryAssistant extends BaseAssistant
     super
     
     @image_limit = 20
-    @fetching_images = false
+    @is_loading_content = false
     @last_article_id = null
     @sr = 'pics'
 
@@ -12,7 +12,7 @@ class GalleryAssistant extends BaseAssistant
     return unless params?
     
     if params.type is "article-list"
-      @fetching_images = false
+      @is_loading_content = false
       @handleLoadArticlesResponse(params.response) if params.success?
 
   setup: ->
@@ -62,16 +62,15 @@ class GalleryAssistant extends BaseAssistant
     @controller.setupWidget(Mojo.Menu.appMenu, {omitDefaultItems: true}, appMenuModel)
 
     @thumbs = []
-
-    @activityButtonModel = {label : "Load more"}
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
+    @controller.get('puller').hide()
 
   activate: (event) ->
     super
     
     @addListeners(
       [@controller.get("gallery"), Mojo.Event.tap, @handleTap]
-      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadImages]
+      [@controller.get("puller"), Mojo.Event.tap, @loadImages]
+      [@controller.getSceneScroller(), Mojo.Event.dragging, @handleScrollUpdate]
     )
     
     @switchSubreddit("pics")
@@ -127,19 +126,15 @@ class GalleryAssistant extends BaseAssistant
       @controller.get('gallery').appendChild(mydiv)
 
   displayLoadingButton: ->
-    @controller.get('loadMoreButton').mojo.activate()
-    @activityButtonModel.label = "Loading"
-    @activityButtonModel.disabled = true
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('loading')
+    @controller.get('puller').show()
 
   displayLoadMoreButton: ->
-    @controller.get('loadMoreButton').mojo.deactivate()
-    @activityButtonModel.label = "Load more"
-    @activityButtonModel.disabled = false
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('pull to refresh')
+    @controller.get('puller').show()
 
   handleLoadArticlesResponse: (response) ->
-    @fetching_images = false
+    @is_loading_content = false
     @displayLoadMoreButton()
     
     return unless response? and response.responseJSON? and response.responseJSON.data? and response.responseJSON.data.children?
@@ -156,11 +151,14 @@ class GalleryAssistant extends BaseAssistant
     @controller.get('gallery').update('')
     @last_article_id = null
     @thumbs.clear()
+    
+  loadMore: =>
+    @loadImages()
 
   loadImages: =>
-    return if @fetching_images
+    return if @is_loading_content
 
-    @fetching_images = true
+    @is_loading_content = true
     @displayLoadingButton()
 
     parameters = {}
@@ -172,7 +170,7 @@ class GalleryAssistant extends BaseAssistant
 
   switchSubreddit: (subreddit) ->
     return unless subreddit?
-    @fetching_images = false
+    @is_loading_content = false
     
     @updateHeading("#{subreddit}")
     @sr = subreddit

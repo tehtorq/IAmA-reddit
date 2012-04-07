@@ -51,7 +51,7 @@ body.palm-default {
 
 .comment_counter {
   text-align : center;
-  font-size: large;
+  font-size: small;
   line-height: 40px;
   width: 40px;
   height: 40px;
@@ -64,19 +64,19 @@ body.palm-default {
 
 .article_desc_author {
   font-weight: bold;
-  color: grey;
+  color: gray;
 }
 
 .comment_desc {
   float: left;
   margin: 4px 0px;
-  color: grey;
+  color: gray;
   font-size: small;
 }
 
 .article_desc {
   font-size: small;
-  color: grey;
+  color: gray;
   margin-top: 6px;
   float: left;
   clear: both;

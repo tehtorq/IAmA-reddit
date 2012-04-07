@@ -65,12 +65,9 @@ class RedditsAssistant extends BaseAssistant
       renderLimit : 1000
     }, @redditsModel)
     
-    @activityButtonModel = {label : "Load more"}
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
-    @controller.get('loadMoreButton').hide()
+    @controller.get('puller').hide()
 
     @controller.setupWidget('filterfield', {delay: 2000})
-
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
 
   activate: (event) ->
@@ -78,8 +75,9 @@ class RedditsAssistant extends BaseAssistant
     
     @addListeners(
       [@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped]
-      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreReddits]
+      [@controller.get("puller"), Mojo.Event.tap, @loadMore]
       [@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem]
+      [@controller.getSceneScroller(), Mojo.Event.dragging, @handleScrollUpdate]
     )
     
     @loadReddits() if @redditsModel.items.length is 0
@@ -158,10 +156,12 @@ class RedditsAssistant extends BaseAssistant
   handleDeleteItem: (event) =>
     @unsubscribe(event.item.name, event.item.display_name)
 
-  loadMoreReddits: =>
+  loadMore: =>
+    Banner.send('loading more!')
     @loadReddits()
 
   loadReddits: ->
+    @is_loading_content = true
     parameters = {}
     parameters.limit = 25
     
@@ -169,7 +169,7 @@ class RedditsAssistant extends BaseAssistant
       parameters.after = @reddit_api.last_reddit
       @displayButtonLoading()
     else
-      @controller.get('loadMoreButton').hide()
+      @controller.get('puller').hide()
       @spinSpinner(true)
       @controller.get('reddit-list').mojo.noticeRemovedItems(0, @controller.get('reddit-list').mojo.getLength())
     
@@ -183,6 +183,7 @@ class RedditsAssistant extends BaseAssistant
     new Subreddit(@).fetch(parameters)
 
   handleLoadRedditsResponse: (response) ->
+    @is_loading_content = false
     return unless response? and response.responseJSON? and response.responseJSON.data?
     items = response.responseJSON.data.children
     
@@ -208,24 +209,19 @@ class RedditsAssistant extends BaseAssistant
     @reddit_api.last_reddit = response.responseJSON.data.after
 
     if @reddit_api.last_reddit?
-      @controller.get('loadMoreButton').show()
+      @controller.get('puller').show()
     else
-      @controller.get('loadMoreButton').hide()
+      @controller.get('puller').hide()
     
     if @controller.get('reddit-list').mojo.getLength() is 0
       @controller.get('reddit-list').mojo.noticeAddedItems(0, [null])
 
   displayButtonLoadMore: ->
-    @controller.get('loadMoreButton').mojo.deactivate()
-    @activityButtonModel.label = "Load more"
-    @activityButtonModel.disabled = false
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('pull to refresh')
+    @controller.get('puller').show()
 
   displayButtonLoading: ->
-    @controller.get('loadMoreButton').mojo.activate()
-    @activityButtonModel.label = "Loading"
-    @activityButtonModel.disabled = true
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('loading')
 
   itemTapped: (event) =>
     item = event.item

@@ -134,10 +134,8 @@ class FrontpageAssistant extends PowerScrollBase
         thumbnail: @thumbnailFormatter
         vote: @voteFormatter
       }, @articles)
-
-    @activityButtonModel = {label : "Load more"}
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
-    @controller.get('loadMoreButton').hide()
+      
+    @controller.get('puller').hide()
   
   activate: (event) ->
     super
@@ -148,7 +146,8 @@ class FrontpageAssistant extends PowerScrollBase
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]
       [@controller.get("list"), Mojo.Event.hold, @itemHold]
       [@controller.get("list"), Mojo.Event.listDelete, @handleDeleteItem]
-      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
+      [@controller.get("puller"), Mojo.Event.tap, @loadMore]
+      [@controller.getSceneScroller(), Mojo.Event.dragging, @handleScrollUpdate]
     )
 
     if @articles.items.length is 0
@@ -166,7 +165,7 @@ class FrontpageAssistant extends PowerScrollBase
   
   cleanup: (event) ->
     super
-  
+    
   tagFormatter: (propertyValue, model) =>
     return "" unless model.data?
       
@@ -309,17 +308,15 @@ class FrontpageAssistant extends PowerScrollBase
     @reddit_api.setSubreddit(subreddit)
     @loadArticles()
   
-  loadMoreArticles: =>
+  loadMore: =>
     @reddit_api.load_next = true
     @loadArticles()
   
   displayLoadingButton: ->
-    @controller.get('loadMoreButton').mojo.activate()
-    @activityButtonModel.label = "Loading"
-    @activityButtonModel.disabled = true
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('loading')
   
   loadArticles: ->
+    @is_loading_content = true
     parameters = {}
     parameters.limit = @reddit_api.getArticlesPerPage()
     
@@ -329,7 +326,7 @@ class FrontpageAssistant extends PowerScrollBase
     else
       length = @articles.items.length
       @articles.items.clear()
-      @controller.get('loadMoreButton').hide()
+      @controller.get('puller').hide()
       @spinSpinner(true)
       @controller.modelChanged(@articles)
 
@@ -350,6 +347,7 @@ class FrontpageAssistant extends PowerScrollBase
     new Request(@).get(@reddit_api.getArticlesUrl(), parameters, 'load-articles')
   
   handleLoadArticlesResponse: (response) ->
+    @is_loading_content = false
     length = @articles.items.length
     @reddit_api.load_next = false
     json = response.responseJSON
@@ -366,15 +364,12 @@ class FrontpageAssistant extends PowerScrollBase
     @controller.get('list').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
-    @controller.get('loadMoreButton').mojo.deactivate()
-    @activityButtonModel.label = "Load more"
-    @activityButtonModel.disabled = false
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('pull to refresh')
   
     if items.length > 0
-      @controller.get('loadMoreButton').show()
+      @controller.get('puller').show()
     else
-      @controller.get('loadMoreButton').hide()
+      @controller.get('puller').hide()
     
     @controller.get('list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
   

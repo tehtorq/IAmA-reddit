@@ -52,8 +52,6 @@ class ArticleAssistant extends PowerScrollBase
     
     @comment_list = new CommentList({kind: 't3', data: @article}, @)
 
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, {label : "Loading comments", disabled: true})
-
   activate: (event) ->
     super
     
@@ -71,7 +69,6 @@ class ArticleAssistant extends PowerScrollBase
       @jump_to_comment = event.comment_id
     
     if @comment_list.comments.items.length < 2
-      @controller.get('loadMoreButton').mojo.activate()
       @fetchComments({})
 
   loadComments: (params) ->
@@ -80,8 +77,7 @@ class ArticleAssistant extends PowerScrollBase
     @comment_list.comments.items.push(item)
 
     @controller.modelChanged(@comment_list.comments)
-    @controller.get('loadMoreButton').mojo.activate()
-    @controller.get('loadMoreButton').show()
+    @controller.get('puller').show()
     @fetchComments(params)
 
   handleCommand: (event) ->
@@ -130,12 +126,10 @@ class ArticleAssistant extends PowerScrollBase
   
   handlefetchCommentsResponse: (response) ->
     return unless response? and response.responseJSON?
+    @controller.get('puller').hide()
     
     json = response.responseJSON
-
     @populateComments(json)
-    
-    @controller.get('loadMoreButton').hide()
     
     if @jump_to_comment?
       @controller.getSceneScroller().mojo.revealElement(@jump_to_comment)

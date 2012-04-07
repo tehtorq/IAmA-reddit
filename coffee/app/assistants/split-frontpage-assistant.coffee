@@ -139,14 +139,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
       }, @articles)
       
     @comment_list = new CommentList('', @)
-
-    @activityButtonModel = {label : "Load more"}
-    @controller.setupWidget("loadMoreButton", {type:Mojo.Widget.activityButton}, @activityButtonModel)
-    @controller.get('loadMoreButton').hide()
     
-    @loadingCommentsButtonModel = {label : "Loading comments"}
-    @controller.setupWidget("loadingCommentsButton", {type:Mojo.Widget.activityButton}, @loadingCommentsButtonModel)
-    @controller.get('loadingCommentsButton').hide()
+    @controller.get('puller').hide()
+    @controller.get('comment-puller').hide()
     
     @controller.setupWidget("article-scroller",{mode: 'vertical'},{})
     @controller.setupWidget("comment-scroller",{mode: 'vertical'},{})
@@ -154,6 +149,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     
     @controller.setupWidget("webview", {
       url: 'http://www.google.com'
+      topMargin: 0
       # virtualpagewidth: 20
       # virtualpageheight: 10
     },{})
@@ -166,11 +162,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
       [@controller.get("article-list"), Mojo.Event.listTap, @itemTapped]
       [@controller.get("article-list"), Mojo.Event.hold, @itemHold]
       [@controller.get("article-list"), Mojo.Event.listDelete, @handleDeleteItem]
-      [@controller.get("loadMoreButton"), Mojo.Event.tap, @loadMoreArticles]
+      [@controller.get("puller"), Mojo.Event.tap, @loadMore]
       [@controller.get("comment-list"), Mojo.Event.listTap, @comment_list.itemTapped]
       [@controller.get("comment-list"), Mojo.Event.hold, @comment_list.itemHold]
       [@controller.get("weblink"), Mojo.Event.tap, @showWebpage]
       [@controller.get("commentlink"), Mojo.Event.tap, @showComments]
+      [@controller.get("article-scroller"), Mojo.Event.dragging, @handleArticleScrollUpdate]
     )
     
     @spinCommentSpinner(false)
@@ -238,7 +235,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     
     @controller.get('filterfield').mojo.close()
     @searchReddit(filterEvent.filterString)
-  
+          
   handleCategorySwitch: (params) ->
     return unless params?
     
@@ -358,25 +355,22 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @reddit_api.setSubreddit(subreddit)
     @loadArticles()
   
-  loadMoreArticles: =>
+  loadMore: =>
     @reddit_api.load_next = true
     @loadArticles()
   
   displayLoadingButton: ->
-    @controller.get('loadMoreButton').mojo.activate()
-    @activityButtonModel.label = "Loading"
-    @activityButtonModel.disabled = true
-    @controller.modelChanged(@activityButtonModel)
+    @controller.get('puller').update('loading')
+    @controller.get('puller').show()
     
   displayLoadingCommentsButton: (bool) ->
     if bool
-      @controller.get('loadingCommentsButton').mojo.activate()
-      @controller.get('loadingCommentsButton').show()
+      @controller.get('comment-puller').show()
     else
-      @controller.get('loadingCommentsButton').mojo.deactivate()
-      @controller.get('loadingCommentsButton').hide()
+      @controller.get('comment-puller').hide()
   
   loadArticles: ->
+    @is_loading_content = true
     parameters = {}
     parameters.limit = @reddit_api.getArticlesPerPage()
     
@@ -389,7 +383,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       
       length = @articles.items.length
       @articles.items.clear()
-      @controller.get('loadMoreButton').hide()
+      #@controller.get('puller').hide()
       @spinSpinner(true)
       @controller.modelChanged(@articles)
 
@@ -408,8 +402,19 @@ class SplitFrontpageAssistant extends PowerScrollBase
       @updateHeading(null)
   
     new Request(@).get(@reddit_api.getArticlesUrl(), parameters, 'load-articles')
+    
+  handleArticleScrollUpdate: =>
+    if @controller.get('puller').visible()
+      offset = @controller.get('puller').viewportOffset()[1] - @controller.get("article-scroller").mojo.scrollerSize()['height']
+      @log "#{@controller.get('puller').viewportOffset()[1]} - #{@controller.get("article-scroller").mojo.scrollerSize()['height']} = #{offset}"
+
+      if offset < 0
+        if @is_loading_content is false
+          @loadMore()
   
   handleLoadArticlesResponse: (response) ->
+    @is_loading_content = false
+    
     length = @articles.items.length
     @reddit_api.load_next = false
     json = response.responseJSON
@@ -426,15 +431,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('article-list').mojo.noticeAddedItems(length, items)
     
     @spinSpinner(false)
-    @controller.get('loadMoreButton').mojo.deactivate()
-    @activityButtonModel.label = "Load more"
-    @activityButtonModel.disabled = false
-    @controller.modelChanged(@activityButtonModel)
   
     if items.length > 0
-      @controller.get('loadMoreButton').show()
+      @controller.get('puller').update('pull to refresh')
+      @controller.get('puller').show()
     else
-      @controller.get('loadMoreButton').hide()
+      @controller.get('puller').hide()
     
     @controller.get('article-list').mojo.noticeAddedItems(0, [null]) if @articles.items.length is 0
   
@@ -579,6 +581,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('right-pane').addClassName('bring-it-in')
     @spinCommentSpinner(false)
     @displayLoadingCommentsButton(false)
+    
     return unless response? and response.responseJSON?
 
     json = response.responseJSON
@@ -607,6 +610,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
     @controller.get('comment-scroller').hide()
     @controller.get('webview-scroller').show()
+    @controller.get('webview').mojo.openURL(@article.data.url)
     
   showComments: =>
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
@@ -614,8 +618,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('comment-scroller').show()
     
   selectArticle: (article, comments_or_webpage) ->
-    if @article? and @article.data.name == article.data.name
-      if comments_or_webpage == 'web'
+    if @article?.data.name is article.data.name
+      if comments_or_webpage is 'web'
         @showWebpage()
       else
         @showComments()
@@ -625,14 +629,20 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @article = article
     @spinCommentSpinner(true)
     
-    if comments_or_webpage == 'web'
+    if comments_or_webpage is 'web'
       @showWebpage()
     else
       @showComments()
     
     @controller.get('right-pane').addClassName('take-it-away')
-    @controller.get('webview').mojo.openURL(@article.data.url)
-    setTimeout(@loadArticleComments, 250, @article)
+    @controller.get('webview').mojo.openURL(@article.data.url) if @controller.get('webview-scroller').visible()
+    #setTimeout(@loadArticleComments, 250, @article)
+    
+    @controller.window.setTimeout(
+      =>
+        @loadArticleComments(@article)
+      250
+    )
   
   itemTapped: (event) =>
     article = event.item
