@@ -41,35 +41,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
       {label:$L("friends"), command:$L("subreddit friends")}
       ]})
     
-    array = []
-    
-    if Subreddit.cached_list.length > 0    
-      # subscribed reddits
-      
-      _.each Subreddit.cached_list, (item) ->
-        if item.subscribed is true
-          array.push {label: item.label, command: 'subreddit ' + item.label}
-      
-      # unsubscribed reddits
-      
-      if array.length is 0
-        _.each Subreddit.cached_list, (item) ->
-          if item.subscribed isnt true
-            array.push {label: item.label, command: 'subreddit ' + item.label}
-      
-      array.sort (a, b) ->
-        return -1 if a.label.toLowerCase() < b.label.toLowerCase()
-        return 1 if a.label.toLowerCase() > b.label.toLowerCase()
-        0
-    
-      array.unshift({label: 'random', command: 'subreddit random'})
-      array.unshift({label: 'all', command: 'subreddit all'})
-      array.unshift({label: 'frontpage', command: 'subreddit frontpage'})
-    
-    @subredditSubmenuModel = {items: array}
-
-    @controller.setupWidget('subreddit-submenu', null, @subredditSubmenuModel)
-    
     heading = if @reddit_api.subreddit? then @reddit_api.subreddit else 'Frontpage'
     
     back_button = if @showBackNavigation()
@@ -83,7 +54,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
         back_button
         items: [
           {}
-          { label: $L('/r'), submenu: "subreddit-submenu", icon: "", width: 61}
+          { label: $L('/r'), command: "subreddit-submenu", icon: "", width: 61}
           {label: $L('Search'), icon:'search', command:'search'}
           { label: '', submenu: "category-submenu", iconPath: 'images/options.png'}
           {label: $L('Submit'), icon:'new', command:'submit'}
@@ -110,7 +81,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
         ]}
       {label: "Messages", command: 'messages-cmd'}
       {label: "Recent Comments", command: 'recent-comments-cmd'}
-      {label: "Reddits", command: 'reddits-cmd'}
+      {label: "Subreddits", command: 'reddits-cmd'}
       {label: "Preferences", command: Mojo.Menu.prefsCmd}
       {label: "About", command: 'about-scene'}
     ]
@@ -230,6 +201,34 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('comment-scroller').style.height = "#{@controller.window.innerHeight - 50}px"
     @controller.get('left-pane').style.width = "#{@controller.window.innerWidth * 0.4}px"
     
+  getSubreddditMenuItems: ->
+    array = []
+
+    if Subreddit.cached_list.length > 0    
+      # subscribed reddits
+
+      _.each Subreddit.cached_list, (item) ->
+        if item.subscribed is true
+          array.push {label: item.label, command: 'subreddit ' + item.label}
+
+      # unsubscribed reddits
+
+      if array.length is 0
+        _.each Subreddit.cached_list, (item) ->
+          if item.subscribed isnt true
+            array.push {label: item.label, command: 'subreddit ' + item.label}
+
+      array.sort (a, b) ->
+        return -1 if a.label.toLowerCase() < b.label.toLowerCase()
+        return 1 if a.label.toLowerCase() > b.label.toLowerCase()
+        0
+
+      array.unshift({label: 'random', command: 'subreddit random'})
+      array.unshift({label: 'all', command: 'subreddit all'})
+      array.unshift({label: 'frontpage', command: 'subreddit frontpage'})
+
+    array
+  
   filter: (filterEvent) =>
     return if filterEvent.filterString.length is 0
     
@@ -453,36 +452,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
      
     data = response.responseJSON.data
     children = data.children
-    array = []
-    i = 0
-    
     is_logged_in = @isLoggedIn()
     
     _.each children, (child) ->
       Subreddit.cached_list.push {label: child.data.display_name, subscribed: is_logged_in, name: child.data.name}
-    
-    _.each Subreddit.cached_list, (item) ->
-      if item.subscribed is true
-        array.push {label: item.label, command: 'subreddit ' + item.label}
-    
-    # unsubscribed reddits
-  
-    if array.length is 0
-      _.each Subreddit.cached_list, (item) ->
-        if item.subscribed isnt true
-          array.push {label: item.label, command: 'subreddit ' + item.label}
-  
-    array.sort (a, b) ->
-      return -1 if a.label.toLowerCase() < b.label.toLowerCase()
-      return 1 if a.label.toLowerCase() > b.label.toLowerCase()
-      0
-    
-    array.unshift {label: 'random', command: 'subreddit random'}
-    array.unshift {label: 'all', command: 'subreddit all'}
-    array.unshift {label: 'frontpage', command: 'subreddit frontpage'}
-    
-    @subredditSubmenuModel.items = array
-    @controller.modelChanged @subredditSubmenuModel
   
   handleActionSelection: (command) =>
     return unless command?
@@ -490,6 +463,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     params = command.split ' '
   
     switch params[0]
+      when 'subreddit'
+        @switchSubreddit(params[1])
       when 'open-link-cmd'
         article = @articles.items[parseInt(params[1])]
         
@@ -614,9 +589,10 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @controller.get('comment-scroller').hide()
     @controller.get('webview-scroller').show()
     
-    if load is true
+    if load is true or @article_webpage_loaded isnt true
+      @article_webpage_loaded = true
       @controller.get('webview').mojo.openURL("file://" + Mojo.appPath + "webview.html")
-      @controller.get('webview').mojo.openURL(@article.data.url) if load is true
+      @controller.get('webview').mojo.openURL(@article.data.url)
     
   showComments: (reload = true) =>
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
@@ -632,6 +608,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
         
       return
     
+    @article_webpage_loaded = false
     @article = article
     @spinCommentSpinner(true)
     @controller.get('right-pane').addClassName('take-it-away')
@@ -733,6 +710,12 @@ class SplitFrontpageAssistant extends PowerScrollBase
         @toggleSearch()
       when 'back'
         @controller.stageController.popScene()
+      when 'subreddit-submenu'
+        @controller.popupSubmenu {
+          onChoose: @handleActionSelection,
+          #placeNear:element_tapped,
+          items: @getSubreddditMenuItems()
+        }
       when 'submit'
         if @reddit_api.subreddit?
           @controller.stageController.pushScene({name:"submit"}, {sr: @reddit_api.subreddit})

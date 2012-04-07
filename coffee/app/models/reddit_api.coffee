@@ -33,9 +33,9 @@ class RedditAPI
     
     if reddit_session isnt ''
       @user = @findUserByRedditSession(reddit_session)
-      
-      if @user?
-        Banner.send("Logged in as #{@user.username}")
+            # 
+            # if @user?
+            #   Banner.send("Logged in as #{@user.username}")
 
   constructor: ->
     @base_url = 'http://www.reddit.com/'

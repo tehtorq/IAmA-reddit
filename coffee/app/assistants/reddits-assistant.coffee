@@ -123,13 +123,13 @@ class RedditsAssistant extends BaseAssistant
 
     if params.type[0] is "subreddit-subscribe"
       if params.type[1]?
-        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.name isnt params.type[1]
+        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.command isnt "subreddit #{params.type[2]}"
         Subreddit.cached_list.push({label: params.type[2], command: 'subreddit ' + params.type[2], subscribed: true})
       
       Banner.send("Subscribed!")
     else if params.type[0] is "subreddit-unsubscribe"
       if params.type[1]?
-        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.name isnt params.type[1]
+        Subreddit.cached_list = _.select Subreddit.cached_list, (item) -> item.command isnt "subreddit #{params.type[2]}"
       
       Banner.send("Unsubscribed!")
     else if params.type[0] is "subreddit-load"
