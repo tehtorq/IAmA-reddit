@@ -12,10 +12,15 @@ class UsersAssistant extends BaseAssistant
     super
     @updateHeading('manage accounts')
     
+    back_button = if AppAssistant.deviceIsTouchPad() or true
+      {label: $L('Back'), icon:'', command:'back', width:80}
+    else
+      {}
+    
     @viewMenuModel =
       visible: true
       items: [
-        {label: $L('Back'), icon:'', command:'back', width:80}
+        back_button
         items: [
           {}
           {label: $L('Register'), command: 'register-cmd'}
@@ -33,6 +38,9 @@ class UsersAssistant extends BaseAssistant
       itemTemplate: "users/list-item",
       emptyTemplate: "list/empty_template",
       nullItemTemplate: "users/null_item_template"
+      swipeToDelete: true
+      formatters: 
+        selected: @selectedFormatter
       }, @listModel)
 
   activate: (event) ->
@@ -40,9 +48,23 @@ class UsersAssistant extends BaseAssistant
     
     @addListeners(
       [@controller.get("users-list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("users-list"), Mojo.Event.listDelete, @handleDeleteItem]
     )
     
     @loadUsers()
+    
+  handleDeleteItem: (event) =>
+    user_to_forget = @users[event.index]
+    users_to_remember = _.select @users, (user) -> user.username isnt user_to_forget.username
+    new Mojo.Model.Cookie("iama-reddit-users").put(JSON.stringify(users_to_remember))
+    @listModel.items.splice(event.index, 1)
+    Banner.send('Forgotten!')
+    
+  selectedFormatter: (propertyValue, model) =>
+    if model.username is RedditAPI.findCurrentUser()?.username
+      return "(logged in)"
+      
+    ""
 
   timeFormatter: (propertyValue, model) =>
     return "" if model.kind not in ['t1','t3','t4']
@@ -76,15 +98,23 @@ class UsersAssistant extends BaseAssistant
 
   itemTapped: (event) =>
     index = event.index
+    user = @users[index]
     
-    @controller.popupSubmenu({
-      onChoose: @handleTapSelection,
-      items: [
-        {label: $L('Log in'), command: 'login-cmd ' + index}
-        {label: $L('Forget'), command: 'forget-cmd ' + index}
-        {label: $L('Log out'), command: 'logout-cmd'}
-      ]
-    })
+    if user.username is RedditAPI.findCurrentUser()?.username
+      @controller.popupSubmenu({
+        onChoose: @handleTapSelection,
+        items: [
+          {label: $L('Log in'), command: 'login-cmd ' + index}
+          {label: $L('Log out'), command: 'logout-cmd'}
+        ]
+      })
+    else      
+      @controller.popupSubmenu({
+        onChoose: @handleTapSelection,
+        items: [
+          {label: $L('Log in'), command: 'login-cmd ' + index}
+        ]
+      })
     
   login: (index) ->
     @selected = index
@@ -98,6 +128,7 @@ class UsersAssistant extends BaseAssistant
     new User(@).login(params)
     
   logout: (index) ->
+    @selected = index
     params = {uh: @getModHash()}
     new User(@).logout(params)
      
@@ -108,11 +139,11 @@ class UsersAssistant extends BaseAssistant
 
     switch params[0]
       when 'login-cmd'
-        @login(params[1])
-      when 'forget-cmd'
+        @spinSpinner(true)
         @login(params[1])
       when 'logout-cmd'
-        @logout()
+        @spinSpinner(true)
+        @logout(params[1])
   
   handleCommand: (event) ->
     return if event.type isnt Mojo.Event.command
@@ -130,26 +161,23 @@ class UsersAssistant extends BaseAssistant
         @controller.stageController.pushScene({name:"login",transition: Mojo.Transition.crossFade}, {})
       when 'register-cmd'
         @controller.stageController.pushScene({name:"register",transition: Mojo.Transition.crossFade}, {})
-        
-  logout: ->
-    params =
-      uh: "#{@getModHash()}"
-
-    @log(params, true)
-
-    new User(@).logout(params)    
     
   handleCallback: (params) ->
     return params unless params? and params.success
     
     if params.type is 'user-logout'
-      Mojo.Log.info(JSON.stringify(params))
+      @spinSpinner(false)
+      new Mojo.Model.Cookie("reddit_session").put("")
+      Subreddit.cached_list.length = 0
+      @controller.get('users-list').mojo.noticeUpdatedItems(0, @listModel.items)
       Banner.send("Logged out")
+      @controller.stageController.swapScene({name:AppAssistant.frontpageSceneName()})
     else if params.type is 'user-login'
       @handleLoginResponse(params.response)      
   
   handleLoginResponse: (response) ->
     return if response.readyState isnt 4
+    @spinSpinner(false)
 
     if response.responseJSON?
       json = response.responseJSON.json
@@ -168,6 +196,7 @@ class UsersAssistant extends BaseAssistant
     user = @users[@selected]
 
     RedditAPI.setUser(user.username, modhash, cookie, user.password)
+    Subreddit.cached_list.length = 0
 
     Banner.send("Logged in as #{user.username}")
     @controller.stageController.swapScene({name:AppAssistant.frontpageSceneName()})

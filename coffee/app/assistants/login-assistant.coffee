@@ -102,10 +102,7 @@ class LoginAssistant extends BaseAssistant
     RedditAPI.setUser(@usernameModel.value, modhash, cookie, @passwordModel.value)
 
     Banner.send("Logged in as " + @usernameModel.value)
-    @menu()
+    @controller.stageController.popScene()
 
   loginFailure: (response) ->
     Banner.send(response.errors[0][1])
-
-  menu: ->
-    AppAssistant.openFrontpage("swap", {}, @controller)

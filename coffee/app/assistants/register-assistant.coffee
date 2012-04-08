@@ -113,7 +113,7 @@ class RegisterAssistant extends BaseAssistant
     RedditAPI.setUser(@usernameModel.value, modhash, cookie, @passwordModel.value)
 
     Banner.send("Created " + @usernameModel.value)
-    @menu()
+    @controller.stageController.popScene()
 
   registerFailure: (response) ->
     @fetchCaptcha()
@@ -130,6 +130,3 @@ class RegisterAssistant extends BaseAssistant
 
     url = 'http://www.reddit.com/captcha/' + @iden + '.png'
     @controller.get('image_id').src = url
-
-  menu: ->
-    AppAssistant.openFrontpage("swap", {}, @controller)

@@ -28,14 +28,14 @@ class RedditAPI
     users = @getUsers()
     _.first _.select users, (user) -> user.reddit_session is reddit_session
     
-  @checkIfLoggedIn: ->
+  @findCurrentUser: ->
     reddit_session = StageAssistant.cookieValue("reddit_session", '')
     
     if reddit_session isnt ''
       @user = @findUserByRedditSession(reddit_session)
-            # 
-            # if @user?
-            #   Banner.send("Logged in as #{@user.username}")
+      return @user
+      
+    null
 
   constructor: ->
     @base_url = 'http://www.reddit.com/'

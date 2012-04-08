@@ -531,10 +531,13 @@ class FrontpageAssistant extends PowerScrollBase
       when 'search'
         @toggleSearch()
       when 'subreddit-submenu'
+        list_items = @getSubreddditMenuItems()
+        list_items.push({label: "Loading", command: 'donothing'}) if list_items.length == 0
+        
         @controller.popupSubmenu {
           onChoose: @handleActionSelection,
           #placeNear:element_tapped,
-          items: @getSubreddditMenuItems()
+          items: list_items
         }
       when 'submit'
         if @reddit_api.subreddit?
