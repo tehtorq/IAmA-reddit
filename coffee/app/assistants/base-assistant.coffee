@@ -82,7 +82,6 @@ class BaseAssistant
   handleScrollUpdate: =>
     if @controller.get('puller').visible()
       offset = @controller.get('puller').viewportOffset()[1] - @controller.getSceneScroller().mojo.scrollerSize()['height']
-      @log "#{@controller.get('puller').viewportOffset()[1]} - #{@controller.getSceneScroller().mojo.scrollerSize()['height']} = #{offset}"
 
       if offset < 0
         if @is_loading_content is false

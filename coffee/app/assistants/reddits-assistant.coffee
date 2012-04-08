@@ -194,7 +194,8 @@ class RedditsAssistant extends BaseAssistant
       if (length < 1) or (item.data.name isnt @last_name) # ugly hack for possible bug in reddits/mine    
         if item.data.description?
           item.data.description = item.data.description.replace(/\n/gi, "<br/>")
-          item.data.description = item.data.description.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
+          #item.data.description = item.data.description.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' onClick=\"return false\" href='$2'>$1</a>")
+          item.data.description = item.data.description.replace(/\[([^\]]*)\]\(([^\)]+)\)/gi, "<a class='linky' href='$2'>$1</a>")
 
         item.data.prevent_delete = (@reddit_api.reddits_category isnt 'mine')
         new_items.push(item.data)
@@ -225,8 +226,14 @@ class RedditsAssistant extends BaseAssistant
   itemTapped: (event) =>
     item = event.item
     element_tapped = event.originalEvent.target
+    
+    if event.srcElement.up('.linky')
+      Banner.send "linky"
+      
+    #@log event.srcElement.className, true
 
     if element_tapped.className is 'linky'
+      Banner.send('here')
       linky = Linky.parse(element_tapped.href)
 
       if linky.subtype is 'reddit'

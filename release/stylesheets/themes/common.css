@@ -154,6 +154,12 @@
   position:relative; /* for comment counter */
 }
 
+.subreddit_header_image {
+  background-color: white;
+  max-width: 240px;
+  -webkit-border-radius: 4px;
+}
+
 .subreddit {
   position:relative; /* for comment counter */
   min-height: 30px;
