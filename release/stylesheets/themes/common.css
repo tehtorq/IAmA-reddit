@@ -156,6 +156,7 @@
 
 .subreddit {
   position:relative; /* for comment counter */
+  min-height: 30px;
 }
 
 .column {

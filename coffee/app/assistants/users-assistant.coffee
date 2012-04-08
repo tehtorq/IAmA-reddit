@@ -104,7 +104,6 @@ class UsersAssistant extends BaseAssistant
       @controller.popupSubmenu({
         onChoose: @handleTapSelection,
         items: [
-          {label: $L('Log in'), command: 'login-cmd ' + index}
           {label: $L('Log out'), command: 'logout-cmd'}
         ]
       })

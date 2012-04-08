@@ -8,7 +8,7 @@ class RedditsAssistant extends BaseAssistant
 
   setup: ->
     super
-    @updateHeading('reddits')
+    @updateHeading('subreddits')
     
     @controller.setupWidget "spinner", @attributes = {}, @model = {spinning: true}
     
@@ -157,7 +157,6 @@ class RedditsAssistant extends BaseAssistant
     @unsubscribe(event.item.name, event.item.display_name)
 
   loadMore: =>
-    Banner.send('loading more!')
     @loadReddits()
 
   loadReddits: ->

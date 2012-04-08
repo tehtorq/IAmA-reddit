@@ -40,11 +40,13 @@ body.palm-default {
   -webkit-border-image: url(../../images/glass/indent.png) 38 32 32 32 stretch stretch;
   /*visibility: hidden;*/
   z-index: -100;
-  width: 80%;  
-  font-size: large;
   color: silver;
+  font-size: small;
   padding: 18px;
-  margin: -12px 6px 6px 12px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: -12px;
+  margin-bottom: 6px;
   -webkit-border-radius: 6px;
   position:relative; /* for comment counter */
 }

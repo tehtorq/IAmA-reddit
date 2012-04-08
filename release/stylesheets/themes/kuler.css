@@ -35,11 +35,14 @@ body.palm-default {
 
 .subreddit_info {
   z-index: -100;
-  width: 80%;  
-  font-size: large;
   background-color: #D1D1BC;
   color: #302C29;
+  font-size: small;
   padding: 18px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: -12px;
+  margin-bottom: 6px;
   margin: -12px 6px 6px 12px;
   position:relative; /* for comment counter */
 }
