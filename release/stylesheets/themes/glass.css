@@ -1,8 +1,8 @@
 
 body.palm-default {
- background: url(../../images/gradient-background.png) center center repeat;
- background-attachment:fixed;
- -webkit-background-size: 101% 101%;
+  background: url(../../images/gradient-background.png) center center repeat;
+  background-attachment:fixed;
+  -webkit-background-size: 101% 101%;
 }
 
 .md p, .md h1 {
@@ -21,7 +21,7 @@ body.palm-default {
 
 .reddit_article {
   position:relative; /* for comment counter */
-  padding: 10px 18px 6px 18px;
+  padding: 10px 10px 6px 10px;
 }
 
 .reddit_comment {

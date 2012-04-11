@@ -17,6 +17,9 @@ body.palm-default {
   margin: 3px 0px 3px 4px;
   -webkit-border-radius: 6px 0px 0px 6px;
   overflow: auto;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .puller {
