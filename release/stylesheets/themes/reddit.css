@@ -43,10 +43,7 @@ body.palm-default {
   color: black;
   font-size: small;
   padding: 18px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: -12px;
-  margin-bottom: 6px;
+  margin: -12px 10px 6px 10px;
   -webkit-border-radius: 6px;
   position:relative; /* for comment counter */
 }

@@ -38,10 +38,7 @@ body.palm-default {
   z-index: -100;
   font-size: small;
   padding: 18px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: -12px;
-  margin-bottom: 6px;
+  margin: -12px 10px 6px 10px;
   position:relative; /* for comment counter */
 }
 
@@ -60,19 +57,19 @@ body.palm-default {
 
 .article_desc_author {
   font-weight: bold;
-  color: grey;
+  color: gray;
 }
 
 .comment_desc {
   float: left;
   margin: 4px 0px;
-  color: grey;
+  color: gray;
   font-size: small;
 }
 
 .article_desc {
   font-size: small;
-  color: grey;
+  color: gray;
   margin-top: 6px;
   float: left;
   clear: both;

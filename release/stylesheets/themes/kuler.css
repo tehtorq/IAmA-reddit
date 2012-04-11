@@ -39,11 +39,7 @@ body.palm-default {
   color: #302C29;
   font-size: small;
   padding: 18px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: -12px;
-  margin-bottom: 6px;
-  margin: -12px 6px 6px 12px;
+  margin: -12px 10px 6px 10px;
   position:relative; /* for comment counter */
 }
 
@@ -62,7 +58,7 @@ body.palm-default {
 
 .article_desc_author {
   font-weight: bold;
-  color: grey;
+  color: gray;
 }
 
 .comment_desc {

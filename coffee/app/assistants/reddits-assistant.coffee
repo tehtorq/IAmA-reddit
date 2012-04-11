@@ -63,9 +63,11 @@ class RedditsAssistant extends BaseAssistant
       preventDeleteProperty: 'prevent_delete',
       lookahead : 25,
       renderLimit : 1000
+      formatters: 
+        image: @imageFormatter
     }, @redditsModel)
     
-    @controller.get('puller').hide()
+    #@controller.get('puller').hide()
 
     @controller.setupWidget('filterfield', {delay: 2000})
     @controller.listen('filterfield', Mojo.Event.filter, @filter)
@@ -75,6 +77,7 @@ class RedditsAssistant extends BaseAssistant
     
     @addListeners(
       [@controller.get("reddit-list"), Mojo.Event.listTap, @itemTapped]
+      [@controller.get("reddit-list"), Mojo.Event.hold, @itemHold]
       [@controller.get("puller"), Mojo.Event.tap, @loadMore]
       [@controller.get("reddit-list"), Mojo.Event.listDelete, @handleDeleteItem]
       [@controller.getSceneScroller(), Mojo.Event.dragging, @handleScrollUpdate]
@@ -82,6 +85,12 @@ class RedditsAssistant extends BaseAssistant
     
     @loadReddits() if @redditsModel.items.length is 0
     
+  imageFormatter: (propertyValue, model) =>
+    if model.header_img? and model.header_img isnt ""
+      return "<img class='subreddit_header_image' src='#{model.header_img}'>"
+        
+    ""
+  
   handleCategorySwitch: (category) ->
     @reddit_api.setRedditsCategory(category)
     @loadReddits()
@@ -93,7 +102,7 @@ class RedditsAssistant extends BaseAssistant
       when 'top'
         @scrollToTop()
       when 'frontpage-cmd'
-        @controller.stageController.popScene({name:AppAssistant.frontpageSceneName()})
+        @controller.stageController.swapScene({name:AppAssistant.frontpageSceneName()})
       when 'popular-cmd'
         @handleCategorySwitch('popular')
       when 'new-cmd'
@@ -163,13 +172,11 @@ class RedditsAssistant extends BaseAssistant
     @is_loading_content = true
     parameters = {}
     parameters.limit = 25
+    @displayButtonLoading()
     
     if @reddit_api.last_reddit?
       parameters.after = @reddit_api.last_reddit
-      @displayButtonLoading()
     else
-      @controller.get('puller').hide()
-      @spinSpinner(true)
       @controller.get('reddit-list').mojo.noticeRemovedItems(0, @controller.get('reddit-list').mojo.getLength())
     
     if @reddit_api.search?
@@ -202,8 +209,6 @@ class RedditsAssistant extends BaseAssistant
         @last_name = item.data.name
 
     @controller.get('reddit-list').mojo.noticeAddedItems(length, new_items)
-    
-    @spinSpinner(false)
     @displayButtonLoadMore()
     
     @reddit_api.last_reddit = response.responseJSON.data.after
@@ -222,6 +227,7 @@ class RedditsAssistant extends BaseAssistant
 
   displayButtonLoading: ->
     @controller.get('puller').update('loading')
+    @controller.get('puller').show()
 
   itemTapped: (event) =>
     item = event.item
@@ -233,7 +239,6 @@ class RedditsAssistant extends BaseAssistant
     #@log event.srcElement.className, true
 
     if element_tapped.className is 'linky'
-      Banner.send('here')
       linky = Linky.parse(element_tapped.href)
 
       if linky.subtype is 'reddit'
@@ -265,14 +270,24 @@ class RedditsAssistant extends BaseAssistant
                onChoose: @handleActionCommand,
                items: [{label: $L('Visit'), command: 'view-cmd ' + item.display_name}]
       })
+      
+  itemHold: (event) =>
+    event.preventDefault()
+    thing = event.srcElement.up('.thing-container')
+    reddit = @findByName(thing.id)
+    @log "reddit: #{reddit} #{thing.id} "
+    AppAssistant.openFrontpage("swap", {reddit:thing.id}, @controller)
 
+  findByName: (name) ->
+    _.first _.select @redditsModel.items, (item) -> item.display_name is name
+    
   handleActionCommand: (command) =>
     return unless command?
 
     params = command.split(' ')
 
     if params[0] is 'view-cmd'
-      AppAssistant.openFrontpage("swap", {reddit:params[1]}, @controller)
+      AppAssistant.openFrontpage("clone", {reddit:params[1]}, @controller)
     else if params[0] is 'frontpage-add-cmd'
       @subscribe(params[1], params[2])
     else if params[0] is 'frontpage-remove-cmd'

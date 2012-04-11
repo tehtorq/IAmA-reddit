@@ -99,8 +99,6 @@ class FrontpageAssistant extends PowerScrollBase
         thumbnail: @thumbnailFormatter
         vote: @voteFormatter
       }, @articles)
-      
-    @controller.get('puller').hide()
   
   activate: (event) ->
     super
@@ -307,20 +305,19 @@ class FrontpageAssistant extends PowerScrollBase
   
   displayLoadingButton: ->
     @controller.get('puller').update('loading')
+    @controller.get('puller').show()
   
   loadArticles: ->
     @is_loading_content = true
     parameters = {}
     parameters.limit = @reddit_api.getArticlesPerPage()
+    @displayLoadingButton()
     
     if @reddit_api.load_next
       parameters.after = @articles.items[@articles.items.length - 1].data.name
-      @displayLoadingButton()
     else
       length = @articles.items.length
       @articles.items.clear()
-      @controller.get('puller').hide()
-      @spinSpinner(true)
       @controller.modelChanged(@articles)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
@@ -553,7 +550,7 @@ class FrontpageAssistant extends PowerScrollBase
       when 'manage-users-cmd'
         @controller.stageController.swapScene({name:"users",transition: Mojo.Transition.crossFade}, {})
       when 'reddits-cmd'
-        @controller.stageController.pushScene({name:"reddits"}, {})
+        @controller.stageController.swapScene({name:"reddits",transition: Mojo.Transition.crossFade}, {})
       when 'gallery-cmd'
         @controller.stageController.pushScene({name:"gallery"}, {})
       when 'recent-comments-cmd'

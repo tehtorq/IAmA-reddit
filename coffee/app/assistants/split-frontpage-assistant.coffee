@@ -106,7 +106,6 @@ class SplitFrontpageAssistant extends PowerScrollBase
       
     @comment_list = new CommentList('', @)
     
-    @controller.get('puller').hide()
     @controller.get('comment-puller').hide()
     
     @controller.setupWidget("article-scroller",{mode: 'vertical'},{})
@@ -367,18 +366,16 @@ class SplitFrontpageAssistant extends PowerScrollBase
     @is_loading_content = true
     parameters = {}
     parameters.limit = @reddit_api.getArticlesPerPage()
+    @displayLoadingButton()
     
     if @reddit_api.load_next
       parameters.after = @articles.items[@articles.items.length - 1].data.name
-      @displayLoadingButton()
     else
       @comment_list.comments.items.clear()
       @controller.modelChanged(@comment_list.comments)
       
       length = @articles.items.length
       @articles.items.clear()
-      #@controller.get('puller').hide()
-      @spinSpinner(true)
       @controller.modelChanged(@articles)
 
     if @reddit_api.category? and (@reddit_api.category is 'saved')
@@ -399,8 +396,8 @@ class SplitFrontpageAssistant extends PowerScrollBase
     
   handleArticleScrollUpdate: =>
     if @controller.get('puller').visible()
-      offset = @controller.get('puller').viewportOffset()[1] - @controller.get("article-scroller").mojo.scrollerSize()['height']
-      @log "#{@controller.get('puller').viewportOffset()[1]} - #{@controller.get("article-scroller").mojo.scrollerSize()['height']} = #{offset}"
+      scroller_height = @controller.get("article-scroller").mojo.scrollerSize()['height']
+      offset = @controller.get('puller').viewportOffset()[1] - (scroller_height + scroller_height / 4)
 
       if offset < 0
         if @is_loading_content is false
@@ -726,7 +723,7 @@ class SplitFrontpageAssistant extends PowerScrollBase
       when Mojo.Menu.prefsCmd
         @controller.stageController.pushScene({name:"prefs"}, {})        
       when 'reddits-cmd'
-        @controller.stageController.pushScene({name:"reddits"}, {})
+        @controller.stageController.pushScene({name:"reddits",transition: Mojo.Transition.crossFade}, {})
       when 'gallery-cmd'
         @controller.stageController.pushScene({name:"gallery"}, {})
       when 'recent-comments-cmd'

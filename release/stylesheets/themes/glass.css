@@ -38,22 +38,18 @@ body.palm-default {
 
 .subreddit_info {
   -webkit-border-image: url(../../images/glass/outdent.png) 38 38 36 34 stretch stretch;
-  /*visibility: hidden;*/
   z-index: -100;
   color: silver;
   font-size: small;
   padding: 18px;
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: -12px;
-  margin-bottom: 6px;
+  margin: -6px 10px 6px 10px;
   -webkit-border-radius: 6px;
   position:relative; /* for comment counter */
 }
 
 .comment_counter {
   -webkit-border-image: url(../../images/glass/indent.png) 38 38 36 34 stretch stretch;
-  text-align : center;
+  text-align: center;
   font-size: small;
   line-height: 40px;
   width: 40px;
@@ -65,19 +61,19 @@ body.palm-default {
 
 .article_desc_author {
   font-weight: bold;
-  color: grey;
+  color: gray;
 }
 
 .comment_desc {
   float: left;
   margin: 4px 0px;
-  color: grey;
+  color: gray;
   font-size: small;
 }
 
 .article_desc {
   font-size: small;
-  color: grey;
+  color: gray;
   margin-top: 6px;
   float: left;
   clear: both;
@@ -90,9 +86,9 @@ body.palm-default {
   line-height: 40px;
   width: 40px;
   height: 40px;
-  color: red;  
-  padding: 0px;
-  margin: 0px -18px 5px 5px;  
+  color: silver;  
+  padding: 0px 7px 0px 0px;
+  margin: 0px -6px 5px 5px;
   background-size: 100%;
   float:right;
 }

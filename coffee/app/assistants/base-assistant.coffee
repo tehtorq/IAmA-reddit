@@ -35,7 +35,7 @@ class BaseAssistant
       @controller.get('loading').style.left = '0px'
     else
       @controller.get('loading').style.left = '-200px'
-      #@controller.get('spinner').mojo.stop()
+      @controller.get('spinner').mojo.stop()
       
   addListeners: ->
     @listeners = arguments
@@ -49,7 +49,7 @@ class BaseAssistant
     Mojo.loadStylesheet(@controller.document, Preferences.getThemePath())
     
   toggleSearch: ->
-    @scrollToTop() if @controller.getSceneScroller()? # prevent grey area in list
+    @scrollToTop() if @controller.getSceneScroller()? # prevent gray area in list
     ff = @controller.get("filterfield")
 
     if (ff._mojoController.assistant.filterOpen)
@@ -81,7 +81,8 @@ class BaseAssistant
     
   handleScrollUpdate: =>
     if @controller.get('puller').visible()
-      offset = @controller.get('puller').viewportOffset()[1] - @controller.getSceneScroller().mojo.scrollerSize()['height']
+      scroller_height = @controller.getSceneScroller().mojo.scrollerSize()['height']
+      offset = @controller.get('puller').viewportOffset()[1] - (scroller_height + scroller_height / 4)
 
       if offset < 0
         if @is_loading_content is false

@@ -1,27 +1,14 @@
-<div>
+<div class="thing-container" id="#{display_name}">
   <div class="thing subreddit">
     <div class="column">
       <div class="comment_counter">info</div>
     </div>
-    <img class="subreddit_header_image" src="#{header_img}">
+    #{-imageFormatted}
     <div style="width:80%">#{-title}</div>
+    <div class="article_desc">#{subscribers} subscribers</div>
   </div>
   
   <div class="subreddit_info toggle_hidden" id="drawer_#{name}">
-    <div class="palm-group unlabeled">
-    <div class="palm-list">
-
-       <div class='palm-row first last'>
-         <div class="palm-row-wrapper textfield-group" x-mojo-focus-highlight="true">
-            <div class="title">
-              <div class="label">Subscribers</div>
-              <div>#{subscribers}</div>
-            </div>
-         </div>
-       </div>
-      </div>
-    </div>
-
     <div>#{-description}</div>
   </div>
 </div>

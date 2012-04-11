@@ -163,6 +163,7 @@
 .subreddit {
   position:relative; /* for comment counter */
   min-height: 30px;
+  padding: 10px 12px 6px 12px;
 }
 
 .column {
@@ -180,7 +181,7 @@
   display: none;
 }
 
-.comment_description {    
+.comment_description {
  width: 83%;
 }
 
