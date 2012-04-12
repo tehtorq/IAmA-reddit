@@ -103,7 +103,7 @@ class FrontpageAssistant extends PowerScrollBase
   activate: (event) ->
     super
     
-    @getWallpaper()
+    #@getWallpaper()
     
     @addListeners(
       [@controller.get("list"), Mojo.Event.listTap, @itemTapped]

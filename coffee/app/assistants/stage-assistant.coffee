@@ -38,6 +38,13 @@ class StageAssistant
       if controller?
         controller.unloadStylesheet(old_theme_path)
         controller.loadStylesheet(new_theme_path)
+        
+        if Preferences.theme in ['light','reddit']
+          controller.document.getElementsByTagName("body")[0].removeClassName('palm-dark')
+          controller.document.getElementsByTagName("body")[0].addClassName('palm-light')
+        else
+          controller.document.getElementsByTagName("body")[0].removeClassName('palm-light')
+          controller.document.getElementsByTagName("body")[0].addClassName('palm-dark')
 
   @parseUrls: (text) ->
     return null unless text? and (text.indexOf('http') > -1)

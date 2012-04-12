@@ -48,6 +48,13 @@ class BaseAssistant
   loadTheme: ->
     Mojo.loadStylesheet(@controller.document, Preferences.getThemePath())
     
+    if Preferences.theme in ['light','reddit']
+      @controller.document.getElementsByTagName("body")[0].removeClassName('palm-dark')
+      @controller.document.getElementsByTagName("body")[0].addClassName('palm-light')
+    else
+      @controller.document.getElementsByTagName("body")[0].removeClassName('palm-light')
+      @controller.document.getElementsByTagName("body")[0].addClassName('palm-dark')
+    
   toggleSearch: ->
     @scrollToTop() if @controller.getSceneScroller()? # prevent gray area in list
     ff = @controller.get("filterfield")

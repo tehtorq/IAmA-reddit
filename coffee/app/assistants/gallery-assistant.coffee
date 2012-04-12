@@ -49,7 +49,7 @@ class GalleryAssistant extends BaseAssistant
         {}
       ]
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark no-fade' }, @viewMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'no-fade' }, @viewMenuModel)
     
     appMenuModel =
       visible: true

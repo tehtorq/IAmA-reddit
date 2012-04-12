@@ -81,7 +81,7 @@ class ImageAssistant extends BaseAssistant
       visible: false
       items: command_menu_items
 
-    @controller.setupWidget(Mojo.Menu.commandMenu, { menuClass:'palm-dark' }, @cmdMenuModel)
+    @controller.setupWidget(Mojo.Menu.commandMenu, {menuClass: 'no-fade'}, @cmdMenuModel)
 
   activate: (event) ->
     super
