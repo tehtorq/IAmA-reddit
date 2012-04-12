@@ -71,7 +71,7 @@
 
 .take-it-away {
   opacity: 0;
-  -webkit-transition: opacity 0.25s ease-in;
+  -webkit-transition: opacity 0s ease-in;
 }
 
 #left-pane {
