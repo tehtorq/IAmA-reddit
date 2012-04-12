@@ -17,28 +17,26 @@
 }
 
 #tabs {
-  height:30px;
+  height:20px;
   width:350px;
-  background-color: black;
   position: absolute;
   float: top;
-  top: 0px;
+  top: 15px;
 }
 
-#tabs:first-child {
-  border-left: 1px solid gray;
+/*.palm-popup-content .palm-row .title {
+  font-size: medium;
 }
-
+*/
 .tab-button {
   height:100%;
-  width:150px; 
-  background-color: black; 
+  width:150px;
+  /*background-color: black; */
   float: left;
   text-align: center;
-  border-right: 1px solid gray;
   font-size: large;
-  padding-top: 10px;
-  padding-bottom: 10px;
+/*  padding-top: 12px;
+  padding-bottom: 10px;*/
 }
 
 .puller {

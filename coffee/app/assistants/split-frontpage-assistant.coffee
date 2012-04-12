@@ -574,6 +574,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
             @populateCommentReplies(data.replies.data.children, indent + 1, array)
             
   showWebpage: (load = false) =>
+    @controller.get('weblink').update('<h3 style="display:inline;">link</h3>')
+    @controller.get('commentlink').update('comments')
+    
     @controller.get('right-pane').removeClassName('take-it-away')
     @controller.get('right-pane').addClassName('bring-it-in')
     
@@ -587,6 +590,9 @@ class SplitFrontpageAssistant extends PowerScrollBase
       @controller.get('webview').mojo.openURL(@article.data.url)
     
   showComments: (reload = true) =>
+    @controller.get('commentlink').update('<h3 style="display:inline;">comments</h3>')
+    @controller.get('weblink').update('link')
+    
     @controller.get('comment-scroller').mojo.scrollTo(0,0, false)
     @controller.get('webview-scroller').hide()
     @controller.get('comment-scroller').show()
